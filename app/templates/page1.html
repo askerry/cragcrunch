@@ -1,0 +1,46 @@
+{# Use base.j2 template as a base and only provide values for placeholders
+   in this file.
+#}
+{% extends "base.j2" %}
+
+{# Markdown main content block. #}
+{% block content %}
+{% import "macros.j2" as macros with context %}
+
+#What is ClimbRec?
+
+ Over the years, the [rock climbing](http://en.wikipedia.org/wiki/Rock_climbing) community has amassed a wealth of climbing information. This data includes descriptions and facts about individual routes and [bouldering](http://en.wikipedia.org/wiki/Bouldering) problems, information about different parks and areas, and a massive store of user data in the form of comments, ratings, and suggested difficulty [grades](http://en.wikipedia.org/wiki/Grade_%28climbing%29). This is an impressive [community-driven project](http://www.mountainproject.com/community/) and currently functions as a useful [web resource](www.mountainproject.com) for planning climbing trips and obtaining route details. However, in its current form, much of the richness of this dataset is locked away from the community of users who have built it. ClimbRec is a comprehensive and interactive platform for making the most of this unique data resource.
+
+<br>
+ The primary goal of ClimbRec is personalization. Every climber is [unique](http://climbingnarc.com/2012/01/defining-your-style/) and comes to the crag with their own skills, preferences, and goals. Similarly, every climb is different (e.g. different types of [holds](http://climbing.about.com/od/RockClimbingTechnique/tp/Nine-Basic-Types-Of-Climbing-Handholds.htm) and [faces](http://climbing.about.com/od/cliimbingtechniques/a/3RockFaces.htm)) and demands its own blend of mental and physical skills. ClimbRec aims to learn about its individual users to create a personalized system for finding climbs that are right for YOU. A key feature of this system is a [recommendation engine](http://en.wikipedia.org/wiki/Recommender_system) that makes personalized suggestions about climbs we predict you will enjoy. ClimbRec also aims to provide a flexible system for searching and filtering climbs based on what you are looking for in your next climbing adventure. You helped to build this data source, so we want you to have the freedom to interact with and visualize the data to meet your needs.
+
+{{ macros.captioned_image('img/pretty2.jpg', 'Although some of the same physical and mental demands come into play in almost any rock climbing endeavor, climbing is a diverse sport. Climbing enthusiasts range from adrenaline junkies, to nature lovers looking to unstress in the outdoors, to pure athletes looking to work the most physically demanding moves possible.') }}
+
+##Goals
+
+1. **Assess data acquisition:** [MountainProject.com](www.mountainproject.com) has no API and the available information is user-entered (i.e. messy, incomplete). Did we successfully extract the relevant content? What are appropriate metrics for assessing what proportion of the full dataset we have acquired? Are there potential sources of bias in the data acquisition?
+
+2. **Basic data summary:** {{ macros.captioned_image_inline('img/californiaareas.jpg', 'Where are all these climbs?') }} What is this dataset like? Mountain Project is an impressive community-driven effort to share climbing information. A fun first step is to characterize the scope of this dataset. Who are the contributors? How are the climbs distributed geographically? What kind of climbs are there?
+
+3. **Area/region characterizations:** When making decisions about where to climb, it is nice to have side-by-side comparisons of different areas. Can we visualize the distribution of climb types and grades in different regions? What about other features that aren't readily available on [MountainProject.com](www.mountainproject.com) (e.g. distribution of crimpy vs. juggy climbs)? We want to provide interactive visualization of different areas in terms of the features that you care about.
+
+4. **Climb popularity:** What makes a climb a classic (i.e. popular at the group level)? Can we predict a climb's average rating or popularity? What features are most diagnostic?
+
+{{ macros.captioned_image('img/ratings.png', 'Can we predict what makes certain climbs so universally popular?') }}
+
+5. **Area relationships:** {{ macros.captioned_image_inline('img/traveling.jpg', 'Do many areas see traffic from visitors/climbers who dominantly climb in a differen area?') }}How do the areas relate to one another? Are there certain areas that see a lot of the same climbers? Is there much cross-area climbing (e.g. individuals climbing at multiple climbing areas)? Some cross-area climbing will be necessary to build personalized recommendations at nonlocal areas using user data. Otherwise, we'll need to rely on metadata and climb attributes to provide personalized recommendations for new areas.
+
+6. **Local personalization:** The biggest contribution of ClimbRec is personalized recommendations. We want to find new climbs for YOU. The first step is to focus on your home crag and identify local climbs that are a good fit. Can we predict how individual users will rate specific climbs? What features are most diagnostic at an individual level?
+
+<div class="imagediv">
+<div id='horizontaldiv'>{{ macros.captioned_image('img/sharma.jpg', 'Top male sport climber <br> Chris Sharma') }}</div>
+<div id='horizontaldiv'>{{ macros.captioned_image('img/sasha.jpg', 'Strong female sport climber <br> Sasha DiGulian') }}</div>
+<div id='horizontaldiv'>{{ macros.captioned_image('img/robinson.jpg', 'Elite American boulderer <br> Paul Robinson') }}</div>
+</div>
+<div class="captiondiv">
+<p>These pro climbers all have very different styles and strengths. The climbs that attract Beast Chris Sharma may be different from the ones Sasha Digulian is likely to crush.</p>
+</div>
+
+[climblink]: http://www.mountainproject.com "Mountain Project"
+[imgid]: img/solo.jpg "solo climber"
+{% endblock %}

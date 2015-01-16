@@ -1,0 +1,20 @@
+{% extends "base.j2" %}
+
+{% block content %}
+
+
+<br>
+<h2>{{user['name']}}</h2>
+gender: {{user['gender']}} age: {{ user['age'] }}
+<br>
+home region/crag: {{user['mainarea_name']}}, {{user['country']}}
+<br>
+likes to climb: {{user['climbstyles']}}
+<br>
+mountain project site: {{user['url']}}
+<br>
+{{recs}}
+<br>
+{{plotdata}}
+<br>
+{% endblock %}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link href="http://fonts.googleapis.com/css?family=Anton"
+            rel="stylesheet" type="text/css"/>
+        <title>ClimbRec</title>
+        <meta charset="utf-8" />
+        <meta name="description" content="report for final project of CS109">
+        <meta name="keywords" content="rock climbing, data analysis, data science, visualization">
+        <meta name="author" content="Amy E. Skerry">
+        <meta name="viewport" content="width=device-width">
+        <!--default font-->
+        <link href="http://fonts.googleapis.com/css?family=Anton" rel="stylesheet" type="text/css"/>
+        <!--JQUERY-->
+        <script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <!--my less-->
+        <link rel="stylesheet/less" href="{{ media_url('css/style.less') }}"/> <!--dev only-->
+        <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
+        <script src="{{ media_url('js/less-1.6.0.min.js') }}" type="text/javascript"></script><!--dev only-->
+                <!--prettier dialogs!-->
+        <script src="{{ media_url('js/bootbox.min.js') }}" type="text/javascript"></script>
+                <!--more reasonable hover latencies-->
+        <script src="{{ media_url('js/hoverIntent.min.js') }}" type="text/javascript"></script>
+                <!-- Latest compiled and minified bootstrap JavaScript (needed for bootbox)-->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+    <div id="page">
+        <div id="title">
+            <div id="textdiv">
+            <h1>ClimbRec</h1>
+            <p>Find the climbs for you</p>
+            </div>
+            <img class="logo" src="{{ media_url('img/logo.jpg') }}" alt="logo">
+        </div>
+        <div id="container">
+        <div id="sidebar">
+        <nav>
+        {# Move main menu rendering away from the base layout. This
+           way it can be used to generate the list many times, e.g. in
+           a footer, etc.
+        #}
+            {% import "macros.j2" as macros with context %}
+            {{ macros.render_basic_menu() }}
+
+        </nav>
+         {% import "macros.j2" as macros with context %}
+            {{ macros.captioned_image('img/ropes.png') }}
+        </div>
+        <div id="content">
+        {# Main content block. Notice it has to pass through the
+           Markdown filter to generate HTML. If a block in content
+           pages contains only markup, you can omit the filter.
+        #}
+            {% filter markdown -%}
+            {% block content %}{% endblock %}
+            {%- endfilter %}
+        </div>
+        </div>
+
+        {# Some parts of the web are not needed for development and can
+           wait for production (e.g. analytics). They can be included in
+           the final production build. Create a new config file, extend
+           the original one and override the "mode" property; then build
+           the site with the new "production configuration".
+        #}
+        {#
+        {% if site.config.mode == "production" -%}
+            {% include "ga.j2" %}
+        {%- endif %}
+        #}
+    </div>
+    </body>
+</html>

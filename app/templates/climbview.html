@@ -1,0 +1,26 @@
+{% extends "base.j2" %}
+
+{% block content %}
+
+
+<br>
+<h2>{{climb['name']}}</h2>
+area: {{climb['areaname']}} mainarea: {{ climb['mainarea_name'] }}
+<br>
+{{ climb['nest'] }}
+<br>
+style: {{climb['style']}}, length: {{climb['length']}}
+<br>
+protection: {{climb['protection']}}, pitches: {{climb['pitch']}}
+<br>
+rating: {{climb['avgsars']}}, pageviews: {{climb['pageviews']}}
+<br>
+consensus grade: {{climb['grade']}}
+<br>
+mountain project site: {{climb['url']}}
+<br>
+<h1>Similar Climbs</h1>
+{{recs}}
+<br>
+
+{% endblock %}

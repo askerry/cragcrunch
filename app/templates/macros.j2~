@@ -1,0 +1,25 @@
+{# Generates the main and basic menu from context data in the site's
+   configuration file.
+#}
+{% macro render_basic_menu() -%}
+<ul class="menu">
+{% for menu_item in menu %}
+    <li><a {% if (menu_item.url == resource.relative_path) %}class="selected" {% endif -%}
+        href="{{ content_url(menu_item.url) }}">{{ menu_item.title }}</a></li>
+{% endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro captioned_image(imgstr, caption) %}
+<div class="imgcontainer">
+	<img class="fullw_img" src= "{{ '/static/im/'+imgstr }}" alt="empty image">
+	<p class="caption">{{  caption  }}</p>
+</div>
+{%- endmacro %}
+
+{% macro captioned_image_inline(imgstr, caption) %}
+<div class="imgcontainer_inline">
+	<img class="fullw_img" src= "{{ media_url(imgstr) }}" alt="empty image">
+	<p class="caption">{{  caption  }}</p>
+</div>
+{%- endmacro %}

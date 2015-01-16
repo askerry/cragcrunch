@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link href="http://fonts.googleapis.com/css?family=Anton"
+            rel="stylesheet" type="text/css"/>
+        <title>ClimbRec</title>
+        <meta charset="utf-8" />
+        <meta name="description" content="Insight Data Science Project">
+        <meta name="keywords" content="rock climbing, data analysis, data science, visualization">
+        <meta name="author" content="Amy E. Skerry">
+        <meta name="viewport" content="width=device-width">
+        <!--default font-->
+        <link href="http://fonts.googleapis.com/css?family=Anton" rel="stylesheet" type="text/css"/>
+        <!--JQUERY-->
+        <script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <!--my less--> 
+        <!--dev only-->
+        <link rel="stylesheet/less" href="/static/style.less"/> 
+        <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.2.0/less.min.js"></script>
+        <script src="/static/js/less-1.6.0.min.js" type="text/javascript"></script><!--dev only-->
+                <!--prettier dialogs!-->
+        <script src="/static/js/bootbox.min.js" type="text/javascript"></script>
+                <!--more reasonable hover latencies-->
+        <script src="/static/js/hoverIntent.min.js" type="text/javascript"></script>
+                <!-- Latest compiled and minified bootstrap JavaScript (needed for bootbox)-->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+    <div id="page">
+        <div id="title">
+            <div id="textdiv">
+            <h1>ClimbRec</h1>
+            <p>Find the climbs for you</p>
+            </div>
+            <img class="logo" src="/static/img/logo.jpg" alt="logo">
+        </div>
+        <div id="container">
+        <div id="sidebar">
+        <nav>
+                                <ul class="menu">
+    <li><a class="selected" href="/index.html">Home</a></li>
+    <li><a href="/report.html">Data Report</a></li>
+    <li><a href="/playground.html">Playground</a></li>
+    <li><a href="/background.html">Background</a></li>
+    <li><a href="/procedures.html">Procedures</a></li>
+</ul>
+
+        </nav>
+                     <div class="imgcontainer">
+	<img class="fullw_img" src= "/static/img/ropes.png" alt="empty image">
+	<p class="caption"></p>
+</div>
+        </div>
+        <div id="content">   
+            {% block content %}{% endblock %}
+        </div>
+        </div>
+
+                    </div>
+    </body>
+</html>

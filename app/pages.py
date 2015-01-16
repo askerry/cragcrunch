@@ -1,0 +1,60 @@
+# generates page of climb info
+from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ToDosTable
+from sqlalchemy import func
+import re
+import pandas as pd
+import numpy as np
+import os
+import viz
+import pagedata.user as uf
+import pagedata.climb as cf
+import pagedata.area as af
+import pagedata.home as hf
+
+from config import rootdir
+
+################     HOME PAGE    ####################
+
+
+def initial_home(g):
+    return hf.gettopclimbs(g)
+    
+def result_home(request, g):
+    text = request.form['text']
+    finds=hf.findmatch(text, g)
+    return finds
+
+################     USER PAGE    ####################
+
+
+def getuserpage(g, inputdict):
+    climberid=inputdict['userid']
+    a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
+    udict=uf.getuserdict(a, g.db)
+    urecs=uf.getuserrecs(udict, g.db)
+    uplotdata=uf.getuserplots(udict, g.db)
+    return udict, urecs, uplotdata
+
+################     AREA PAGE    ####################
+
+
+def getareapage(g, inputdict):
+    areaid=inputdict['areaid']
+    a=g.db.session.query(AreaTable).filter_by(areaid=areaid).first()
+    adict=af.getareadict(a, g.db)
+    del adict['_sa_instance_state']
+    aplotdata=af.getplotdata(adict['allchildren'], g.db)
+    return adict, aplotdata
+    
+
+################     CLIMB PAGE    ####################
+
+
+def getclimbpage(g, inputdict):
+    climbid=int(inputdict['climbid'])
+    print climbid
+    c=g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
+    cdict=cf.getclimbdict(c, g.db)
+    del cdict['_sa_instance_state']
+    crecs=cf.getsimilarclimbs(g.db, climbid)
+    return cdict, crecs

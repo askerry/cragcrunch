@@ -1,0 +1,18 @@
+# configuration
+DATABASE = '/tmp/flaskr.db'
+DEBUG = True
+SECRET_KEY = 'development key'
+USERNAME = 'admin'
+PASSWORD = 'default'
+ #database parameters
+class Cfg():
+    def __init__(self):
+        self.projectroot = '/home/amyskerry/Projects/climbrec/'
+        self.host = 'localhost'
+        self.user = 'root'
+        self.passwd = 'iloverj4life'
+        self.dbname = 'climbdb'
+        self.charset = 'utf8'
+        self.use_unicode = 0
+        self.clobber = False
+    pasDBCFG=Cfg()

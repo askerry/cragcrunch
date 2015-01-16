@@ -1,0 +1,30 @@
+{% extends "base.j2" %}
+{% block content %}
+<h1>Search</h1>
+    <form action="." method="POST">
+        <input type="text" name="text">
+        <input type="submit" name="my-form" value="Send">
+    </form>
+<br>
+{% if (returntype=='result') %}
+    Users
+    {% for e in result['users'] %}
+        <a href="user/{{e['climberid']}}">{{e['name']}}</a>
+    {% endfor %}
+    Climbs
+    {% for e in result['climbs'] %}
+        <a href="view/climb{{e['climbid']}}">{{e['name']}}</a>
+    {% endfor %}
+    Areas
+    {% for e in result['areas'] %}
+        <a href="view/area{{e['areaid']}}">>{{e['name']}}<a>
+    {% endfor %}
+{% else %}
+    <h1>Popular Climbs</h1>
+      <ul class=entries>
+      {% for entry in result.keys() %}
+        <a href="view/climb{{ result[entry] }}">{{ entry }}</a>
+      {% endfor %}
+      </ul>
+{% endif %}
+{% endblock %}

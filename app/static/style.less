@@ -1,0 +1,304 @@
+/*  font styles  */
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,200,700|Rosario:400,700);
+
+@my-font-family: 'Roboto', sans-serif;
+.my-font-family {
+     &.light {
+          font-family: "Roboto",sans-serif;
+          font-weight: 200;
+     }
+     &.regular {
+          font-family: "Roboto",sans-serif;
+          font-weight: 400;
+     }
+     &.bold {
+          font-family: "Roboto",sans-serif;
+          font-weight: 700;
+     }
+}
+.my-font-family2 {
+     &.light {
+          font-family: "Rosario",sans-serif;
+          font-weight: 100;
+     }
+     &.regular {
+          font-family: "Rosario",sans-serif;
+          font-weight: 400;
+     }
+     &.bold {
+          font-family: "Rosario",sans-serif;
+          font-weight: 700;
+     }
+}
+
+/*  colors  */
+@linkcolor:#0077CC;
+@accent1:#002255;
+@accent2:#FFCC00;
+@accent3:#339966;
+@basefontcolor:@accent1;
+@backgroundcolor:#ddd;
+@maincolor:black;
+@headercolor:#0077CC;
+@titlecolor:white;
+@contentcolor:white;
+@navcolor:gray;
+@subcapcolor:#002255;
+@capcolor:black;
+@containercolor:@maincolor;
+
+/*  font/spacing sizes  */
+@fontbase:10px;
+@navfontsize:1.5em;
+@widetextspacing:.3em;
+@headerbig:4em;
+@headersmall:2em;
+@listindent:2em;
+@micropad:.3em;
+@minpad:.5em;
+@medpad:1em;
+@largepad:2em;
+@xlpad:5em;
+
+/*  sizing  */
+@containerwidth:1200px;
+@minheight:900px;
+@headerwidth:91%;
+@headerheight:9em;
+@contentwidth:72%;
+@contentpadder:2%;
+@navwidth:20%;
+@leftmargin:5%;
+@rightmargin:3%;
+@headerbuffer:3em;
+
+
+/*  mixins  */
+.text-shadow (@string: -1px 2px 3px rgba(0, 0, 0, 1)) {
+    text-shadow: @string;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    color: @basefontcolor;
+    background-color: @backgroundcolor;
+    /*background-image: url('../img/rockbg10.jpg');*/
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+#page {
+    margin: 0 auto;
+    overflow:auto;
+    width: @containerwidth;
+    min-height: @minheight;
+    background-color:@maincolor;
+    position: relative;
+    font-size: @fontbase;
+    .my-font-family .light;
+    margin-bottom:1%;
+    margin-top:1%;
+}
+#container {
+    margin:0em;
+    background-color:@containercolor;
+    position:relative;
+    height:100%;
+    width:100%;
+}
+
+strong {
+    color: @basefontcolor;
+}
+
+a {
+    color: @linkcolor;
+}
+
+a:hover, a:focus {
+    text-decoration: none;
+}
+
+ul, ol {
+    margin-bottom: @medpad;
+}
+
+ul, ol {
+    margin-left: @listindent;
+}
+
+.textblock {
+    margin:@listindent*.7;
+    margin-left:@listindent*2;
+    font-size:@fontbase*.8;
+}
+.captiondiv{
+  font-size:.9em;
+  color:@capcolor;
+  text-align:center;
+  padding:1em;
+   .my-font-family .bold;
+}
+.caption{
+    font-size:.7em;
+    line-height:1.3em;
+    color:@subcapcolor;
+    text-align:center;
+    .my-font-family .regular;
+}
+#title {
+    position: relative;
+    background-color:@headercolor;
+    margin-top: @headerbuffer;
+    margin-bottom: @headerbuffer;
+    padding-left:@minpad;
+    color:@titlecolor;
+    width:@headerwidth;
+    height:@headerheight;
+    .my-font-family .bold;
+    text-transform: uppercase;
+}
+#textdiv {
+  position:relative;
+  float:left;
+}
+
+#title h1 {
+    font-size: @headerbig;
+}
+
+#title p {
+    font-size: @headersmall;
+    letter-spacing: @widetextspacing;
+    padding-bottom:@micropad;
+}
+.logo{
+    float:right;
+    height:100%;
+    padding:2%;
+}
+
+#sidebar{
+  background-color:@navcolor;
+  right: @rightmargin;
+  width: @navwidth;
+  .my-font-family2 .regular;
+  float:right;
+  height:70%;
+}
+
+nav {
+    width: 100%;
+    .my-font-family2 .regular;
+    float:right;
+    text-align:right;
+    background-color:@navcolor;
+    padding-top:5%;
+}
+
+nav a,
+nav a:visited {
+    margin-right:7%;
+    font-size:@navfontsize;
+    text-decoration: none;
+    color: @basefontcolor;
+    text-transform: uppercase;
+}
+
+nav a.selected {
+    color: @accent1;
+    .my-font-family2 .bold;
+}
+
+nav a:hover {
+    color: @accent2;
+}
+
+nav ul li {
+    list-style-type: none;
+}
+
+.menu{
+}
+
+#content {
+    top:0em;
+    background-color:@contentcolor;
+    line-height: 1.5em;
+    position: relative;
+    left: @leftmargin;
+    width: @contentwidth;
+    padding: @contentpadder;
+}
+
+#content h1 {
+    text-transform: uppercase;
+    margin-bottom: @medpad;
+    color: @basefontcolor;
+}
+
+#content h2 {
+    margin-top: @medpad;
+    margin-bottom: @medpad;
+}
+
+#content h3 {
+    margin-top: @minpad;
+    margin-bottom: @minpad;
+}
+.imagediv{
+  margin-top:@medpad;
+  margin-bottom:@medpad;
+  width:100%;
+  height:10em;
+}
+.inlineimagediv{
+  margin-top:@medpad;
+  display:inline-block;
+  float:right;
+  margin-bottom:@medpad;
+  width:46%;
+  height:7em;
+}
+
+#horizontaldiv{
+    padding:@minpad;
+    display:inline-block;
+    width:32.9%;
+    height:100%;
+}
+
+#horizontaldiv50{
+    padding:@minpad;
+    display:inline-block;
+    width:49%;
+    height:100%;
+}
+
+.imgcontainer {
+    text-align:center;
+    height:100%;
+    padding:.5%;
+    margin:1.5%;
+    margin-top:@minpad;
+}
+.imgcontainer_inline {
+  padding-left:1em;
+  display:inline-block;
+  margin-bottom:1em;
+  float:right;
+  width:15em;
+  overflow:hidden;
+}
+
+.fullw_img{
+    height:100%;
+    width:100%;
+}
