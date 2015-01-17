@@ -61,6 +61,17 @@ def reindexall(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commen
     full_stardf.index=full_stardf.starid
     full_tododf.index=full_tododf.todosid
     return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
+
+def renameindices(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
+    full_climbdf.index.rename('index', inplace=True)
+    full_areadf.index.rename('index', inplace=True)
+    full_climberdf.index.rename('index', inplace=True)
+    full_tickdf.index.rename('index', inplace=True)
+    full_commentdf.index.rename('index', inplace=True)
+    full_gradedf.index.rename('index', inplace=True)
+    full_stardf.index.rename('index', inplace=True)
+    full_tododf.index.rename('index', inplace=True)
+    return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
     
 def pickletheseobjects(filename, objects):
     '''takes list of objects and pickles them to <filename>'''
