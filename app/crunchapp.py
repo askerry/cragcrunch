@@ -69,9 +69,8 @@ def home():
 
 @app.route('/', methods=['POST'])
 def search():
-    text = request.form['text']
-    finds=pinf.findmatch(text, g)
-    return render_template('home.html', returntype='result', result=finds)
+    result=pinf.result_home(request, g)
+    return render_template('home.html', returntype='result', result=result)
 
 
 @app.route('/view')

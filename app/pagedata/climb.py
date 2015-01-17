@@ -5,11 +5,12 @@ Created on Fri Jan 16 09:17:48 2015
 @author: amyskerry
 """
 
-from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ToDosTable
+from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
 import viz
 import pandas as pd
 import os
+from copy import deepcopy
 
 from config import rootdir
 
@@ -31,7 +32,7 @@ def getareanest(areaid, db,areanest=[], nestednames=[]):
     return areanest, nestednames
 
 def getclimbdict(c, db):
-    cdict=c.__dict__
+    cdict=deepcopy(c.__dict__)
     cdict['climbid']=int(cdict['climbid'])
     cdict['areaname']=db.session.query(AreaTable).filter_by(areaid=int(c.area)).first().name
     cdict['mainarea']=db.session.query(AreaTable).filter_by(areaid=int(c.area)).first().mainarea
@@ -46,11 +47,19 @@ def getclimbdict(c, db):
     cdict['nest']=' -- '.join(nestednames)
     return cdict
     
-def getsimilarclimbs(db, climbid):
+def getsimilarclimbs(db, climbid, ClimbTable):
     projdir=os.path.join(rootdir, 'Projects','cragcrunch','data', 'user_sim_matrix.csv')
     df=pd.read_csv(projdir)
-    print "xxxx"
-    print climbid
     climbindices=np.argsort(df.ix[climbid,:].values)[-5:]
-    simclimbs=df.columns[climbindices]
-    return simclimbs
+    print df.columns.values[:10]
+    simids=df.columns[climbindices].values
+    print simids
+    ids=db.session.query(ClimbTable).all()
+    ids=[float(el.climbid) for el in ids]
+    print ids[:10]
+    simclimbids=[el for el in simids if el in ids]
+    print simclimbids
+    simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=climbid).first() for climbid in simclimbids]
+    simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
+    print simclimbdicts
+    return simclimbdicts

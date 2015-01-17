@@ -4,7 +4,7 @@ Created on Fri Jan 16 09:12:37 2015
 
 @author: amyskerry
 """
-from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ToDosTable
+from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
 import viz
 

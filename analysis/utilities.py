@@ -6,9 +6,11 @@ Created on Fri Jan 16 10:11:44 2015
 """
 
 import clean
-
+import miscdf
+import numpy as np
 
 def cleandf(df):
+    '''apply various functions to clean string inputs from html'''
     nanvalues=['','None','unavailable', None]
     df=df.applymap(lambda x:np.nan if x in nanvalues else x)
     for col in df.columns:
@@ -32,10 +34,54 @@ def cleandf(df):
             df['urlname']=df[col].apply(clean.extractname)
         if col=='style':
             df[col]=df[col].apply(clean.mergeiceandsnow)
+        if col =='pitch':
+            df[col]=df[col].apply(clean.strippitch)
+
     return df
     
-def reindex(df):
-    for col in df.columns:
-        if col in ('climbid', 'areaid', 'climberid', 'ticksid', 'commentsid', 'gradesid', 'starid', 'todosid'):
-            df.index=[int(val) for val in df[col].values]
-    return df
+def dedupsandmissing(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
+    '''deal with duplicated/missing areas and climbers'''
+    full_areadf=clean.dedupareas(full_areadf) 
+    full_climberdf=clean.dedupclimbers(full_climberdf)
+    full_tickdf= clean.addmissingclimbers(full_climberdf, full_tickdf)
+    full_commentdf = clean.addmissingclimbers(full_climberdf, full_commentdf)
+    full_gradedf = clean.addmissingclimbers(full_climberdf, full_gradedf)
+    full_tododf= clean.addmissingclimbers(full_climberdf, full_tododf)
+    full_stardf = clean.addmissingclimbers(full_climberdf, full_stardf)
+    return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
+    
+def reindexall(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
+    '''reindex everything so that id is index'''
+    full_climbdf.index=full_climbdf.climbid
+    full_areadf.index=full_areadf.areaid
+    full_climberdf.index=full_climberdf.climberid
+    full_tickdf.index=full_tickdf.ticksid
+    full_commentdf.index=full_commentdf.commentsid
+    full_gradedf.index=full_gradedf.gradesid
+    full_stardf.index=full_stardf.starid
+    full_tododf.index=full_tododf.todosid
+    return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
+    
+def pickletheseobjects(filename, objects):
+    '''takes list of objects and pickles them to <filename>'''
+    with open(filename, 'wb') as output:
+        pickler = pickle.Pickler(output, pickle.HIGHEST_PROTOCOL)
+        for obj in objects:
+            try:
+                pickler.dump(obj)
+            except:
+                print "pickle fail"
+            
+def loadpickledobjects(filename):
+    '''takes <filename> and loads it, returning list of objects'''
+    with open(filename, 'r') as inputfile:
+        remaining=1
+        objects=[]
+        while remaining:
+            try:
+                objects.append(pickle.load(inputfile))
+            except:
+                remaining=0
+    return objects
+    
+    

@@ -1,11 +1,6 @@
 # generates page of climb info
-from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ToDosTable
+from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 from sqlalchemy import func
-import re
-import pandas as pd
-import numpy as np
-import os
-import viz
 import pagedata.user as uf
 import pagedata.climb as cf
 import pagedata.area as af
@@ -56,5 +51,5 @@ def getclimbpage(g, inputdict):
     c=g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
     cdict=cf.getclimbdict(c, g.db)
     del cdict['_sa_instance_state']
-    crecs=cf.getsimilarclimbs(g.db, climbid)
+    crecs=cf.getsimilarclimbs(g.db, climbid, ClimbTable)
     return cdict, crecs

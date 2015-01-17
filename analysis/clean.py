@@ -80,6 +80,16 @@ def mergeiceandsnow(style):
         return 'Ice'
     else: 
         return style
+        
+def strippitch(pitch):
+    try:
+        nump=int(pitch[:pitch.index(' ')])
+    except:
+        try:
+            nump=int(pitch)
+        except:
+            nump=np.nan
+    return nump
 
 ################################
 #  Duplicates/Missing Values   #
@@ -135,6 +145,7 @@ def fixclimbers(climberdf, hitsdf):
         if len(csid)>0 and csid[0] not in call:
             climberdf.loc[csindex[0],'climberid']=c
             climberdf=climberdf.drop([index])
+    climberdf=climberdf[~climberdf['climberid'].isnull()]
     return climberdf
     
 def fixstars(stardf, climbdf):
@@ -146,3 +157,69 @@ def fixstars(stardf, climbdf):
     stars=stardf.groupby('climb').mean()['starsscore'].values
     climbdf.loc[ids,'computed_avgstars']=stars
     return climbdf
+    
+################################
+#      Misc Grade Cleanups     #
+################################
+
+def numerizegrades(grade, gradelists=[]):
+    '''convert grade to numeric scale'''
+    num=np.nan
+    for l in gradelists:
+        if grade in l:
+            return l.index(grade)
+    return num
+    
+def splitgrade(grade,output='num'):
+    '''split grade into numeric and letter values'''
+    if grade:
+        num=grade
+        letter=''
+        if grade=='Easy 5th':
+            num='5.0'
+            letter='-'
+        elif grade=='V?':
+            num=np.nan
+            letter=''
+        elif grade[0]=='5':
+            for val in ('a','b','c','d','+','-', 'a/b','b/c','c/d'):
+                if val in grade:
+                    num=grade[:grade.index(val)]
+                    letter=val
+        elif grade[:2] in ('WI', 'AI'):
+            if 'M' in grade:
+                first=grade[:grade.index(' ')]
+                num1, letter1=dealwithplusminus(first)
+                sec=grade[grade.index(' ')+1:]
+                num2, letter2=dealwithplusminus(sec)
+                num='%s %s' %(num1, num2)
+                letter='%s %s' %(letter1, letter2)
+            else:
+                num, letter=dealwithplusminus(grade)
+        elif grade[0] in ('V','C','A', 'M'):
+            if "easy" in grade:
+                num='V0'
+                letter='-'
+            else:
+                num, letter=dealwithplusminus(grade)
+        if output=='num':
+            return num
+        elif output=='letter':
+            return letter
+    else:
+        return None
+        
+def dealwithplusminus(grade):
+    if grade[-1]=='-':
+        num=grade[:grade.index('-')]
+        letter=grade[-1]
+    elif '-' in grade:
+        num=grade[:grade.index('-')]
+        letter='+'
+    elif '+' in grade:
+        num=grade[:grade.index('+')]
+        letter=grade[-1]
+    else:
+        num=grade
+        letter=''
+    return num, letter

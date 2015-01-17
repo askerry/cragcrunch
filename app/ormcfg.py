@@ -127,6 +127,7 @@ class GradesTable(Base):
     grade = Column(String(30))
     name = Column(String(200))
 
+'''
 class ToDosTable(Base):
     __tablename__ = 'todos_prepped'
     todosid = Column(Integer, primary_key=True, autoincrement=True)
@@ -135,3 +136,4 @@ class ToDosTable(Base):
     climber = Column(Integer, ForeignKey('Climber.climberid'))
     url = Column(String(200))
     name = Column(String(200))
+'''
