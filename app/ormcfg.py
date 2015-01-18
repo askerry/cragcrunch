@@ -29,6 +29,7 @@ class ClimbTable(Base):
     area = Column(Integer, ForeignKey('area_prepped.areaid'))
     region = Column(String(20))
     name = Column(String(70))
+    mainarea = Column(Integer)
     description = Column(Text)#String(10000)
     grade = Column(String(30))
     fa = Column(String(200))
@@ -69,6 +70,7 @@ class ClimberTable(Base):
     aid_f = Column(String(30))
     mixed_l = Column(String(30))
     mixed_f = Column(String(30))
+    region = Column(String(70))
 
 '''
 class PhotoTable(Base):

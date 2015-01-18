@@ -1,29 +1,36 @@
 {% extends "base.j2" %}
 {% block content %}
-<h1>Search</h1>
     <form action="." method="POST">
-        <input type="text" name="text">
-        <input type="submit" name="my-form" value="Send">
+        <span class="searchspan">Search for User, Climb, or Area: <input type="text" name="text"></span>
     </form>
 <br>
 {% if (returntype=='result') %}
-    Users
+    <h4>Users</h4>
+    <ul class=entries>
     {% for e in result['users'] %}
-        <a href="user/{{e['climberid']}}">{{e['name']}}</a>
+        <li><a href="user/{{e['climberid']}}">{{e['name']}}, {{e['mainarea_name']}}, {{e['region']}}</a></li>
     {% endfor %}
-    Climbs
+    </ul>
+
+    <h4>Climbs</h4>
+    <ul class=entries>
     {% for e in result['climbs'] %}
-        <a href="view/climb{{e['climbid']}}">{{e['name']}}</a>
+        <li><a href="view/climb{{e['climbid']}}">{{e['name']}}, {{e['mainarea_name']}}, {{e['region']}}, {{e['grade']}}, {{e['style']}}</a></li>
     {% endfor %}
-    Areas
+    </ul>
+
+    <h4>Areas</h4>
+    <ul class=entries>
     {% for e in result['areas'] %}
-        <a href="view/area{{e['areaid']}}">>{{e['name']}}<a>
+        <li><a href="view/area{{e['areaid']}}">{{e['name']}}, {{e['mainarea_name']}}, {{e['region']}}<a></li>
     {% endfor %}
+    </ul>
+
 {% else %}
-    <h1>Popular Climbs</h1>
+    <h4>Popular Climbs</h4>
       <ul class=entries>
-      {% for entry in result.keys() %}
-        <a href="view/climb{{ result[entry] }}">{{ entry }}</a>
+      {% for entry in result %}
+        <li><a href="view/climb{{ entry['climbid']}}">{{ entry['name'] }}, {{ entry['mainarea_name'] }}, {{ entry['region'] }} ({{ entry['pageviews'] }} page views)</a></li>
       {% endfor %}
       </ul>
 {% endif %}

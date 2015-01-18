@@ -65,6 +65,7 @@ def teardown_request(exception):
 @app.route('/')
 def home():
     result=pinf.initial_home(g)
+    #result={}
     return render_template('home.html', returntype='noresult', result=result)
 
 @app.route('/', methods=['POST'])
@@ -92,6 +93,11 @@ def view(searchid=0):
 def user(userid=0):
     userdict, userrecs, userplotdata=pinf.getuserpage(g, {'userid':userid})
     return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata)
+
+@app.route('/about')
+def about():
+    text='test text test text'
+    return render_template('about.html', text=text)
 
 
 if __name__ == '__main__':

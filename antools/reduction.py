@@ -68,4 +68,4 @@ def limit2popular(full_hitsdf,full_climbdf, full_stardf, full_commentdf, full_gr
     full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf=dropclimbs(popclimbdf, full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf)
     print "beginning with %s unique climbs" %(len(full_climbdf))
     print "limited to %s climbs by restricting to climbs with >%s climber entries" %(len(popclimbdf),minthresh)
-    return full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf
+    return popclimbdf, full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf

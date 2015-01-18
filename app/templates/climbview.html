@@ -20,7 +20,10 @@ consensus grade: {{climb['grade']}}
 mountain project site: {{climb['url']}}
 <br>
 <h1>Similar Climbs</h1>
-{{recs}}
+{% for rec in recs %}
+	<h4>{{rec['name']}}</h4>
+	{{rec['grade'], rec['mainarea_name'], rec['region'], rec['style']}}
+{% endfor %}
 <br>
 
 {% endblock %}

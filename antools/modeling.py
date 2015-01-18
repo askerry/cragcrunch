@@ -4,6 +4,16 @@ import numpy as np
 import pandas as pd
 
 
+##################################################
+#               Misc Model Setup                 #
+##################################################
+
+def splittraintest(df, climbids):
+    ids=df[df['climb'].isin(climbids)].index.values
+    test=df.copy()
+    test=test.loc[ids,:]
+    train=df.drop(ids)
+    return test,train
 
 ##################################################
 #             Similarity Functions               #
@@ -30,27 +40,33 @@ def computeattributematrix(allclimbs, allcols, cdf):
     return attrmat
 
 def getcoord1up(adf,areaid):
-    print adf[adf['areaid']==areaid]
-    #print adf[adf['areaid']==areaid]
+    try:
+        lon=adf[adf['areaid']==areaid].longitude.values[0]
+        lat=adf[adf['areaid']==areaid].latitude.values[0]
+    except:
+        lon=np.nan
+        lat=np.nan
     return lat,lon
 
 def computelocationmatrix(cdf, adf, allclimbs):
     locdf=pd.merge(cdf,adf, left_on='area', right_on='areaid', how='inner')
     locdf['area']=locdf['area_x']
+    locdf.index=locdf['climbid'].values
+    allclimbs=[val for val in allclimbs if val in locdf.climbid.unique()]
     locdf=locdf.ix[allclimbs,:]
     locdf=locdf[['climbid','latitude', 'longitude','area']]
     for i in locdf[pd.isnull(locdf['latitude'])].index.values:
-        lat,lon=getcoord1up(adf,locdf.loc[i,'area'])
+        aid=locdf.loc[i,'area']
+        lat,lon=getcoord1up(adf,aid)
         if np.isnan(lat):
-            aid=ocdf.loc[i,'mainarea'].values[0]
-            print aid
+            aid=cdf.loc[i,'mainarea']
             lat,lon=getcoord1up(adf,aid)
-        locdf.loc[i,'lat']=lat
-        locdf.loc[i,'lon']=lon
+        locdf.loc[i,'latitude']=lat
+        locdf.loc[i,'longitude']=lon
     allclimbs=locdf['climbid']
     del locdf['climbid']
     del locdf['area']
-    return pd.DataFrame(index=allclimbs, data=locdf.values)
+    return pd.DataFrame(index=allclimbs, data=locdf.values).dropna()
 
 def gettopbottom(df, n=20):
     '''take similarity matrix and identify n most and least similar climbs'''

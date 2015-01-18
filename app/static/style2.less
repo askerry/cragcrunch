@@ -1,0 +1,132 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,200,700|Rosario:400,700);
+
+@my-font-family: 'Roboto', sans-serif;
+.my-font-family {
+     &.light {
+          font-family: "Roboto",sans-serif;
+          font-weight: 200;
+     }
+     &.regular {
+          font-family: "Roboto",sans-serif;
+          font-weight: 400;
+     }
+     &.bold {
+          font-family: "Roboto",sans-serif;
+          font-weight: 700;
+     }
+}
+
+@basefontcolor:black;
+@backgroundcolor:black;
+@maincolor:#ddd;
+@headercolor:#0077CC;
+@contentcolor:white;
+@containercolor:@maincolor;
+
+/*  font/spacing sizes  */
+@fontbase:10px;
+@navfontsize:1.5em;
+@widetextspacing:.3em;
+@headerbig:4em;
+@headersmall:2em;
+@listindent:2em;
+@micropad:.3em;
+@minpad:.5em;
+@medpad:1em;
+@largepad:2em;
+@xlpad:5em;
+
+/*  sizing  */
+@containerwidth:100%;
+@minheight:900px;
+@headerwidth:100%;
+@headerheight:9em;
+@contentwidth:90%;
+@contentpadder:2%;
+@navwidth:20%;
+@leftmargin:5%;
+@rightmargin:3%;
+@headerbuffer:3em;
+
+html, body {
+    color: @basefontcolor;
+    background-color: @backgroundcolor;
+    /*background-image: url('../img/rockbg10.jpg');*/
+    box-sizing: border-box;
+}
+
+#page {
+    margin: 0 auto;
+    overflow:auto;
+	width: @containerwidth;
+    min-height: @minheight;
+    background-color:@maincolor;
+    position: relative;
+    font-size: @fontbase;
+    .my-font-family .light;
+    margin-bottom:1%;
+}
+
+/* *********************** */
+/*        Nav Stuff        */
+/* *********************** */
+
+.container {
+    margin:0em;
+    width:100%;
+}
+
+.navbar-inverse 
+	.navbar-brand {
+	 font-size: 2.5em;
+}
+
+.navbar-inverse 
+	.nav>li>a {
+	font-size:1.9em;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active {
+	 background-color:#ddd;
+	 color:black;
+}
+
+/* *********************** */
+/*       Banner Stuff      */
+/* *********************** */
+
+#banner {
+  width: 100%;
+}
+
+#bannerimg {
+	width: 100%;
+    height: auto;
+}
+
+/* *********************** */
+/*     Structure Stuff     */
+/* *********************** */
+
+#content {
+    top:0em;
+    background-color:@contentcolor;
+    line-height: 1.5em;
+    position: relative;
+    margin:auto;
+    width: @contentwidth;
+    padding: @contentpadder;
+}
+
+/* *********************** */
+/*       Misc Stuff        */
+/* *********************** */
+
+.searchspan{
+	font-size:2.2em;
+}
+
+a {
+	font-size:1.5em;
+	color:black;
+}

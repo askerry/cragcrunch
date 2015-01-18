@@ -18,23 +18,30 @@ from config import rootdir
 def gettopclimbs(g):
     #topclimbs = g.db.rawsql('select climbid, name from climb_prepped where pageviews> 30000 limit 10;')
     topclimbs=g.db.session.query(ClimbTable).filter(ClimbTable.pageviews>50000).all()[:10]
-    tdict={c.name:c.climbid for c in topclimbs}
-    return tdict
+    tlist=[{'name':c.name,'climbid':c.climbid, 'pageviews':int(c.pageviews), 'mainarea_name':g.db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name, 'region':c.region} for c in topclimbs]
+    return tlist
 
 def findmatch(text,g):
-    matchids={'climbs':[],'areas':[], 'users':[]}
-    matchstr='%'+text+'%'
-    climbmatches=g.db.session.query(ClimbTable).filter(ClimbTable.name.ilike(matchstr)).all()
-    for c in climbmatches:
-        cd={'climbid':c.climbid, 'name':c.name, 'region':c.region}
-        matchids['climbs'].append(cd)
-    areamatches=g.db.session.query(AreaTable).filter(AreaTable.name.ilike(matchstr)).all()
-    for a in areamatches:
-        ad={'areaid':a.areaid, 'name':a.name, 'region':a.region}
-        matchids['areas'].append(ad)
-    usermatches=g.db.session.query(ClimberTable).filter(ClimberTable.name.ilike(matchstr)).all()
-    for u in usermatches:
-        ud={'climberid':int(u.climberid), 'name':u.name, 'location':u.mainarea}
-        matchids['users'].append(ud)
-    return matchids
+    text=text.strip()
+    if text !='':
+        matchids={'climbs':[],'areas':[], 'users':[]}
+        matchstr='%'+text+'%'
+        climbmatches=g.db.session.query(ClimbTable).filter(ClimbTable.name.ilike(matchstr)).all()
+        for c in climbmatches:
+            mainarea_name=g.db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name
+            cd={'climbid':c.climbid, 'name':c.name, 'mainarea_name':mainarea_name, 'region':c.region, 'grade':c.grade, 'style':c.style, 'url':c.url}
+            matchids['climbs'].append(cd)
+        areamatches=g.db.session.query(AreaTable).filter(AreaTable.name.ilike(matchstr)).all()
+        for a in areamatches:
+            mainarea_name=g.db.session.query(AreaTable).filter_by(areaid=a.mainarea).first().name
+            ad={'areaid':a.areaid, 'name':a.name, 'mainarea_name':mainarea_name, 'region':a.region, 'url':c.url}
+            matchids['areas'].append(ad)
+        usermatches=g.db.session.query(ClimberTable).filter(ClimberTable.name.ilike(matchstr)).all()
+        for u in usermatches:
+            mainarea_name=g.db.session.query(AreaTable).filter_by(areaid=u.mainarea).first().name
+            ud={'climberid':int(u.climberid), 'name':u.name, 'mainarea_name':mainarea_name, 'region':u.region, 'url':c.url}
+            matchids['users'].append(ud)
+        return matchids
+    else:
+        return {'users':[{}],'areas':[{}],'climbds':[{}]}
     
