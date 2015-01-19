@@ -18,35 +18,26 @@
 
 @basefontcolor:black;
 @backgroundcolor:black;
+@linkcolor:#2233AA;
+@clickedcolor:#554499;
 @maincolor:#ddd;
 @headercolor:#0077CC;
 @contentcolor:white;
 @containercolor:@maincolor;
 
 /*  font/spacing sizes  */
-@fontbase:10px;
+@fontbase:14px;
 @navfontsize:1.5em;
+@navtitlesize:2em;
 @widetextspacing:.3em;
-@headerbig:4em;
-@headersmall:2em;
-@listindent:2em;
-@micropad:.3em;
-@minpad:.5em;
-@medpad:1em;
-@largepad:2em;
-@xlpad:5em;
+
 
 /*  sizing  */
 @containerwidth:100%;
 @minheight:900px;
 @headerwidth:100%;
-@headerheight:9em;
 @contentwidth:90%;
 @contentpadder:2%;
-@navwidth:20%;
-@leftmargin:5%;
-@rightmargin:3%;
-@headerbuffer:3em;
 
 html, body {
     color: @basefontcolor;
@@ -78,12 +69,12 @@ html, body {
 
 .navbar-inverse 
 	.navbar-brand {
-	 font-size: 2.5em;
+	 font-size: @navtitlesize;
 }
 
 .navbar-inverse 
 	.nav>li>a {
-	font-size:1.9em;
+	font-size:@navfontsize;
 }
 
 .navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active {
@@ -111,7 +102,6 @@ html, body {
 #content {
     top:0em;
     background-color:@contentcolor;
-    line-height: 1.5em;
     position: relative;
     margin:auto;
     width: @contentwidth;
@@ -123,10 +113,79 @@ html, body {
 /* *********************** */
 
 .searchspan{
-	font-size:2.2em;
+	font-size:1.8em;
 }
 
 a {
-	font-size:1.5em;
-	color:black;
+	font-size:1.1em;
+	color:@linkcolor;
+}
+
+a.subtlelink {
+	font-size:.9em;
+	color:#aab;
+}
+.contenthead {
+	width:100%;
+	position:relative;
+
+}
+
+#contenttitle {
+	font-size:2.5em;
+	display:inline;
+}
+
+#details {
+	font-size:1.3em;
+	right:0em;
+	bottom:0em;
+	display:inline;
+	position:absolute;
+}
+
+.maincontent{
+	line-height:1.2em;
+}
+
+.maincontent div{
+	margin-top:1.5em;
+	margin-bottom:.75em;
+}
+
+/* *********************** */
+/*       Climb Stuff        */
+/* *********************** */
+
+#contenttitle.secondary {
+	font-size:1.2em;
+	padding-left:3em;
+}
+#details.secondary {
+	font-size:1em;
+}
+/* *********************** */
+/*       User Stuff        */
+/* *********************** */
+
+.usercontent{
+	width:100%;
+	position:relative;
+	margin-top:1em;
+	background-color:green;
+}
+
+#profile{
+	background-color:#7788BB;
+	position:absolute;
+	width:40%;
+	left:0em;
+
+}
+
+#userrecs{
+	position:absolute;
+	right:0em;
+	background-color:red;
+	width:58%;
 }

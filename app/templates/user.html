@@ -4,17 +4,24 @@
 
 
 <br>
-<h2>{{user['name']}}</h2>
-gender: {{user['gender']}} age: {{ user['age'] }}
-<br>
-home region/crag: {{user['mainarea_name']}}, {{user['country']}}
-<br>
-likes to climb: {{user['climbstyles']}}
-<br>
-mountain project site: {{user['url']}}
-<br>
-{{recs}}
-<br>
-{{plotdata}}
-<br>
+<div class="contenthead">
+	<div id="contenttitle">{{user['name']}} </div>                                  
+	<div id="details">{%if user['gender']!=''%}{{user['gender']}},{%endif%} {%if user['gender']!=''%}{{ user['age'] }},{%endif%} {{user['mainarea_name']}}, {{user['country']}}</div>
+</div>
+<div class='usercontent'>
+	<div id="profile">
+		Climbs {{user['climbstyles']}}. View climbing record on <a href="http://{{user['url']}}">MountainProject</a>.
+		<br>
+		<div id="plotcontainer" style="height: 400px; margin: auto; min-width: 310px; max-width: 600px">{{plotdata|safe}}</div>
+	</div>
+	<div id="userrecs">
+		<h3>Best climbs for you:</h3>
+		      <ul class=entries>
+		      {% for entry in recs %}
+		        <li><a href="view/climb{{ entry['climbid']}}">{{ entry['name'] }} </a>, {{ entry['mainarea_name'] }}, {{ entry['region'] }} <a class="subtlelink" href="http://{{entry['url']}}">({{ entry['pageviews'] }} views on MP)</a></li>
+		      {% endfor %}
+		      </ul>
+	</div>
+</div>
+
 {% endblock %}

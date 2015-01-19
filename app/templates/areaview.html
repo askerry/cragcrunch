@@ -3,15 +3,16 @@
 {% block content %}
 
 <br>
-<h2>{{area['name']}}</h2>
-region: {{area['region']}} country: {{ area['country'] }}
-<br>
-home region/crag: {{area['mainarea_name']}}, {{area['country']}}
-<br>
-main area: {{area['mainarea']}}, google maps: {{area['mapref']}}
-<br>
-mountain project site: {{area['url']}}
-<br>
+<div class="contenthead">
+<div id="contenttitle">{{area['name']}}</div>                                  
+<div id="details">{{ area['mainarea_name'] }}, {{ area['region'] }}, {{ area['country'] }}</div>
+</div>
+
+<div class="maincontent">
+<div>{{area['description']}}</div>
+<div>{{area['directions']}}</div>
+<div><a href="http://{{area['url']}}">View on MountainProject</a></div>
+</div>
 <h4>Most Popular Climbs </h4>
 	{% for e in area['popclimbs'].keys() %}
         <a href="climb{{e}}">{{area['popclimbs'][e]}}</a>

@@ -8,21 +8,21 @@
     <h4>Users</h4>
     <ul class=entries>
     {% for e in result['users'] %}
-        <li><a href="user/{{e['climberid']}}">{{e['name']}}, {{e['mainarea_name']}}, {{e['region']}}</a></li>
+        <li><a href="user/{{e['climberid']}}">{{e['name']}} </a>, {{e['mainarea_name']}}, {{e['region']}} <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
     {% endfor %}
     </ul>
 
     <h4>Climbs</h4>
     <ul class=entries>
     {% for e in result['climbs'] %}
-        <li><a href="view/climb{{e['climbid']}}">{{e['name']}}, {{e['mainarea_name']}}, {{e['region']}}, {{e['grade']}}, {{e['style']}}</a></li>
+        <li><a href="view/climb{{e['climbid']}}">{{e['name']}} </a>, {{e['mainarea_name']}}, {{e['region']}}, {{e['grade']}}, {{e['style']}}, <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
     {% endfor %}
     </ul>
 
     <h4>Areas</h4>
     <ul class=entries>
     {% for e in result['areas'] %}
-        <li><a href="view/area{{e['areaid']}}">{{e['name']}}, {{e['mainarea_name']}}, {{e['region']}}<a></li>
+        <li><a href="view/area{{e['areaid']}}">{{e['name']}} </a>, {{e['mainarea_name']}}, {{e['region']}} <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
     {% endfor %}
     </ul>
 
@@ -30,7 +30,7 @@
     <h4>Popular Climbs</h4>
       <ul class=entries>
       {% for entry in result %}
-        <li><a href="view/climb{{ entry['climbid']}}">{{ entry['name'] }}, {{ entry['mainarea_name'] }}, {{ entry['region'] }} ({{ entry['pageviews'] }} page views)</a></li>
+        <li><a href="view/climb{{ entry['climbid']}}">{{ entry['name'] }} </a>, {{ entry['mainarea_name'] }}, {{ entry['region'] }} <a class="subtlelink" href="http://{{entry['url']}}">({{ entry['pageviews'] }} views on MP)</a></li>
       {% endfor %}
       </ul>
 {% endif %}

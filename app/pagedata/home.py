@@ -18,7 +18,7 @@ from config import rootdir
 def gettopclimbs(g):
     #topclimbs = g.db.rawsql('select climbid, name from climb_prepped where pageviews> 30000 limit 10;')
     topclimbs=g.db.session.query(ClimbTable).filter(ClimbTable.pageviews>50000).all()[:10]
-    tlist=[{'name':c.name,'climbid':c.climbid, 'pageviews':int(c.pageviews), 'mainarea_name':g.db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name, 'region':c.region} for c in topclimbs]
+    tlist=[{'name':c.name,'url':c.url, 'climbid':c.climbid, 'pageviews':int(c.pageviews), 'mainarea_name':g.db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name, 'region':c.region} for c in topclimbs]
     return tlist
 
 def findmatch(text,g):

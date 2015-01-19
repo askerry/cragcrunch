@@ -23,13 +23,21 @@ def getareanest(areaid, db,areanest=[], nestednames=[]):
     local=db.session.query(AreaTable).filter_by(country = 'USA').all()
     regions=set([l.region for l in local])
     name=db.session.query(AreaTable).filter_by(areaid=areaid).first().name
-    if name not in regions:
+    if name not in regions and len(areanest)<8:
         parent=db.session.query(AreaTable).filter_by(areaid=areaid).first().area
-        parentname=db.session.query(AreaTable).filter_by(areaid=areaid).first().name
+        parentname=db.session.query(AreaTable).filter_by(areaid=parent).first().name
+        print parentname
         areanest.append(parent)
         nestednames.append(parentname)
         getareanest(parent, db, areanest, nestednames)
+    elif name not in regions:
+        regionname=db.session.query(AreaTable).filter_by(areaid=areaid).first().region
+        print regionname
+        regionid=db.session.query(AreaTable).filter_by(name=regionname).first().areaid
+        areanest.append(regionid)
+        areanest.append(regionname)
     return areanest, nestednames
+
 
 def getclimbdict(c, db):
     cdict=deepcopy(c.__dict__)
@@ -42,7 +50,24 @@ def getclimbdict(c, db):
     except:
         cdict['mainarea_name']=''
         cdict['region']=db.session.query(AreaTable).filter_by(areaid=cdict['area']).first().region
-    cdict['length']="%s ft" %cdict['length']
+    if cdict['length']>0:
+        cdict['length']="%s ft" %int(cdict['length'])
+    else:
+        cdict['length']=""
+    if cdict['pitch']==1:
+        cdict['pitch']="%s pitch" %int(cdict['pitch'])
+    elif cdict['pitch']>1:
+        cdict['pitch']="%s pitches" %int(cdict['pitch'])
+    else:
+        cdict['length']=""
+    cdict['pageviews']=int(cdict['pageviews'])
+    if cdict['avgstars']==1:
+        cdict['avgstars']="%.2f star" %(cdict['avgstars'])
+    elif cdict['avgstars']>1:
+        cdict['avgstars']="%.2f stars" %(cdict['avgstars'])
+    else:
+        cdict['avgstars']="no stars"
+    cdict['description']=cdict['description'].replace('/n','<br>')
     nestedids,nestednames=getareanest(cdict['area'], db)
     cdict['nest']=' -- '.join(nestednames)
     return cdict
