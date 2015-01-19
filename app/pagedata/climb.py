@@ -67,7 +67,9 @@ def getclimbdict(c, db):
         cdict['avgstars']="%.2f stars" %(cdict['avgstars'])
     else:
         cdict['avgstars']="no stars"
-    cdict['description']=cdict['description'].replace('/n','<br>')
+    #print cdict['description']
+    cdict['description']=cdict['description'].replace('. \n','<br><br>')
+    #print cdict['description']
     nestedids,nestednames=getareanest(cdict['area'], db)
     cdict['nest']=' -- '.join(nestednames)
     return cdict

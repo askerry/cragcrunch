@@ -12,7 +12,7 @@ from config import rootdir
 
 
 def initial_home(g):
-    return hf.gettopclimbs(g)
+    return hf.gettopclimbs(g.db)
     
 def result_home(request, g):
     text = request.form['text']
@@ -26,8 +26,7 @@ def getuserpage(g, inputdict):
     climberid=inputdict['userid']
     a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict=uf.getuserdict(a, g.db)
-    #urecs=uf.getuserrecs(udict, g.db)
-    urecs=hf.gettopclimbs(g)
+    urecs=uf.getuserrecs(udict, g.db)
     uplotdata=uf.getuserplots(udict, g.db)
     return udict, urecs, uplotdata
 

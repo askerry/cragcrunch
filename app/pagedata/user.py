@@ -10,6 +10,10 @@ import pandas as pd
 import viz
 import misc
 import json
+from flask import jsonify
+import home as hf
+import climb as cf
+
 from config import rootdir
 
 
@@ -47,11 +51,15 @@ def getuserplots(udict,db):
         f,ax, corrs, labels, sems=getuserpredictors(usdf,t, minn=6)
     '''
     plotdata=demofig()
+    print plotdata
     return plotdata
     
 def getuserrecs(udict, db):
     userid=udict['climberid']
-    recclimbs=[]
+    #climbids=getusersimilarclimbs(udict, db)
+    climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
+    climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
+    recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
     return recclimbs
 
 import matplotlib.pyplot as plt
@@ -66,8 +74,8 @@ def demofig():
     xlabel='my x label'
     ylabel='my y label'
     djson=pushdata(means, sems, labels, plottitle, xlabel, ylabel)
-    string="<script> var chart;$(function () {$('#plotcontainer').highcharts(%s);}); </script>" %(djson)
-    return string
+    print djson
+    return djson
 
 def demofig1():
     corrs=[1,2,3,4,5,4,3,2,6,7]
@@ -99,8 +107,7 @@ def pushdata(means, sems, labels, title, xlabel, ylabel):
     jsondict['title']['text']=title
     jsondict['yAxis'][0]['title']['text']=ylabel
     jsondict['yAxis'][0]['title']['text']=xlabel
-    encoder=json.JSONEncoder()
-    djson=encoder.encode(jsondict)
+    djson=json.dumps(jsondict)
     return djson
 
 

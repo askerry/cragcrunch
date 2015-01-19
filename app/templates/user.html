@@ -12,13 +12,24 @@
 	<div id="profile">
 		Climbs {{user['climbstyles']}}. View climbing record on <a href="http://{{user['url']}}">MountainProject</a>.
 		<br>
-		<div id="plotcontainer" style="height: 400px; margin: auto; min-width: 310px; max-width: 600px">{{plotdata|safe}}</div>
+		<div id="plotcontainer" style="height: 400px; margin: auto; min-width: 310px; max-width: 600px; background-color:yellow;">
+		<script>
+			var plotdata='{{plotdata | safe}}';
+			console.log(plotdata);
+			var jsondata=JSON.parse(plotdata);
+			console.log('xxx');
+			console.log(jsondata);
+			console.log('yyy');
+			var chart;$(function () {$('#plotcontainer').highcharts(jsondata);});
+		</script>
+		asgjhaskjdghalskdjh
+		</div>
 	</div>
 	<div id="userrecs">
 		<h3>Best climbs for you:</h3>
 		      <ul class=entries>
 		      {% for entry in recs %}
-		        <li><a href="view/climb{{ entry['climbid']}}">{{ entry['name'] }} </a>, {{ entry['mainarea_name'] }}, {{ entry['region'] }} <a class="subtlelink" href="http://{{entry['url']}}">({{ entry['pageviews'] }} views on MP)</a></li>
+		        <li><a href="..view/climb{{ entry['climbid']}}">{{ entry['name'] }} </a>, {{ entry['mainarea_name'] }}, {{ entry['region'] }} <a class="subtlelink" href="http://{{entry['url']}}">({{ entry['pageviews'] }} views on MP)</a></li>
 		      {% endfor %}
 		      </ul>
 	</div>
