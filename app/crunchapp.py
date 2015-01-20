@@ -90,7 +90,7 @@ def view(searchid=0):
 
 @app.route('/user')
 @app.route('/user/<userid>')
-def user(userid=7):
+def user(userid=123):
     userdict, userrecs, userplotdata=pinf.getuserpage(g, {'userid':userid})
     return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata)
 

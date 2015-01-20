@@ -20,17 +20,38 @@ def splittraintest(df, climbids):
 ##################################################
 
 def computeinteractionmatrix(allclimbs, allclimbers, hdf):
-    nClimb=len(allclimbs)
-    nClimber=len(allclimbers)
-    mat=np.zeros([nClimb, nClimber])
-    groups=hdf.groupby('climb').groups
-    for climbn, climb in enumerate(groups.keys()):
-        indices=groups[climb]
-        climberids=hdf.ix[indices,'climber']
-        climberind=np.array([np.where(allclimbers==climber)[0][0] for climber in climberids])
-        mat[climbn,climberind]=1
-    hitmat=pd.DataFrame(index=allclimbs, columns=allclimbers, data=mat)
+    '''make climb x climber matrix filled in with hits'''
+    climbs=[val for val in hdf.climb.unique() if val in allclimbs]
+    climbers=[val for val in hdf.climber.unique() if val in allclimbers]
+    mat=np.zeros([len(climbs), len(climbers)])
+    groups=hdf.groupby('climber').groups
+    for g in groups.keys():
+        climberindex=climbers.index(g)
+        u_climbs=groups[g]
+        for c in u_climbs:
+            climb=hdf.loc[c,'climb']
+            climbindex=climbs.index(climb)
+            mat[climbindex,climberindex]=1
+    hitmat=pd.DataFrame(index=climbs, columns=climbers, data=mat)
     return hitmat
+    
+def computestarmatrix(allclimbs, allclimbers,sdf):
+    '''make climb x climber matrix filled in with star ratings'''
+    climbs=[val for val in sdf.climb.unique() if val in allclimbs]
+    climbers=[val for val in sdf.climber.unique() if val in allclimbers]
+    mat=np.zeros([len(climbs), len(climbers)])
+    mat[:,:] = np.nan
+    groups=sdf.groupby('climber').groups
+    for g in groups.keys():
+        climberindex=climbers.index(g)
+        u_climbs=groups[g]
+        for c in u_climbs:
+            rating=sdf.loc[c,'starsscore']
+            climb=sdf.loc[c,'climb']
+            climbindex=climbs.index(climb)
+            mat[climbindex, climberindex]=rating
+    starmat=pd.DataFrame(index=climbs, columns=climbers, data=mat)
+    return starmat
 
 def computeattributematrix(allclimbs, allcols, cdf):
     mat=cdf.loc[allclimbs,allcols].dropna()

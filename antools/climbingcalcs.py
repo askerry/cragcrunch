@@ -8,6 +8,7 @@ Created on Fri Jan 16 12:49:34 2015
 import scipy.stats
 import numpy as np
 import clean
+import random as rd
 
 def getstates(areadf):
     '''take an area and define the region for it based on it's parent'''
@@ -18,6 +19,33 @@ def getstates(areadf):
         statedict[s]=getsubareas(areadf, stateids[sn])
     mainareadf=areadf.loc[areadf['area'].isin(stateids)]
     return states, stateids, statedict, mainareadf
+    
+def computerelativestar(stardf,climbdf):
+    '''for each climber, calculate the difference between their rating and the average rating'''
+    climbids=stardf['climb'].values
+    starids=stardf['starid'].values
+    averages=climbdf.loc[climbids,'avgstars'].values
+    diffs=stardf['starsscore'].values-averages
+    stardf.loc[starids,'relative_star']=diffs
+    return stardf
+    
+def normalizetoindividual(indstars):
+    indstars['zscored_star_relative']=(indstars['relative_star'].values-indstars['relative_star'].mean())/indstars['relative_star'].std()
+    indstars['zscored_star']=(indstars['starsscore'].values-indstars['starsscore'].mean())/indstars['starsscore'].std()
+    return indstars
+    
+def relativegrade(gid, climbid, grade, cdf=None, ndictgrades={}):
+    if climbid in cdf.index.values:
+        consensus=cdf.loc[climbid,'grade']
+        consensus_rank=ndictgrades[consensus]
+        ind_rank=ndictgrades[grade]
+        return float(ind_rank)-float(consensus_rank)
+        
+def computerelativegrades(climbdf, gradedf):
+    allgrades=list(gradedf['grade'].unique())+list(climbdf['grade'].unique())
+    ndictgrades={c:clean.numerizegrades(c, gradelists=[rd.grades, rd.bouldergrades]) for c in allgrades}
+    gradedf['rankdiff']=gradedf.apply(lambda x:relativegrade(x['gradesid'], x['climb'], x['grade'], cdf=climbdf, ndictgrades=ndictgrades), axis=1)
+    return gradedf    
     
 def addmainarea(areaid, areadf, climbdf):
     '''takes a given area and finds the highest level parent area that contains it'''
@@ -40,7 +68,7 @@ def getclimberareas(hitsdf, climbdf, climberdf):
     '''get all mainareas that a climber has climbd in'''
     for c in climberdf.climberid.values:
         climbids=hitsdf[hitsdf['climber']==c]['climb'].values
-        areas=climbdf.ix[climbids,'mainarea'].values
+        areas=climbdf.loc[climbids,'mainarea'].values
         numareas=len(set(areas))
         try:
             m=scipy.stats.mode(areas)[0][0]
@@ -109,29 +137,7 @@ def computeareastiffness(climbdf, areadf):
     return areadf
    
     
-def computerelativegrades(climbdf, gradedf):
-    ndictgrades={c:clean.numerizegrades(c, gradelists=[grades, bouldergrades]) for c in gradedf['grade'].unique()}
-    ndictclimbs={c:clean.numerizegrades(c, gradelists=[grades, bouldergrades]) for c in climbdf['grade'].unique()}
-    for c in gradedf['climb'].unique():
-        if c in climbdf.index.values:
-            consensus=climbdf.loc[c,'grade']
-            consensus_rank=ndictclimbs[consensus]
-            indices=gradedf.loc[gradedf['climb']==c,'grade'].index.values
-            indgrades=gradedf.loc[indices,'grade'].values
-            indgrades_rank=[ndictgrades[el] for el in indgrades]
-            gradedf.loc[indices,'consensus']=consensus
-            diffs=np.array([rank-consensus_rank for rank in indgrades_rank])
-            gradedf.loc[indices,'rankdiff']=diffs
-    return gradedf
-    
-def getrelativestar(stardf,climbdf):
-    #computes each climbers star rating relative to the star ratings provided by others
-    climbids=stardf['climb'].values
-    starids=stardf['starid'].values
-    averages=climbdf.loc[climbids,'avgstars'].values
-    diffs=stardf['starsscore'].values-averages
-    stardf.loc[starids,'relative_star']=diffs
-    return stardf
+
 def summarizesubmitters(climbdf, climberdf, hitsdf):
     submittercounts=climbdf.groupby('submittedby').count()[['climbid']].dropna()
     submittercounts=submittercounts[~np.isnan(submittercounts)]

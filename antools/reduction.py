@@ -64,7 +64,7 @@ def limittoUSA(climbdf, areadf):
 def limit2popular(full_hitsdf,full_climbdf, full_stardf, full_commentdf, full_gradedf, full_tickdf, minthresh=5):
     selclimbs=full_hitsdf.groupby('climb').count()['climber']
     selclimbs=[v for v in selclimbs[selclimbs>minthresh].index.values if ~np.isnan(v)]
-    popclimbdf=full_climbdf.ix[selclimbs,:]
+    popclimbdf=full_climbdf.loc[selclimbs,:]
     full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf=dropclimbs(popclimbdf, full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf)
     print "beginning with %s unique climbs" %(len(full_climbdf))
     print "limited to %s climbs by restricting to climbs with >%s climber entries" %(len(popclimbdf),minthresh)

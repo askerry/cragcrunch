@@ -51,7 +51,7 @@ def dedupsandmissing(full_climberdf, full_areadf, full_climbdf,full_stardf,full_
     full_stardf = clean.addmissingclimbers(full_climberdf, full_stardf)
     return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
     
-def reindexall(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
+def reindexall(full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
     '''reindex everything so that id is index'''
     full_climbdf.index=full_climbdf.climbid
     full_areadf.index=full_areadf.areaid
@@ -61,9 +61,10 @@ def reindexall(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commen
     full_gradedf.index=full_gradedf.gradesid
     full_stardf.index=full_stardf.starid
     full_tododf.index=full_tododf.todosid
-    return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
+    full_hitsdf.index=full_hitsdf.hitsid
+    return full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
 
-def renameindices(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf, mainareadf):
+def renameindices(full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf, mainareadf):
     full_climbdf.index.rename('index', inplace=True)
     full_areadf.index.rename('index', inplace=True)
     full_climberdf.index.rename('index', inplace=True)
@@ -72,8 +73,9 @@ def renameindices(full_climberdf, full_areadf, full_climbdf,full_stardf,full_com
     full_gradedf.index.rename('index', inplace=True)
     full_stardf.index.rename('index', inplace=True)
     full_tododf.index.rename('index', inplace=True)
+    full_hitsdf.index.rename('index', inplace=True)
     mainareadf.index.rename('index', inplace=True)
-    return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf,mainareadf
+    return full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf,mainareadf
     
 def pickletheseobjects(filename, objects):
     '''takes list of objects and pickles them to <filename>'''

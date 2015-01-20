@@ -63,16 +63,27 @@ def getuserrecs(udict, db):
 
 
 def makejsontemplate():
-    errdata={"name":"variable error", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
-    coldata={"name":"variable","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
+    errdata={"name":"95% CI", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
+    coldata={"name":"Preference Score","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
     series=[coldata, errdata]
-    jsondict={"legend":{'enabled':False},"exporting": {"enabled": False }, "credits":{'enabled':False}, "chart": {"type":"errorbar", "renderTo":"plotcontainer"},"title": {"text": "default title"},"xAxis": [{"categories": ["a", "b", "c", "d"], "title": {"text": "xlabel","style": {"color": 'black'}}}],"yAxis": [{"labels": {"style": {"color": 'black'}},"max":-1.1, "max":1.1, "title": {"text": "variable name","style": {"color": 'black'}}}], 'series':series}
+    jsondict={}
+    jsondict["chart"]={"type":"errorbar", "renderTo":"plotcontainer", "backgroundColor":'#55FF88'}
+    for item in {'margin': [50, 20, 50, 50]}.items():
+        jsondict["chart"][item[0]]=item[1]
+    jsondict["series"]=series
+    jsondict["legend"]={'enabled':False}
+    jsondict["exporting"]= {"enabled": False }
+    jsondict["credits"]={'enabled':False}
+    jsondict["title"]={"text": "default title"}
+    jsondict["xAxis"]=[{"categories": ["a", "b", "c", "d"],'labels':{'rotation':-90}, "title": {"text": "xlabel","style": {"color": 'black'}}}]
+    jsondict["yAxis"]=[{"labels": {"style": {"fontSize":"8px","fontFamily": 'Verdana, sans-serif',"color": 'black'}}, "max":-1, "max":1, "title": {"text": "variable name","style": {"color": 'black'}}}]
+
     return jsondict
 def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict=makejsontemplate()
     jsondict['chart']['renderTo']=plotid
     jsondict['series'][0]['data']=list(means)
-    jsondict['series'][1]['data']=[[m-sems[mn],m+sems[mn]] for mn,m in enumerate(means)]
+    jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
     jsondict['xAxis'][0]['categories']=list(labels)
     jsondict['title']['text']=title
     jsondict['yAxis'][0]['title']['text']=ylabel
