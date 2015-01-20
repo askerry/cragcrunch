@@ -66,13 +66,13 @@ def makejsontemplate():
     errdata={"name":"variable error", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
     coldata={"name":"variable","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
     series=[coldata, errdata]
-    jsondict={"legend":{'enabled':False},"credits":{'enabled':False}, "chart": {"type":"errorbar", "renderTo":"plotcontainer"},"title": {"text": "default title"},"xAxis": [{"categories": ["a", "b", "c", "d"], "title": {"text": "xlabel","style": {"color": 'black'}}}],"yAxis": [{"labels": {"style": {"color": 'black'}},"title": {"text": "variable name","style": {"color": 'black'}}}], 'series':series}
+    jsondict={"legend":{'enabled':False},"exporting": {"enabled": False }, "credits":{'enabled':False}, "chart": {"type":"errorbar", "renderTo":"plotcontainer"},"title": {"text": "default title"},"xAxis": [{"categories": ["a", "b", "c", "d"], "title": {"text": "xlabel","style": {"color": 'black'}}}],"yAxis": [{"labels": {"style": {"color": 'black'}},"max":-1.1, "max":1.1, "title": {"text": "variable name","style": {"color": 'black'}}}], 'series':series}
     return jsondict
 def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict=makejsontemplate()
     jsondict['chart']['renderTo']=plotid
     jsondict['series'][0]['data']=list(means)
-    jsondict['series'][1]['data']=list(sems)
+    jsondict['series'][1]['data']=[[m-sems[mn],m+sems[mn]] for mn,m in enumerate(means)]
     jsondict['xAxis'][0]['categories']=list(labels)
     jsondict['title']['text']=title
     jsondict['yAxis'][0]['title']['text']=ylabel
