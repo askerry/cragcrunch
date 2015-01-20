@@ -67,11 +67,9 @@ def getclimbdict(c, db):
         cdict['avgstars']="%.2f stars" %(cdict['avgstars'])
     else:
         cdict['avgstars']="no stars"
-    #print cdict['description']
     cdict['description']=cdict['description'].replace('. \n','<br><br>')
-    #print cdict['description']
     nestedids,nestednames=getareanest(cdict['area'], db)
-    cdict['nest']=' -- '.join(nestednames)
+    cdict['nest']=zip(nestedids, nestednames)
     return cdict
     
 def getsimilarclimbs(db, climbid, ClimbTable):
@@ -81,10 +79,7 @@ def getsimilarclimbs(db, climbid, ClimbTable):
     simids=df.columns.values[climbindices].astype(float)
     ids=db.session.query(ClimbTable).all()
     ids=[float(el.climbid) for el in ids]
-    print ids[:10]
     simclimbids=[el for el in simids if el in ids]
-    print simclimbids
     simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=climbid).first() for climbid in simclimbids]
     simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
-    print simclimbdicts
     return simclimbdicts

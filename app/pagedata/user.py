@@ -38,21 +38,19 @@ def getuserdict(u,db):
     return udict
     
 def getuserplots(udict,db):
-    '''
     userid=udict['climberid']
     userstars=db.session.query(StarsTable).filter_by(climber=userid).all()
     sdf=misc.convertsqlobj2df(userstars)
     userclimbs=sdf.climb.unique()
-    climbdata=db.session.query(ClimbTable).all()
-    cdf=misc.convertsqlobd2df(climbdata)
-    for t in misc.termtypes.keys():
-        ndf=getuserstarsbywords(sdf, cdf, userid, misc.terms)
+    climbdata=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(userclimbs)).all()
+    cdf=misc.convertsqlobj2df(climbdata)
+    djsons=[]
+    for tn,t in enumerate(['hold types','face descriptions','ease factors','safety factors']):
         usdf=getuserstarsbywords(sdf, cdf, userid, misc.termtypes[t])
-        f,ax, corrs, labels, sems=getuserpredictors(usdf,t, minn=6)
-    '''
-    plotdata=demofig()
-    print plotdata
-    return plotdata
+        corrs, labels, sems=getuserpredictors(usdf,t, minn=6)
+        plotid="plotcontainer%s" %tn
+        djsons.append(pushdata(corrs, sems, labels, '', t, 'preference score', plotid))
+    return djsons
     
 def getuserrecs(udict, db):
     userid=udict['climberid']
@@ -62,51 +60,23 @@ def getuserrecs(udict, db):
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
     return recclimbs
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import mpld3
-
-def demofig():
-    means=[3,4,5,2]
-    sems=[[2,4],[3,5],[4.5,5.7],[1.5,2.3]]
-    labels=['green','blue','orange','pink']
-    plottitle='HIIII'
-    xlabel='my x label'
-    ylabel='my y label'
-    djson=pushdata(means, sems, labels, plottitle, xlabel, ylabel)
-    print djson
-    return djson
-
-def demofig1():
-    corrs=[1,2,3,4,5,4,3,2,6,7]
-    sems=[.1,.2,.3,.4,.5,.1,.2,.3,.1,.6]
-    labels=['a','b','c','d','e','f','g','h','i','j']
-    f,ax=plt.subplots(figsize=[4,3])
-    ax.bar(range(len(corrs)), corrs, yerr=sems)
-    ax.set_xlim([0,len(corrs)])
-    ax.set_xticks(np.arange(len(corrs))+.5)
-    ax.set_xticklabels(labels, rotation=90)
-    ax.set_ylabel('preference score')
-    ax.set_xlabel('x label')
-    ax_fmt = HelloWorld()
-    mpld3.plugins.connect(f, ax_fmt)
-    return mpld3.fig_to_html(f)
 
 
 def makejsontemplate():
-    errdata={"name": "variable error","type": "errorbar","yAxis": 0,"data": [[48, 51], [68, 73], [92, 110], [128, 136]],"tooltip": {"pointFormat": "(error range: {point.low}-{point.high} mm)<br/>"}}
-    coldata={"name": "variable","type": "column","yAxis": 0, "data": [49.9, 71.5, 106.4, 129.2],"tooltip": {"pointFormat": '<span style="font-weight: bold; color: {series.color}">{series.name}</span>: <b>{point.y:.1f} mm</b>'}}
+    errdata={"name":"variable error", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
+    coldata={"name":"variable","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
     series=[coldata, errdata]
-    jsondict={"chart": {"zoomType": "xy"},"title": {"text": " default title"},"xAxis": [{"categories": ["a", "b", "c", "d"]}],"yAxis": [{"labels": {"style": {"color": 'red'}},"title": {"text": "variable name","style": {"color": 'blue'}}}],"tooltip": {"shared": True}, 'series':series}
+    jsondict={"legend":{'enabled':False},"credits":{'enabled':False}, "chart": {"type":"errorbar", "renderTo":"plotcontainer"},"title": {"text": "default title"},"xAxis": [{"categories": ["a", "b", "c", "d"], "title": {"text": "xlabel","style": {"color": 'black'}}}],"yAxis": [{"labels": {"style": {"color": 'black'}},"title": {"text": "variable name","style": {"color": 'black'}}}], 'series':series}
     return jsondict
-def pushdata(means, sems, labels, title, xlabel, ylabel):
+def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict=makejsontemplate()
-    jsondict['series'][0]['data']=means
-    jsondict['series'][1]['data']=sems
-    jsondict['xAxis'][0]['categories']=labels
+    jsondict['chart']['renderTo']=plotid
+    jsondict['series'][0]['data']=list(means)
+    jsondict['series'][1]['data']=list(sems)
+    jsondict['xAxis'][0]['categories']=list(labels)
     jsondict['title']['text']=title
     jsondict['yAxis'][0]['title']['text']=ylabel
-    jsondict['yAxis'][0]['title']['text']=xlabel
+    jsondict['xAxis'][0]['title']['text']=xlabel
     djson=json.dumps(jsondict)
     return djson
 
@@ -131,48 +101,5 @@ def getuserpredictors(usdf,t,minn=6):
     corrs=predictions.values
     labels=predictions.index.values
     sems=[standarderrorcorr(r, len(usdf)) for r in corrs]
-    if len(labels)>4:
-        f,ax=plt.subplots(figsize=[4,3])
-        ax.bar(range(len(corrs)), corrs, yerr=sems)
-        ax.set_xlim([0,len(corrs)])
-        ax.set_xticks(np.arange(len(corrs))+.5)
-        ax.set_xticklabels(labels, rotation=90)
-        ax.set_ylabel('preference score')
-        ax.set_xlabel(t)
-        sns.despine()
-        plt.tight_layout()
-    else:
-        f,ax=[],[]
-    return f,ax, corrs, labels, sems
+    return corrs, labels, sems
 
-
-import mpld3.plugins
-class HelloWorld(mpld3.plugins.PluginBase):  # inherit from PluginBase
-    """Hello World plugin"""
-
-    JAVASCRIPT = """
-    mpld3.register_plugin("helloworld", HelloWorld);
-    HelloWorld.prototype = Object.create(mpld3.Plugin.prototype);
-    HelloWorld.prototype.constructor = HelloWorld;
-    function HelloWorld(fig, props){
-        mpld3.Plugin.call(this, fig, props);
-    };
-
-    HelloWorld.prototype.draw = function(){
-        // FIXME: this is a very brittle way to select the y-axis element
-        var ax = this.fig.axes[0].elements[1];
-
-        // see https://github.com/mbostock/d3/wiki/Formatting#d3_format
-        // for d3js formating documentation
-        ax.axis.tickFormat(d3.format("d"));
-
-        // TODO: use a function for tick values that
-        // updates when values pan and zoom
-        ax.axis.tickValues([1,100,1000]);
-
-        // HACK: use reset to redraw figure
-        this.fig.reset();
-    }
-    """
-    def __init__(self):
-        self.dict_ = {"type": "helloworld"}

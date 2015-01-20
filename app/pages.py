@@ -47,7 +47,6 @@ def getareapage(g, inputdict):
 
 def getclimbpage(g, inputdict):
     climbid=int(inputdict['climbid'])
-    print climbid
     c=g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
     cdict=cf.getclimbdict(c, g.db)
     del cdict['_sa_instance_state']

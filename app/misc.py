@@ -9,6 +9,7 @@ descriptors=['steep','overhang','slab','technical','thin', 'ramp', 'overhung','s
 easeterms=['easy','hard','stiff','pumpy','beginner','hang','hung','take','difficult', 'committing', 'crux', 'soft','sandbag', 'awkward','creative','comfortable']
 safetyterms=['runout','spicy','exciting','nervous','sketchy','no pro', 'deck', 'eats gear', 'easy to protect','fall','rusty','clipping','swing', 'tenuous', 'minimal pro', 'mental']
 rockterms=['granite', 'limestone', 'schist', 'patina','sandstone', 'conglomerate', 'quartzite', 'gneiss', 'basalt']
+terms=holdterms+descriptors+easeterms+safetyterms+rockterms
 termtypes={'rock type':rockterms, 'ease factors':easeterms, 'hold types':holdterms,'safety factors': safetyterms, 'face descriptions':descriptors}
 
 

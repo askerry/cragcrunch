@@ -11,27 +11,54 @@
 <div class='usercontent'>
 	<div id="profile">
 		Climbs {{user['climbstyles']}}. View climbing record on <a href="http://{{user['url']}}">MountainProject</a>.
-		<br>
-		<div id="plotcontainer" style="height: 400px; margin: auto; min-width: 310px; max-width: 600px; background-color:yellow;">
+		
+		<div id="plotbox">
+		<div class="plotrow">
+		<div id="plotcontainer0">
 		<script>
-			var plotdata='{{plotdata | safe}}';
-			console.log(plotdata);
+			var plotdata='{{plotdata[0] | safe}}';
 			var jsondata=JSON.parse(plotdata);
-			console.log('xxx');
-			console.log(jsondata);
-			console.log('yyy');
-			var chart;$(function () {$('#plotcontainer').highcharts(jsondata);});
+			var chart = new Highcharts.Chart(jsondata);
 		</script>
-		asgjhaskjdghalskdjh
+		</div>
+		<div id="plotcontainer1">
+		<script>
+			var plotdata='{{plotdata[1] | safe}}';
+			var jsondata=JSON.parse(plotdata);
+			var chart = new Highcharts.Chart(jsondata);
+		</script>
+		</div>
+		</div>
+		<div>
+		<div class="plotrow">
+		<div id="plotcontainer2">
+		<script>
+			var plotdata='{{plotdata[2] | safe}}';
+			var jsondata=JSON.parse(plotdata);
+			var chart = new Highcharts.Chart(jsondata);
+		</script>
+		</div>
+		<div id="plotcontainer3">
+		<script>
+			var plotdata='{{plotdata[3] | safe}}';
+			var jsondata=JSON.parse(plotdata);
+			var chart = new Highcharts.Chart(jsondata);
+		</script>
+		</div>
+		</div>
+		</div>
+		</div>
 		</div>
 	</div>
+
 	<div id="userrecs">
 		<h3>Best climbs for you:</h3>
-		      <ul class=entries>
-		      {% for entry in recs %}
-		        <li><a href="..view/climb{{ entry['climbid']}}">{{ entry['name'] }} </a>, {{ entry['mainarea_name'] }}, {{ entry['region'] }} <a class="subtlelink" href="http://{{entry['url']}}">({{ entry['pageviews'] }} views on MP)</a></li>
+		      {% for rec in recs %}
+		        	<div class="contenthead">
+					<div id="contenttitle" class="secondary"><a href="view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
+					<div id="details" class="secondary">{{rec['style']}}, {{rec['grade']}} .......... {{ rec['mainarea_name'] }}, {{ rec['region'] }}</div>
+					</div>
 		      {% endfor %}
-		      </ul>
 	</div>
 </div>
 

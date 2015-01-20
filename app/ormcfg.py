@@ -2,6 +2,7 @@ __author__ = 'amyskerry'
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, Float, String, Boolean, Date, ForeignKey, Text
+from misc import terms
 
 Base = declarative_base()
 
@@ -43,6 +44,11 @@ class ClimbTable(Base):
     avgstars = Column(String(30))
     pageviews = Column(String(30))
     submittedby = Column(String(70))
+    commentsmerged = Column(Text)
+
+for c in terms:
+    setattr(ClimbTable,c+'_description', Column(Integer))
+    setattr(ClimbTable,c+'_commentsmerged', Column(Integer))
 
 class ClimberTable(Base):
     __tablename__ = 'climber_prepped'
