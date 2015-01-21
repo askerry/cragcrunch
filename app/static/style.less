@@ -1,4 +1,3 @@
-/*  font styles  */
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,200,700|Rosario:400,700);
 
 @my-font-family: 'Roboto', sans-serif;
@@ -16,72 +15,29 @@
           font-weight: 700;
      }
 }
-.my-font-family2 {
-     &.light {
-          font-family: "Rosario",sans-serif;
-          font-weight: 100;
-     }
-     &.regular {
-          font-family: "Rosario",sans-serif;
-          font-weight: 400;
-     }
-     &.bold {
-          font-family: "Rosario",sans-serif;
-          font-weight: 700;
-     }
-}
 
-/*  colors  */
-@linkcolor:#0077CC;
-@accent1:#002255;
-@accent2:#FFCC00;
-@accent3:#339966;
-@basefontcolor:@accent1;
-@backgroundcolor:#ddd;
-@maincolor:black;
+@basefontcolor:black;
+@backgroundcolor:black;
+@linkcolor:#2233AA;
+@clickedcolor:#554499;
+@maincolor:#ddd;
 @headercolor:#0077CC;
-@titlecolor:white;
 @contentcolor:white;
-@navcolor:gray;
-@subcapcolor:#002255;
-@capcolor:black;
 @containercolor:@maincolor;
 
 /*  font/spacing sizes  */
-@fontbase:10px;
+@fontbase:14px;
 @navfontsize:1.5em;
+@navtitlesize:2em;
 @widetextspacing:.3em;
-@headerbig:4em;
-@headersmall:2em;
-@listindent:2em;
-@micropad:.3em;
-@minpad:.5em;
-@medpad:1em;
-@largepad:2em;
-@xlpad:5em;
+
 
 /*  sizing  */
-@containerwidth:1200px;
-@minheight:900px;
-@headerwidth:91%;
-@headerheight:9em;
-@contentwidth:72%;
+@containerwidth:100%;
+@minheight:1500px;
+@headerwidth:100%;
+@contentwidth:90%;
 @contentpadder:2%;
-@navwidth:20%;
-@leftmargin:5%;
-@rightmargin:3%;
-@headerbuffer:3em;
-
-
-/*  mixins  */
-.text-shadow (@string: -1px 2px 3px rgba(0, 0, 0, 1)) {
-    text-shadow: @string;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-}
 
 html, body {
     color: @basefontcolor;
@@ -90,215 +46,226 @@ html, body {
     box-sizing: border-box;
 }
 
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
 #page {
     margin: 0 auto;
     overflow:auto;
-    width: @containerwidth;
+	width: @containerwidth;
     min-height: @minheight;
     background-color:@maincolor;
     position: relative;
     font-size: @fontbase;
     .my-font-family .light;
     margin-bottom:1%;
-    margin-top:1%;
 }
-#container {
+
+/* *********************** */
+/*        Nav Stuff        */
+/* *********************** */
+
+.container {
     margin:0em;
-    background-color:@containercolor;
-    position:relative;
-    height:100%;
     width:100%;
 }
 
-strong {
-    color: @basefontcolor;
+.navbar-inverse 
+	.navbar-brand {
+	 font-size: @navtitlesize;
 }
 
-a {
-    color: @linkcolor;
+.navbar-inverse 
+	.nav>li>a {
+	font-size:@navfontsize;
 }
 
-a:hover, a:focus {
-    text-decoration: none;
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active {
+	 background-color:#ddd;
+	 color:black;
 }
 
-ul, ol {
-    margin-bottom: @medpad;
+/* *********************** */
+/*       Banner Stuff      */
+/* *********************** */
+
+#banner {
+  width: 100%;
 }
 
-ul, ol {
-    margin-left: @listindent;
+#bannerimg {
+	width: 100%;
+    height: auto;
 }
 
-.textblock {
-    margin:@listindent*.7;
-    margin-left:@listindent*2;
-    font-size:@fontbase*.8;
-}
-.captiondiv{
-  font-size:.9em;
-  color:@capcolor;
-  text-align:center;
-  padding:1em;
-   .my-font-family .bold;
-}
-.caption{
-    font-size:.7em;
-    line-height:1.3em;
-    color:@subcapcolor;
-    text-align:center;
-    .my-font-family .regular;
-}
-#title {
-    position: relative;
-    background-color:@headercolor;
-    margin-top: @headerbuffer;
-    margin-bottom: @headerbuffer;
-    padding-left:@minpad;
-    color:@titlecolor;
-    width:@headerwidth;
-    height:@headerheight;
-    .my-font-family .bold;
-    text-transform: uppercase;
-}
-#textdiv {
-  position:relative;
-  float:left;
-}
-
-#title h1 {
-    font-size: @headerbig;
-}
-
-#title p {
-    font-size: @headersmall;
-    letter-spacing: @widetextspacing;
-    padding-bottom:@micropad;
-}
-.logo{
-    float:right;
-    height:100%;
-    padding:2%;
-}
-
-#sidebar{
-  background-color:@navcolor;
-  right: @rightmargin;
-  width: @navwidth;
-  .my-font-family2 .regular;
-  float:right;
-  height:70%;
-}
-
-nav {
-    width: 100%;
-    .my-font-family2 .regular;
-    float:right;
-    text-align:right;
-    background-color:@navcolor;
-    padding-top:5%;
-}
-
-nav a,
-nav a:visited {
-    margin-right:7%;
-    font-size:@navfontsize;
-    text-decoration: none;
-    color: @basefontcolor;
-    text-transform: uppercase;
-}
-
-nav a.selected {
-    color: @accent1;
-    .my-font-family2 .bold;
-}
-
-nav a:hover {
-    color: @accent2;
-}
-
-nav ul li {
-    list-style-type: none;
-}
-
-.menu{
-}
+/* *********************** */
+/*     Structure Stuff     */
+/* *********************** */
 
 #content {
     top:0em;
     background-color:@contentcolor;
-    line-height: 1.5em;
     position: relative;
-    left: @leftmargin;
+    margin:auto;
     width: @contentwidth;
     padding: @contentpadder;
 }
 
-#content h1 {
-    text-transform: uppercase;
-    margin-bottom: @medpad;
-    color: @basefontcolor;
+/* *********************** */
+/*       Misc Stuff        */
+/* *********************** */
+
+.searchspan{
+	font-size:1.8em;
 }
 
-#content h2 {
-    margin-top: @medpad;
-    margin-bottom: @medpad;
+a {
+	font-size:1.1em;
+	color:@linkcolor;
 }
 
-#content h3 {
-    margin-top: @minpad;
-    margin-bottom: @minpad;
+a.subtlelink {
+	font-size:.9em;
+	color:#aab;
 }
-.imagediv{
-  margin-top:@medpad;
-  margin-bottom:@medpad;
-  width:100%;
-  height:10em;
-}
-.inlineimagediv{
-  margin-top:@medpad;
-  display:inline-block;
-  float:right;
-  margin-bottom:@medpad;
-  width:46%;
-  height:7em;
+.contenthead {
+	width:100%;
+	position:relative;
+
 }
 
-#horizontaldiv{
-    padding:@minpad;
-    display:inline-block;
-    width:32.9%;
-    height:100%;
+#contenttitle {
+	font-size:2.5em;
+	display:inline;
 }
 
-#horizontaldiv50{
-    padding:@minpad;
-    display:inline-block;
-    width:49%;
-    height:100%;
+#details {
+	font-size:1.3em;
+	right:0em;
+	bottom:0em;
+	display:inline;
+	position:absolute;
 }
 
-.imgcontainer {
-    text-align:center;
-    height:100%;
-    padding:.5%;
-    margin:1.5%;
-    margin-top:@minpad;
-}
-.imgcontainer_inline {
-  padding-left:1em;
-  display:inline-block;
-  margin-bottom:1em;
-  float:right;
-  width:15em;
-  overflow:hidden;
+.maincontent{
+	line-height:1.2em;
 }
 
-.fullw_img{
-    height:100%;
-    width:100%;
+.maincontent div{
+	margin-top:1.5em;
+	margin-bottom:.75em;
+}
+
+/* *********************** */
+/*       Climb Stuff        */
+/* *********************** */
+
+#contenttitle.secondary {
+	font-size:1.2em;
+	padding-left:3em;
+}
+#details.secondary {
+	font-size:1em;
+}
+/* *********************** */
+/*       User Stuff        */
+/* *********************** */
+
+.usercontent{
+	width:100%;
+	position:relative;
+	height:700px;
+}
+
+#profile{
+	position:absolute;
+	width:67%;
+	left:0em;
+	height:100%;
+
+}
+
+#userrecs{
+	position:absolute;
+	right:0em;
+	background-color:gray;
+	width:32%;
+	padding:1em;
+	height:100%;
+}
+
+.plotrow{
+	height:50%;
+	width:100%;
+}
+
+#plotbox{
+	height:96%;
+	width:100%;
+	margin:auto;
+}
+
+#plotcontainer0{
+	height: 48%;
+	width:48%; 
+	left:0em;
+	position:absolute;
+	margin:1%;
+	margin-right:.5%;
+	overflow:hidden;
+}
+#plotcontainer1{
+	height: 48%;
+	width:48%; 
+	right:0em;
+	position:absolute;
+	margin:1%;
+	overflow:hidden;
+	margin-left:.5%;
+}
+#plotcontainer2{
+	height: 48%;
+	width:48%; 
+	left:0em;
+	position:absolute;
+	margin:1%;
+	right-left:.5%;
+	overflow:hidden;
+}
+#plotcontainer3{
+	height: 48%;
+	width:48%; 
+	right:0em;
+	position:absolute;
+	margin:1%;
+	margin-left:.5%;
+	overflow:hidden;
+}
+
+.tagline{
+	width:100%;
+	text-align:right;
+}
+.recroute{
+	color:purple;
+	font-size:1.2em;
+}
+
+/* *********************** */
+/*       About Stuff       */
+/* *********************** */
+#logoimg {
+	height:6em;
+	right:0em;
+	bottom:0em;
+	display:inline;
+	position:absolute;
+}
+.fitimg{
+	height:100%;
+	width:auto;
+}
+#faceimg {
+	height:12em;
+	right:0em;
+	bottom:0em;
+	display:inline;
+	position:absolute;
 }

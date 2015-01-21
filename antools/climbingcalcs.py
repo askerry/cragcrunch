@@ -10,6 +10,21 @@ import numpy as np
 import clean
 import random as rd
 
+def getratingcounts(climbid, sdf=None):
+    '''return number of people who have rating a climb'''
+    relsdf=sdf[sdf['climb']==climbid]
+    return len(relsdf), np.std(relsdf.starsscore)
+
+
+def getnonuserstar(climbid, userid, sdf=None):
+    '''return avg rating of a climb for all users excluding that user'''
+    climbdf=sdf[sdf['climb']==climbid]
+    nonuserdf=climbdf[climbdf['climber']!=userid]
+    avg=nonuserdf.starsscore.mean()
+    print avg
+    std=nonuserdf.starsscore.std()
+    return avg, std
+
 def getstates(areadf):
     '''take an area and define the region for it based on it's parent'''
     states=areadf[areadf['region']=='World'].name.values

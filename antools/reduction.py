@@ -4,19 +4,19 @@ Created on Fri Jan 16 10:31:42 2015
 
 @author: amyskerry
 """
-
 import numpy as np
 
 def dropstyles(climbdf,stardf, commentdf, gradedf, tickdf, tododf):
     '''I don't like ice or alpine climbing so I'm not going to worry about them :)'''
     dropids=[]
-    mask=climbdf['style'].isin(['Alpine', 'Ice', 'Mixed', 'Chipped']).values
-    dropids.extend(climbdf.loc[mask].climbid.values)
-    mask1=climbdf['style'].isin(['Sport', 'Trad', 'TR']).values
-    mask2=~climbdf['grade'].map(lambda x:x.startswith('5')).values
+    mask=climbdf['style'].isin(['Alpine', 'Ice', 'Mixed', 'Chipped', 'Aid'])
+    dropids.extend(climbdf[mask].climbid.values)
+    dropids.extend(climbdf[climbdf['style']=='nan'].climbid.values)
+    mask1=climbdf['style'].isin(['Sport', 'Trad', 'TR'])
+    mask2=~climbdf['grade'].map(lambda x:x.startswith('5'))
     dropids.extend(climbdf.loc[mask1 & mask2].climbid.values)
     mask1=climbdf['style']=='Boulder'
-    mask2=~climbdf['grade'].map(lambda x:x.startswith('V')).values
+    mask2=~climbdf['grade'].map(lambda x:x.startswith('V'))
     dropids.extend(climbdf.loc[mask1 & mask2].climbid.values)
     dclimbs=climbdf.loc[climbdf['climbid'].isin(dropids)]
     climbdf=climbdf.drop(dclimbs.index.values)

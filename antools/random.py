@@ -11,6 +11,7 @@ Created on Tue Nov 11 20:42:58 2014
 
 @author: amyskerry
 """
+import clean
 
 grades, rawgrades, bouldergrades = ['3rd','4th', 'Easy 5th'],['3rd','4th','Easy 5th'],['V?']
 for i in range(0,16):
@@ -23,6 +24,12 @@ for i in range(0,16):
         grades.append('5.'+str(i)+l)
     for l in ['-','','+']:
         bouldergrades.append('V'+str(i)+l)
+        
+        
+ndictgrades={c:clean.numerizegrades(c, gradelists=[grades]) for c in grades}
+ndictgrades_r={item[1]:item[0] for item in ndictgrades.items()}
+ndictbouldergrades={c:clean.numerizegrades(c, gradelists=[bouldergrades]) for c in bouldergrades}
+ndictbouldergrades_r={item[1]:item[0] for item in ndictbouldergrades.items()}
 
 routetypes=['Trad', 'Sport', 'Toprope', 'Boulder', 'Ice', 'Miaxed', 'Aid', 'Alpine']
 holdterms=['crimp','pinch','jug','sloper','ledge','pocket','sidepull','dyno', 'deadpoint','heelhook','toehook','bat-hang', 'undercling', 'crack', 'flake', 'arete','gaston', 'layback','hand crack', 'flaring crack','fingers crack', 'wide crack','thin crack', 'offwidth', 'chimney','diahedral','corner', 'traverse']

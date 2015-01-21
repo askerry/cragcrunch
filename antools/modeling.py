@@ -19,6 +19,29 @@ def splittraintest(df, climbids):
 #             Similarity Functions               #
 ##################################################
 
+def nansim(a,b,simmetric):
+    import scipy.spatial.distance as ssd
+    na,nb=dropnans(a,b)
+    sim=ssd.pdist([na,nb],simmetric)
+    return sim
+def dropnans(a,b):
+    a=a.astype(float)
+    b=b.astype(float)
+    zipped=zip(a,b)
+    mask=np.array([~np.any(np.isnan(z)) for z in zipped])
+    return a[mask],b[mask]  
+
+def computepairwisesimilarity(x, df=None, similaritymetric='cosine'):
+    row=x.values
+    rowcorrs=[]
+    for cn,c in df.iterrows():
+        row2= c.values
+        sim=nansim(row,row2,similaritymetric)
+        rowcorrs.append(sim)
+    values=[c[0] for c in rowcorrs]
+    return values
+
+
 def computeinteractionmatrix(allclimbs, allclimbers, hdf):
     '''make climb x climber matrix filled in with hits'''
     climbs=[val for val in hdf.climb.unique() if val in allclimbs]
@@ -95,7 +118,7 @@ def gettopbottom(df, n=20):
     colnames=colnames+['-'+str(val) for val in range(n,0,-1)]
     data={val:[] for val in colnames}
     for index, row in df.iterrows():
-        indices=list(np.argsort(row.values))
+        indices=list(np.argsort(row.values)) #sorted from nearest to furthest
         uind=np.array(indices[:n]+indices[-(n+1):])
         selected=df.columns.values[uind]
         for cn,c in enumerate(colnames):

@@ -67,16 +67,16 @@ def makejsontemplate():
     coldata={"name":"Preference Score","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
     series=[coldata, errdata]
     jsondict={}
-    jsondict["chart"]={"type":"errorbar", "renderTo":"plotcontainer", "backgroundColor":'#55FF88'}
-    for item in {'margin': [50, 20, 50, 50]}.items():
+    jsondict["chart"]={"type":"errorbar", "renderTo":"plotcontainer", "backgroundColor":'#FFFFFF'}
+    for item in {'margin': [10, 10, 110, 65]}.items():
         jsondict["chart"][item[0]]=item[1]
     jsondict["series"]=series
     jsondict["legend"]={'enabled':False}
     jsondict["exporting"]= {"enabled": False }
     jsondict["credits"]={'enabled':False}
     jsondict["title"]={"text": "default title"}
-    jsondict["xAxis"]=[{"categories": ["a", "b", "c", "d"],'labels':{'rotation':-90}, "title": {"text": "xlabel","style": {"color": 'black'}}}]
-    jsondict["yAxis"]=[{"labels": {"style": {"fontSize":"8px","fontFamily": 'Verdana, sans-serif',"color": 'black'}}, "max":-1, "max":1, "title": {"text": "variable name","style": {"color": 'black'}}}]
+    jsondict["xAxis"]=[{"categories": ["a", "b", "c", "d"],'labels':{'rotation':-75}, "title": {"text": "xlabel","style": {"color": 'black'}}}]
+    jsondict["yAxis"]=[{"labels": {"style": {"fontSize":"8px","fontFamily": 'Verdana, sans-serif',"color": 'black'}}, "max":-1, "max":1, "title": {"text": "","style": {"color": 'black'}}}]
 
     return jsondict
 def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
@@ -86,7 +86,9 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
     jsondict['xAxis'][0]['categories']=list(labels)
     jsondict['title']['text']=title
-    jsondict['yAxis'][0]['title']['text']=ylabel
+    if plotid in ('plotcontainer0', 'plotcontainer2'):
+        jsondict['yAxis'][0]['title']['text']=ylabel
+        jsondict["chart"]['margin'][3]=40
     jsondict['xAxis'][0]['title']['text']=xlabel
     djson=json.dumps(jsondict)
     return djson
