@@ -9,22 +9,20 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 from matplotlib.patches import Rectangle
+from sklearn.metrics import confusion_matrix
+
 
 def plotresults(df, truecol, predcol):
-    if len(df[predcol].unique())>5:
-        counts=[]
-        gs=df.groupby(truecol).groups
-        for key in [1,2,3,4]:
-            rel=df.ix[gs[key]]
-            counts.append(rel.groupby(predcol).count()['climbid'].values)
-        counts=np.array(counts)
-        countsdf=pd.DataFrame(columns=[1,2,3,4], data=counts)
-        countsdf['true']=['1 star','2 stars','3 stars','4 stars']
-        countsdf=countsdf.groupby('true').mean()
+    if len(df[predcol].unique())<5:
+        mat = confusion_matrix(df[truecol], df[predcol])
+        labels=['1 star','2 stars','3 stars','4 stars']
+        countsdf=pd.DataFrame(data=mat, columns=labels)
         propdf=countsdf.divide(countsdf.sum(axis=1), axis='rows')
-        plotconfmat(propdf[1:], propdf['true'].values)
+        mat=propdf.values
+        plotconfmat(mat, labels)
+        return pd.DataFrame(index=labels, columns=labels, data=mat)
     else:
-        df.plot('predcol', 'truecol', kind='scatter')
+        df.plot(predcol, truecol, kind='scatter')
         
 
 def plotconfmat(conf, labels):
@@ -32,8 +30,8 @@ def plotconfmat(conf, labels):
     heatmap = plt.pcolor(conf, cmap='Blues', vmax=100, vmin=0)
     plt.ylabel('true')
     plt.xlabel('predicted')
-    plt.xticks(np.arange(len(labels))+.5,labels)
-    plt.yticks(np.arange(len(labels))+.5,labels)
+    plt.xticks(np.arange(len(labels)),labels)
+    plt.yticks(np.arange(len(labels)),labels)
     plt.colorbar()
     
 def customlegend(colordict, loc=[1,0], alpha=1):

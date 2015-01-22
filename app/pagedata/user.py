@@ -36,7 +36,7 @@ def getuserdict(u,db):
     udict['region']=db.session.query(AreaTable).filter_by(areaid=udict['mainarea']).first().region
     udict['country']=db.session.query(AreaTable).filter_by(areaid=udict['mainarea']).first().country
     return udict
-    
+
 def getuserplots(udict,db):
     userid=udict['climberid']
     userstars=db.session.query(StarsTable).filter_by(climber=userid).all()

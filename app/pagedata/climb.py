@@ -19,12 +19,14 @@ from config import rootdir
 #                Climb Page Functions             #
 ##################################################
 
-def getareanest(areaid, db,areanest=[], nestednames=[]):
+def getareanest(areaid, db,areanest=None, nestednames=None):
+    if areanest is None:
+        areanest=[]
+    if nestednames is None:
+        nestednames=[]
     local=db.session.query(AreaTable).filter_by(country = 'USA').all()
-    regions=set([l.region for l in local])
+    regions=list(set([l.region for l in local]))
     name=db.session.query(AreaTable).filter_by(areaid=areaid).first().name
-    print areanest
-    print name
     if name not in regions and len(areanest)<8:
         parent=db.session.query(AreaTable).filter_by(areaid=areaid).first().area
         parentname=db.session.query(AreaTable).filter_by(areaid=parent).first().name
@@ -33,13 +35,13 @@ def getareanest(areaid, db,areanest=[], nestednames=[]):
         getareanest(parent, db, areanest, nestednames)
     elif name not in regions:
         regionname=db.session.query(AreaTable).filter_by(areaid=areaid).first().region
-        regionid=db.session.query(AreaTable).filter_by(name=regionname).first().areaid
+        regionid=db.session.query(AreaTable).filter_by(name=regionname, region='World').first().areaid
         areanest.append(regionid)
-        areanest.append(regionname)
+        nestednames.append(regionname)
     return areanest, nestednames
 
 
-def getclimbdict(c, db):
+def getclimbdict(c, db, getnest=False):
     cdict=deepcopy(c.__dict__)
     cdict['climbid']=int(cdict['climbid'])
     cdict['areaname']=db.session.query(AreaTable).filter_by(areaid=int(c.area)).first().name
@@ -68,8 +70,9 @@ def getclimbdict(c, db):
     else:
         cdict['avgstars']="no stars"
     cdict['description']=cdict['description'].replace('. \n','<br><br>')
-    nestedids,nestednames=getareanest(cdict['area'], db)
-    cdict['nest']=zip(nestedids, nestednames)
+    if getnest:
+        nestedids,nestednames=getareanest(cdict['area'], db)
+        cdict['nest']=zip(nestedids, nestednames)
     return cdict
     
 def getsimilarclimbs(db, climbid, ClimbTable):
@@ -81,5 +84,6 @@ def getsimilarclimbs(db, climbid, ClimbTable):
     ids=[float(el.climbid) for el in ids]
     simclimbids=[el for el in simids if el in ids]
     simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=climbid).first() for climbid in simclimbids]
+    print "getting recs"
     simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
     return simclimbdicts

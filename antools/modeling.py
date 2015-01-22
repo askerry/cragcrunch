@@ -137,15 +137,19 @@ def getmatches(climbname, u_preddf, cdf, adf, arr):
 
 def getsimilar(climbname, u_preddf, cdf, adf):
     '''get names and dfs for similar and disimilar climbs'''
-    simclimbs, simnames=getmatches(climbname, u_preddf, cdf, adf,['1','2','3','4','5'])
+    simclimbs, simnames=getmatches(climbname, u_preddf, cdf, adf,['1','2','3','4','5', '6','7'])
     simclimbs=simclimbs[['name', 'mainarea', 'region', 'grade', 'description', 'style', 'mainarea_name']]
-    dissimclimbs, dissimnames=getmatches(climbname, u_preddf, cdf, adf,['-1','-2','-3','-4','-5'])
+    dissimclimbs, dissimnames=getmatches(climbname, u_preddf, cdf, adf,['-1','-2','-3','-4','-5', '-6', '-7'])
     dissimclimbs=dissimclimbs[['name', 'mainarea', 'region', 'grade', 'description', 'style', 'mainarea_name']]
     return simclimbs, simnames, dissimclimbs, dissimnames
 
 ##################################################
 #            Personalization Functions           #
 ##################################################
+
+########################
+#     Evaluation       #
+########################
 
 def round2score(df, truecol, predcol):
     preds=[np.round(x) for x in df[predcol].values]
@@ -161,30 +165,60 @@ def round2score(df, truecol, predcol):
     print "4 way recall %.3f" %recall
     return acc, precision, recall, f1
     
-def getuserratings(sdf, cdf, u):
-    climbs=sdf[(sdf['climber']==u) & sdf['starsscore']>0]['climb'].values #all star ratings provided by user
+########################
+#    Prep Prediction   #
+########################
+def normalizewordcounts(climbdf, features,key):
+    '''replace word counts with word counts normalized by length of text'''
+    climbs=climbdf['climbid'].values
+    fullcontent=climbdf[key].values #len of description
+    X=climbdf.loc[climbs,features].values #training features are word counts
+    desclen=np.array([len(x) if isinstance(x,str) else 0 for x in fullcontent]) #get length of each description
+    X=(X.T/desclen).T #normalize word counts by length of description
+    climbdf.loc[climbs,features]=X
+    return climbdf
+def getuserratings(sdf, cdf, u, features):
+    '''return X matrix of features, Y array of labels, list of climb indices'''
+    climbs=[val for val in sdf[(sdf['climber']==u) & sdf['starsscore']>0]['climb'].values if val in cdf.index.values] #all star ratings provided by user
     climb_features=cdf.ix[climbs,:]
-    climb_features=climb_features[[type(v)==str for v in climb_features['description'].values]] #limit to climbs with descriptions
-    climbs=climb_features['climbid'].values #matrix of all climb info
-    descrips=climb_features['description'].values #len of description
+    climbs=climb_features['climbid'].values
     selectedclimbscores=sdf[sdf['climber']==u].groupby('climb').mean()
     Y=selectedclimbscores.ix[climbs,'starsscore'].values #true rating
-    otheravgs=selectedclimbscores.ix[climbs,'other_avg'].values #ratings by all other climbers (excluding u)
-    X=cdf.loc[climbs,[h+'_description' for h in terms]].values #training features are word counts
-    desclen=np.array([len(x) if isinstance(x,str) else 0 for x in descrips]) #get length of each description
-    X=(X.T/desclen).T #normalize word counts by length of description
-    return X, Y, climbs, otheravgs
-    
+    X=cdf.loc[climbs,features].values #training features are word counts
+    return X, Y, climbs
+
+
+########################
+#    Run Prediction    #
+########################    
 def addsummary(summary, score, Y_test, u):
     summary['score'].append(score)
     summary['user'].append(u)
     summary['ntest'].append(len(Y_test))
     return summary
-def addresult(i, inum, results, climbs, Y_test, ypred, otheravgs, u):
+def addresult(i, inum, results, climbs, Y_test, ypred, u):
     results['climbid'].append(climbs[i])
     results['true_rating'].append(Y_test[inum])
     results['feat_pred'].append(ypred[inum])
     results['user'].append(u)
-    results['otheravg'].append(otheravgs[i])
-    results['comb']=np.mean([otheravgs[i], ypred[inum]])
     return results
+    
+def classify(clf,users, features, cdf, sdf, minratings=10):
+    summary={'score':[], 'user':[], 'ntest':[]}
+    results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[], 'otheravg':[]}
+    for u in users:
+        X, Y, climbs=getuserratings(sdf, cdf, u, features)
+        if len(climbs)>minratings:
+            folds=sklearn.cross_validation.KFold(len(climbs), n_folds=len(climbs))
+            for train_i, test_i in folds:
+                X_train,X_test, Y_train, Y_test = X[train_i], X[test_i], Y[train_i], Y[test_i]
+                if len(set(Y_train))>1:
+                    clf.fit(X_train, Y_train)
+                    ypred=clf.predict(X_test)
+                    score=clf.score(X_test, Y_test)
+                    summary=addsummary(summary, score, Y_test, u)
+                    for inum,i in enumerate(test_i):
+                        results=addresult(i,inum, results, climbs, Y_test, ypred, u)
+    resultsdf=pd.DataFrame(data=results)    
+    summarydf=pd.DataFrame(data=summary) 
+    return summarydf, resultsdf  

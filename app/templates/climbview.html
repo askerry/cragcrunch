@@ -11,7 +11,7 @@
 
 <div class="maincontent">
 <div>{% for n in climb['nest'] %}
-	---> <a href="view/climb{{n[0]}}">{{n[1]}}</a>
+	---> <a href="../view/area{{n[0]}}">{{n[1]}}</a>
 {% endfor %}
 </div>
 <div>{{climb['avgstars']}}, <a href="http://{{climb['url']}}">{{climb['pageviews']}} views on MountainProject.com</a></div>

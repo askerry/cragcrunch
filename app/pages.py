@@ -27,6 +27,7 @@ def getuserpage(g, inputdict):
     a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict=uf.getuserdict(a, g.db)
     urecs=uf.getuserrecs(udict, g.db)
+    print udict
     uplotdata=uf.getuserplots(udict, g.db)
     return udict, urecs, uplotdata
 
@@ -48,7 +49,7 @@ def getareapage(g, inputdict):
 def getclimbpage(g, inputdict):
     climbid=int(inputdict['climbid'])
     c=g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
-    cdict=cf.getclimbdict(c, g.db)
+    cdict=cf.getclimbdict(c, g.db, getnest=True)
     del cdict['_sa_instance_state']
     crecs=cf.getsimilarclimbs(g.db, climbid, ClimbTable)
     return cdict, crecs
