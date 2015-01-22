@@ -13,6 +13,7 @@ from sklearn.metrics import confusion_matrix
 
 
 def plotresults(df, truecol, predcol):
+    plt.figure(figsize=[3,2.5])
     if len(df[predcol].unique())<5:
         mat = confusion_matrix(df[truecol], df[predcol])
         labels=['1 star','2 stars','3 stars','4 stars']
@@ -20,9 +21,11 @@ def plotresults(df, truecol, predcol):
         propdf=countsdf.divide(countsdf.sum(axis=1), axis='rows')
         mat=propdf.values
         plotconfmat(mat, labels)
+        plt.show()
         return pd.DataFrame(index=labels, columns=labels, data=mat)
     else:
         df.plot(predcol, truecol, kind='scatter')
+        plt.show()
         
 
 def plotconfmat(conf, labels):

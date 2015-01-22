@@ -3,6 +3,47 @@ __author__ = 'amyskerry'
 import numpy as np
 import pandas as pd
 import sklearn.metrics
+import sklearn.preprocessing
+
+from sklearn.cluster import KMeans, AffinityPropagation
+
+from sklearn.grid_search import GridSearchCV
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LinearRegression,LogisticRegression, Lasso, Ridge, ElasticNet
+from sklearn.svm import SVC, SVR
+from sklearn.ensemble import RandomForestClassifier
+
+class RandomForestClassifierWithCoef(RandomForestClassifier):
+    def fit(self, *args, **kwargs):
+        super(RandomForestClassifierWithCoef, self).fit(*args, **kwargs)
+        self.coef_ = self.feature_importances_
+        
+def classifier(clfname):
+    if clfname=='gnb':
+        clf=GaussianNB()#.sigma_ .theta_
+    elif clfname=='rfc':
+        clf=RandomForestClassifierWithCoef(n_estimators=100, oob_score=True)
+    elif clfname=='svm':
+        clf=SVC(kernel='linear', probability=True, C='.01')
+    elif clfname=='logistic':
+        clf=LogisticRegression()
+    return clf
+    
+def regression(clfname):
+    if clfname=='ols':
+        clf=LinearRegression(normalize=True)
+    elif clfname=='ridge':
+        clf=Ridge() 
+    elif clfname=='lasso':
+        clf=Lasso()
+    elif clfname=='elastic':
+        clf=ElasticNet()
+    elif clfname=='svr':
+        clf=SVR(kernel=kernel, C=Cparam)
+    return clf
+
+
+
 
 ##################################################
 #               Misc Model Setup                 #
@@ -19,6 +60,16 @@ def splittraintest(df, climbids):
 #             Similarity Functions               #
 ##################################################
 
+
+def cluster(df, colname, clustertype='kmeans', k=10):
+    matrix=df.values
+    labels=df[colname].values
+    if clustertype=='affinity':
+        clf=AffinityPropagation()
+    elif clustertype=="kmeans":
+        clf=KMeans(n_clusters=k)
+    clusters=clf.fit_predict(matrix)
+    return pd.DataFrame(data={colname:labels,'cluster':clusters})
 
 def nansim(a,b,simmetric):
     import scipy.spatial.distance as ssd
@@ -57,6 +108,7 @@ def computeinteractionmatrix(allclimbs, allclimbers, hdf):
             climbindex=climbs.index(climb)
             mat[climbindex,climberindex]=1
     hitmat=pd.DataFrame(index=climbs, columns=climbers, data=mat)
+    hitmat['climbid']=climbs
     return hitmat
     
 def computestarmatrix(allclimbs, allclimbers,sdf):
@@ -65,8 +117,9 @@ def computestarmatrix(allclimbs, allclimbers,sdf):
     climbers=[val for val in sdf.climber.unique() if val in allclimbers]
     mat=np.zeros([len(climbs), len(climbers)])
     mat[:,:] = np.nan
+    sdf=sdf[(sdf['climb'].isin(climbs)) & (sdf['climber'].isin(climbers))]
     groups=sdf.groupby('climber').groups
-    for g in groups.keys():
+    for g in groups.keys(): 
         climberindex=climbers.index(g)
         u_climbs=groups[g]
         for c in u_climbs:
@@ -75,13 +128,16 @@ def computestarmatrix(allclimbs, allclimbers,sdf):
             climbindex=climbs.index(climb)
             mat[climbindex, climberindex]=rating
     starmat=pd.DataFrame(index=climbs, columns=climbers, data=mat)
+    starmat['climbid']=climbs
     return starmat
 
 def computeattributematrix(allclimbs, allcols, cdf):
     mat=cdf.loc[allclimbs,allcols].dropna()
-    allclimbs=mat.climbid.values
-    del mat['climbid']
-    attrmat=pd.DataFrame(index=allclimbs, columns=allcols[1:], data=mat.values)
+    allclimbs=mat.index.values
+    normalizer=sklearn.preprocessing.StandardScaler(copy=True, with_mean=True, with_std=True)
+    nmat=normalizer.fit_transform(mat.values)
+    attrmat=pd.DataFrame(index=allclimbs, columns=allcols, data=nmat)
+    attrmat['climbid']=allclimbs
     return attrmat
 
 def getcoord1up(adf,areaid):
@@ -108,10 +164,8 @@ def computelocationmatrix(cdf, adf, allclimbs):
             lat,lon=getcoord1up(adf,aid)
         locdf.loc[i,'latitude']=lat
         locdf.loc[i,'longitude']=lon
-    allclimbs=locdf['climbid']
-    del locdf['climbid']
     del locdf['area']
-    return pd.DataFrame(index=allclimbs, data=locdf.values).dropna()
+    return locdf.dropna()
 
 def gettopbottom(df, n=20):
     '''take similarity matrix and identify n most and least similar climbs'''
@@ -186,6 +240,11 @@ def getuserratings(sdf, cdf, u, features):
     Y=selectedclimbscores.ix[climbs,'starsscore'].values #true rating
     X=cdf.loc[climbs,features].values #training features are word counts
     return X, Y, climbs
+    
+def getuserspecificfeatures(user, sdf, climbs, featname):
+    sdf=sdf[sdf['climber']==user].groupby('climb').mean().loc[climbs,:]
+    featvec=sdf[featname].values
+    return featvec.reshape(len(featvec),1)
 
 
 ########################
@@ -203,15 +262,24 @@ def addresult(i, inum, results, climbs, Y_test, ypred, u):
     results['user'].append(u)
     return results
     
-def classify(clf,users, features, cdf, sdf, minratings=10):
+    
+def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10):
     summary={'score':[], 'user':[], 'ntest':[]}
-    results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[], 'otheravg':[]}
+    results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[]}
+    features=[x for x in cfeatures]
     for u in users:
-        X, Y, climbs=getuserratings(sdf, cdf, u, features)
+        X, Y, climbs=getuserratings(sdf, cdf, u, cfeatures)
+        for s in sfeatures:
+            featvec=getuserspecificfeatures(u, sdf, climbs, s)
+            X=np.hstack([X,featvec])
+            features.append(s)
         if len(climbs)>minratings:
-            folds=sklearn.cross_validation.KFold(len(climbs), n_folds=len(climbs))
+            folds=sklearn.cross_validation.LeaveOneOut(len(climbs))
             for train_i, test_i in folds:
                 X_train,X_test, Y_train, Y_test = X[train_i], X[test_i], Y[train_i], Y[test_i]
+                normalizer=sklearn.preprocessing.StandardScaler(copy=True, with_mean=True, with_std=True)
+                X_train=normalizer.fit_transform(X_train)
+                X_test=normalizer.transform(X_test)
                 if len(set(Y_train))>1:
                     clf.fit(X_train, Y_train)
                     ypred=clf.predict(X_test)
