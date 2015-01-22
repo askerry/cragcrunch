@@ -2,7 +2,7 @@ __author__ = 'amyskerry'
 
 import numpy as np
 import pandas as pd
-
+import sklearn.metrics
 
 ##################################################
 #               Misc Model Setup                 #
@@ -18,6 +18,7 @@ def splittraintest(df, climbids):
 ##################################################
 #             Similarity Functions               #
 ##################################################
+
 
 def nansim(a,b,simmetric):
     import scipy.spatial.distance as ssd
@@ -143,5 +144,47 @@ def getsimilar(climbname, u_preddf, cdf, adf):
     return simclimbs, simnames, dissimclimbs, dissimnames
 
 ##################################################
-#            Personalization Functions            #
+#            Personalization Functions           #
 ##################################################
+
+def round2score(df, truecol, predcol):
+    preds=[np.round(x) for x in df[predcol].values]
+    trues=df[truecol].values
+    acc= sklearn.metrics.accuracy_score(trues,preds)
+    f1=sklearn.metrics.f1_score(trues,preds, pos_label=4)
+    precision=sklearn.metrics.precision_score(trues,preds, pos_label=4)
+    recall=sklearn.metrics.recall_score(trues,preds, pos_label=4)
+    "**********Results for %s**********" %(predcol)
+    print "4 way accuracy %.3f" %acc
+    print "4 way f1 %.3f" %f1
+    print "4 way precision %.3f" %precision
+    print "4 way recall %.3f" %recall
+    return acc, precision, recall, f1
+    
+def getuserratings(sdf, cdf, u):
+    climbs=sdf[(sdf['climber']==u) & sdf['starsscore']>0]['climb'].values #all star ratings provided by user
+    climb_features=cdf.ix[climbs,:]
+    climb_features=climb_features[[type(v)==str for v in climb_features['description'].values]] #limit to climbs with descriptions
+    climbs=climb_features['climbid'].values #matrix of all climb info
+    descrips=climb_features['description'].values #len of description
+    selectedclimbscores=sdf[sdf['climber']==u].groupby('climb').mean()
+    Y=selectedclimbscores.ix[climbs,'starsscore'].values #true rating
+    otheravgs=selectedclimbscores.ix[climbs,'other_avg'].values #ratings by all other climbers (excluding u)
+    X=cdf.loc[climbs,[h+'_description' for h in terms]].values #training features are word counts
+    desclen=np.array([len(x) if isinstance(x,str) else 0 for x in descrips]) #get length of each description
+    X=(X.T/desclen).T #normalize word counts by length of description
+    return X, Y, climbs, otheravgs
+    
+def addsummary(summary, score, Y_test, u):
+    summary['score'].append(score)
+    summary['user'].append(u)
+    summary['ntest'].append(len(Y_test))
+    return summary
+def addresult(i, inum, results, climbs, Y_test, ypred, otheravgs, u):
+    results['climbid'].append(climbs[i])
+    results['true_rating'].append(Y_test[inum])
+    results['feat_pred'].append(ypred[inum])
+    results['user'].append(u)
+    results['otheravg'].append(otheravgs[i])
+    results['comb']=np.mean([otheravgs[i], ypred[inum]])
+    return results

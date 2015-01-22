@@ -23,16 +23,16 @@ def getareanest(areaid, db,areanest=[], nestednames=[]):
     local=db.session.query(AreaTable).filter_by(country = 'USA').all()
     regions=set([l.region for l in local])
     name=db.session.query(AreaTable).filter_by(areaid=areaid).first().name
+    print areanest
+    print name
     if name not in regions and len(areanest)<8:
         parent=db.session.query(AreaTable).filter_by(areaid=areaid).first().area
         parentname=db.session.query(AreaTable).filter_by(areaid=parent).first().name
-        print parentname
         areanest.append(parent)
         nestednames.append(parentname)
         getareanest(parent, db, areanest, nestednames)
     elif name not in regions:
         regionname=db.session.query(AreaTable).filter_by(areaid=areaid).first().region
-        print regionname
         regionid=db.session.query(AreaTable).filter_by(name=regionname).first().areaid
         areanest.append(regionid)
         areanest.append(regionname)

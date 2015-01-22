@@ -10,6 +10,21 @@ import numpy as np
 import clean
 import random as rd
 
+def getavg(starid, climber, sdf=None):
+    '''for each climber's rating, get the average of that climber's rating on all other climbs'''
+    udf=sdf[(sdf['climber']==climber) & (sdf['starid']!=starid)]
+    return udf['starsscore'].mean()
+
+def getclimberdata(climberid, hdf=None, cdf=None):
+    '''get the easiest, hardest, and median difficulty of the climbs climberid has touched'''
+    climbshit=hdf[hdf['climber']==climberid].climb.unique()
+    gradeshit=cdf.loc[climbshit,'numerizedgrade'].values
+    return min(gradeshit), max(gradeshit),np.median(gradeshit)
+
+def getnumhits(climberid, hdf=None):
+    '''how many climbs has this climber touched?'''
+    return len(hdf[hdf['climber']==climberid])
+
 def getratingcounts(climbid, sdf=None):
     '''return number of people who have rating a climb'''
     relsdf=sdf[sdf['climb']==climbid]
@@ -18,12 +33,13 @@ def getratingcounts(climbid, sdf=None):
 
 def getnonuserstar(climbid, userid, sdf=None):
     '''return avg rating of a climb for all users excluding that user'''
-    climbdf=sdf[sdf['climb']==climbid]
-    nonuserdf=climbdf[climbdf['climber']!=userid]
-    avg=nonuserdf.starsscore.mean()
-    print avg
-    std=nonuserdf.starsscore.std()
-    return avg, std
+    if len(sdf)==1:
+        return np.nan, np.nan
+    else:
+        nonuserdf=sdf[sdf['climber']!=userid]
+        avg=nonuserdf.starsscore.mean()
+        std=nonuserdf.starsscore.std()
+        return avg, std
 
 def getstates(areadf):
     '''take an area and define the region for it based on it's parent'''

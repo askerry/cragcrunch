@@ -10,6 +10,23 @@ import numpy as np
 import seaborn as sns
 from matplotlib.patches import Rectangle
 
+def plotresults(df, truecol, predcol):
+    if len(df[predcol].unique())>5:
+        counts=[]
+        gs=df.groupby(truecol).groups
+        for key in [1,2,3,4]:
+            rel=df.ix[gs[key]]
+            counts.append(rel.groupby(predcol).count()['climbid'].values)
+        counts=np.array(counts)
+        countsdf=pd.DataFrame(columns=[1,2,3,4], data=counts)
+        countsdf['true']=['1 star','2 stars','3 stars','4 stars']
+        countsdf=countsdf.groupby('true').mean()
+        propdf=countsdf.divide(countsdf.sum(axis=1), axis='rows')
+        plotconfmat(propdf[1:], propdf['true'].values)
+    else:
+        df.plot('predcol', 'truecol', kind='scatter')
+        
+
 def plotconfmat(conf, labels):
     conf=conf*100
     heatmap = plt.pcolor(conf, cmap='Blues', vmax=100, vmin=0)

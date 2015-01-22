@@ -22,14 +22,10 @@ class DBConnection():
         self.session.close()
     def rawsql(self, string):
         sql=text(string)
-        print
-        print "QUERY: "+str(sql)
         returned = self.engine.execute(sql)
         entries=[]
         for row in returned:
             entries.append(dict(title=row[0], text=row[1]))
-        print "OUTPUT: " + ', '.join([str(d) for d in entries])
-        print
         return entries
 
 
@@ -41,7 +37,6 @@ def connect_db():
 
 def check_db_connection():
     dbconn=connect_db()
-    print "connected to db"
     return dbconn
 
 #testconn=check_db_connection()
