@@ -23,3 +23,5 @@ class Cfg():
         self.use_unicode = use_unicode
         self.clobber = clobber
 DBCFG=Cfg(projectroot, host, user, passwd, dbname='climbdb')
+
+

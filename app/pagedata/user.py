@@ -16,9 +16,19 @@ from flask import jsonify
 import home as hf
 import climb as cf
 import os
+from sqlalchemy import and_
+import sys
+
+rootdir=os.getcwd()
+while 'Projects' in rootdir:
+    rootdir=os.path.dirname(rootdir)
+dirname=os.path.join(rootdir, 'Projects', 'cragcrunch/')
+sys.path.append(dirname)
+
+import antools
 
 
-from config import rootdir
+from config import rootdir, projectroot
 
 
 ##################################################
@@ -66,11 +76,16 @@ def getuserrecs(udict, db):
 
 def getusersimilarclimbs(udict, db):
     graderange=getgraderange(udict,db)
-    candidates=db.session.query(ClimbTable).filter_by(mainarea=udict['mainarea']).where(between(ClimbTable.numerizedgrade, graderange[0], graderange[1])).all()
-    .filter(and_(ClimbTable.numerizedgrade >= graderange[0], ClimbTable.numerizedgrade <= graderange[1])
-    print len(candidates)
+    candidates=db.session.query(ClimbTable).filter_by(mainarea=udict['mainarea']).filter(and_(ClimbTable.numerizedgrade >= graderange[0], ClimbTable.numerizedgrade <= graderange[1])).all()
+    print "processing %s candidate regions" %len(candidates)
+    con=db.engine.connect()
+    result = con.execute("select * from final_X_matrix")
     trainedclfdict=loadtrainedmodel(udict)
-
+    features=trainedclfdict['features']
+    rlist=[]
+    for r in result:
+        rlist.append({key:r[key] for key in features})
+    print len(rlist)
 
 def getgraderange(udict,db):
     g_min = udict['g_min']
@@ -85,9 +100,9 @@ def getgraderange(udict,db):
 
 def loadtrainedmodel(udict):
     fname='user_%s_model.pkl'%(udict['climberid'])
-    filename=os.path.join(projectroot,'data','models',fname)
-    with open(filename, 'wb') as output:
-        trainedclfdict=pickle.load(filename)
+    filename=os.path.join(rootdir,'Projects/cragcrunch/data','models',fname)
+    with open(filename, 'r') as inputfile:
+        trainedclfdict=pickle.load(inputfile)
     return trainedclfdict
 
 def makejsontemplate():

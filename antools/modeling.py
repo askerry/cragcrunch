@@ -307,5 +307,9 @@ def savefinalmodel(X,Y,clf,u,features,datadir):
     filename=os.path.join(datadir,fname)  
     with open(filename, 'wb') as output:
         pickler = pickle.Pickler(output, pickle.HIGHEST_PROTOCOL)
-        pickler.dump(finalclf)
+        try:
+            pickler.dump(finalclf)
+        except:
+            print "pickle fail"
     return finalclf
+    

@@ -45,6 +45,7 @@ class ClimbTable(Base):
     pageviews = Column(String(30))
     submittedby = Column(String(70))
     commentsmerged = Column(Text)
+    numerizedgrade = Column(Float)
 
 for c in terms:
     setattr(ClimbTable,c+'_description', Column(Integer))
