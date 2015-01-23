@@ -65,7 +65,8 @@ def normalizetoindividual(indstars):
     indstars['zscored_star']=(indstars['starsscore'].values-indstars['starsscore'].mean())/indstars['starsscore'].std()
     return indstars
     
-def relativegrade(gid, climbid, grade, cdf=None, ndictgrades={}):
+def relativegrade(gid, climbid, grade, cdf=None, ndictgrades=None):
+    ndictgrades={}
     if climbid in cdf.index.values:
         consensus=cdf.loc[climbid,'grade']
         consensus_rank=ndictgrades[consensus]

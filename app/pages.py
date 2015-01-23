@@ -22,11 +22,13 @@ def result_home(request, g):
 ################     USER PAGE    ####################
 
 
-def getuserpage(g, inputdict):
+def getuserpage(g, inputdict, areaid=None):
     climberid=inputdict['userid']
     a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict=uf.getuserdict(a, g.db)
-    urecs=uf.getuserrecs(udict, g.db)
+    if areaid is None:
+        areaid=udict['mainarea']
+    urecs=uf.getuserrecs(udict, g.db, areaid)
     uplotdata=uf.getuserplots(udict, g.db)
     return udict, urecs, uplotdata
 

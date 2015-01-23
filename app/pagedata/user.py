@@ -54,7 +54,7 @@ def getuserdict(u,db):
 def getuserplots(udict,db):
     userid=udict['climberid']
     userstars=db.session.query(StarsTable).filter_by(climber=userid).all()
-    sdf=misc.convertsqlobj2df(userstars)
+    sdf=misc.convertsqlobj2df(userstars) ##WTF why did i do it this way
     userclimbs=sdf.climb.unique()
     climbdata=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(userclimbs)).all()
     cdf=misc.convertsqlobj2df(climbdata)
@@ -66,27 +66,50 @@ def getuserplots(udict,db):
         djsons.append(pushdata(corrs, sems, labels, '', t, 'preference score', plotid))
     return djsons
     
-def getuserrecs(udict, db):
+def getuserrecs(udict, db, area):
     userid=udict['climberid']
-    climbids=getusersimilarclimbs(udict, db)
-    climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
+    climbids=getusersimilarclimbs(udict, db, area)
+    #climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
     climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
     return recclimbs
 
-def getusersimilarclimbs(udict, db):
+def getusersimilarclimbs(udict, db, area):
     graderange=getgraderange(udict,db)
-    candidates=db.session.query(ClimbTable).filter_by(mainarea=udict['mainarea']).filter(and_(ClimbTable.numerizedgrade >= graderange[0], ClimbTable.numerizedgrade <= graderange[1])).all()
-    print "processing %s candidate regions" %len(candidates)
-    con=db.engine.connect()
-    result = con.execute("select * from final_X_matrix")
+    candidates=db.session.query(ClimbTable).filter_by(mainarea=area).filter(and_(ClimbTable.numerizedgrade >= graderange[0], ClimbTable.numerizedgrade <= graderange[1])).all()
+    candidates=[cf.getclimbdict(c, db) for c in candidates]
     trainedclfdict=loadtrainedmodel(udict)
-    features=trainedclfdict['features']
-    rlist=[]
-    for r in result:
-        rlist.append({key:r[key] for key in features})
-    print len(rlist)
+    classorder=list(trainedclfdict['clf'].classes_)
+    print "processing %s candidate regions" %len(candidates)
+    Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
+    preds,predprobas,climbs=[],[],[]
+    for climb in candidates:
+        cid=climb['climbid']
+        if cid in Xdf.index.values:
+            row=Xdf.loc[cid,:]
+            del row['climbid']
+            featurevector=row.values
+            pred=trainedclfdict['clf'].predict(featurevector)[0]
+            preds.append(pred)
+            predprobas.append(trainedclfdict['clf'].predict_proba(featurevector)[0][classorder.index(pred)])
+            climbs.append(cid)
+    preddf=pd.DataFrame(data={'pred':preds, 'prob':predprobas,'climbid':climbs})
+    preddf=preddf.sort(columns=['pred','prob'], ascending=False)
+    print preddf.iloc[:10]
+    return preddf.iloc[:10,:].climbid.values
 
+
+
+'''
+    #con=db.engine.connect()
+    #result = con.execute("select * from final_X_matrix")
+    trainedclfdict=loadtrainedmodel(udict)
+    #features=trainedclfdict['features']
+    #rlist=[]
+    #for r in result:
+    #    rlist.append({key:r[key] for key in features})
+    #print len(rlist)
+'''
 def getgraderange(udict,db):
     g_min = udict['g_min']
     g_max = udict['g_max']

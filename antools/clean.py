@@ -162,7 +162,7 @@ def fixstars(stardf, climbdf):
 #      Misc Grade Cleanups     #
 ################################
 
-def numerizegrades(grade, gradelists=[]):
+def numerizegrades(grade, gradelists=()):
     '''convert grade to numeric scale'''
     num=np.nan
     for l in gradelists:
