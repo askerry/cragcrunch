@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash
+     abort, render_template, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
@@ -86,13 +86,23 @@ def view(searchid=0):
 @app.route('/user')
 @app.route('/user/<userid>')
 def user(userid=123):
-    userdict, userrecs, userplotdata=pinf.getuserpage(g, {'userid':userid})
-    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata)
+    userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
+    print "XXXXXXX"
+    print defaultarea
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=defaultarea)
 
 @app.route('/about')
 def about():
     text='test text test text'
     return render_template('about.html', text=text)
+
+@app.route("/db_json")
+def updaterecs():
+    areaid=10
+    userid=2424
+    udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid)
+    return jsonify({'recs':urecs})
+
 
 
 if __name__ == '__main__':

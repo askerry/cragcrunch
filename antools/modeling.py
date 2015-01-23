@@ -15,6 +15,7 @@ from sklearn.svm import SVC, SVR
 from sklearn.ensemble import RandomForestClassifier
 
 class RandomForestClassifierWithCoef(RandomForestClassifier):
+    '''extension of the RandomForectClassifier class that allows me to call coef_ instead of feature_importances_ (for ease/consistency with APIs of other models)'''
     def fit(self, *args, **kwargs):
         super(RandomForestClassifierWithCoef, self).fit(*args, **kwargs)
         self.coef_ = self.feature_importances_
@@ -23,9 +24,9 @@ def classifier(clfname):
     if clfname=='gnb':
         clf=GaussianNB()#.sigma_ .theta_
     elif clfname=='rfc':
-        clf=RandomForestClassifierWithCoef(n_estimators=100, oob_score=True, )
+        clf=RandomForestClassifierWithCoef(n_estimators=50, oob_score=True, )
     elif clfname=='svm':
-        clf=SVC(kernel='linear', probability=True, C='.01')
+        clf=SVC(kernel='linear', probability=True, C=.1)
     elif clfname=='logistic':
         clf=LogisticRegression()
     return clf
@@ -267,6 +268,7 @@ def addresult(i, inum, results, climbs, Y_test, ypred, u):
 def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=False, truecol='starsscore', datadir=None):
     summary={'score':[], 'user':[], 'ntest':[]}
     results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[]}
+    importantfeats=[]
     try:
         features=[float(x) for x in cfeatures]
     except:
@@ -282,23 +284,34 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
         if len(climbs)>minratings:
             folds=sklearn.cross_validation.LeaveOneOut(len(climbs))
             for train_i, test_i in folds:
-                X_train,X_test, Y_train, Y_test = X[train_i], X[test_i], Y[train_i], Y[test_i]
-                normalizer=sklearn.preprocessing.StandardScaler(copy=True, with_mean=True, with_std=True)
-                X_train=normalizer.fit_transform(X_train)
-                X_test=normalizer.transform(X_test)
-                if len(set(Y_train))>1:
-                    clf.fit(X_train, Y_train)
-                    ypred=clf.predict(X_test)
-                    score=clf.score(X_test, Y_test)
-                    summary=addsummary(summary, score, Y_test, u)
-                    for inum,i in enumerate(test_i):
-                        results=addresult(i,inum, results, climbs, Y_test, ypred, u)
+                results, summary, feats=foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u)
+                importantfeats.append(feats)
             if datadir is not None:
                 clf.fit(X, Y)
                 finalclf=savefinalmodel(X,Y,clf,u,features,datadir)
     resultsdf=pd.DataFrame(data=results)    
     summarydf=pd.DataFrame(data=summary) 
-    return summarydf, resultsdf  
+    return summarydf, resultsdf, importantfeats  
+    
+def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u):
+    X_train,X_test, Y_train, Y_test = X[train_i], X[test_i], Y[train_i], Y[test_i]
+    normalizer=sklearn.preprocessing.StandardScaler(copy=True, with_mean=True, with_std=True)
+    X_train=normalizer.fit_transform(X_train)
+    X_test=normalizer.transform(X_test)
+    if len(set(Y_train))>1:
+        clf.fit(X_train, Y_train)
+        ypred=clf.predict(X_test)
+        score=clf.score(X_test, Y_test)
+        
+        summary=addsummary(summary, score, Y_test, u)
+        for inum,i in enumerate(test_i):
+            results=addresult(i,inum, results, climbs, Y_test, ypred, u)
+        importantfeats=getfeatimportances(clf, 10)
+    return results, summary, importantfeats
+    
+def getfeatimportances(clf,k):
+    #coefs=clf.coefs_
+    return []
     
 def savefinalmodel(X,Y,clf,u,features,datadir):
     clf.fit(X, Y)

@@ -18,16 +18,15 @@ import climb as cf
 import os
 from sqlalchemy import and_
 import sys
+from collections import OrderedDict
+
 
 rootdir=os.getcwd()
 while 'Projects' in rootdir:
     rootdir=os.path.dirname(rootdir)
 dirname=os.path.join(rootdir, 'Projects', 'cragcrunch/')
 sys.path.append(dirname)
-
 import antools
-
-
 from config import rootdir, projectroot
 
 
@@ -82,34 +81,40 @@ def getusersimilarclimbs(udict, db, area):
     classorder=list(trainedclfdict['clf'].classes_)
     print "processing %s candidate regions" %len(candidates)
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
-    preds,predprobas,climbs=[],[],[]
+    datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}
     for climb in candidates:
-        cid=climb['climbid']
-        if cid in Xdf.index.values:
-            row=Xdf.loc[cid,:]
-            del row['climbid']
-            featurevector=row.values
-            pred=trainedclfdict['clf'].predict(featurevector)[0]
-            preds.append(pred)
-            predprobas.append(trainedclfdict['clf'].predict_proba(featurevector)[0][classorder.index(pred)])
-            climbs.append(cid)
-    preddf=pd.DataFrame(data={'pred':preds, 'prob':predprobas,'climbid':climbs})
+        datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classorder)
+    preddf=pd.DataFrame(data=datadict)
     preddf=preddf.sort(columns=['pred','prob'], ascending=False)
     print preddf.iloc[:10]
     return preddf.iloc[:10,:].climbid.values
 
+def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classorder):
+    cid=climb['climbid']
+    if cid in Xdf.index.values:
+        row=Xdf.loc[cid,:]
+        del row['climbid']
+        featurevector=row.values
+        pred=trainedclfdict['clf'].predict(featurevector)[0]
+        datadict['pred'].append(pred)
+        datadict['prob'].append(trainedclfdict['clf'].predict_proba(featurevector)[0][classorder.index(pred)])
+        datadict['climbid'].append(cid)
+        datadict['style'].append(climb['style'])
+        datadict['mainarea'].append(['mainarea'])
+        datadict['grade'].append(['grade'])
+        hit = len(pd.read_sql("SELECT * from hits_prepped where climber = %s and climb = %s" %(udict['climberid'],cid), db.engine, index_col='index'))
+        datadict['hit'].append(hit)
+    return datadict
 
+def getmainareaoptions(db):
+    localdf=pd.read_sql("SELECT * from area_prepped where country = 'USA'", db.engine, index_col='index').sort(columns='name')
+    regions=[x for x in localdf.region.unique() if x !='World']
+    regionids=[float(localdf[localdf['name']==r].areaid.values[0]) for r in regions]
+    areadf=pd.read_sql("SELECT * from area_prepped where area in (%s)" %','.join(str(r) for r in regionids), db.engine, index_col='index').sort(columns='name')
+    areas = areadf['areaid'].values
+    names = areadf['name'].values
+    return OrderedDict((aid,names[aidn]) for aidn,aid in enumerate(areas))
 
-'''
-    #con=db.engine.connect()
-    #result = con.execute("select * from final_X_matrix")
-    trainedclfdict=loadtrainedmodel(udict)
-    #features=trainedclfdict['features']
-    #rlist=[]
-    #for r in result:
-    #    rlist.append({key:r[key] for key in features})
-    #print len(rlist)
-'''
 def getgraderange(udict,db):
     g_min = udict['g_min']
     g_max = udict['g_max']
@@ -119,7 +124,6 @@ def getgraderange(udict,db):
     else:
         range=[g_median-8, g_median+8]
     return range
-
 
 def loadtrainedmodel(udict):
     fname='user_%s_model.pkl'%(udict['climberid'])
@@ -173,8 +177,10 @@ def getuserstarsbywords(sdf, cdf, climberid, terms):
     ndf=pd.DataFrame(index=sdf['climb'], data=mvals, columns=terms)
     ndf['starsscore']=sdf['starsscore'].values
     return ndf[['starsscore']+terms]
+
 def standarderrorcorr(r,n):
     return (1-r**2)/np.sqrt(n-1)
+
 def getuserpredictors(usdf,t,minn=6):
     predictions=usdf.corr().loc['starsscore'][1:].dropna()
     corrs=predictions.values

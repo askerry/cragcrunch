@@ -52,7 +52,18 @@
 		</div>
 
 	<div id="userrecs">
-		<h3>Best climbs for you:</h3>
+		<h4>Top climbs for you in 
+		<select class="dropdown">
+		{%  for key in areas.keys() %}
+			{{ key }}
+			{% if key == defaultarea %}
+				<option value="{{ key }}" selected> {{areas[key]}} </option>
+			{% else %}
+				<option value="{{ key }}"> {{areas[key]}} </option>
+			{% endif %}
+		{% endfor %}
+		</select>
+		</h4>
 		      {% for rec in recs %}
 					<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
 					<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... {{ rec['mainarea_name'] }}, {{ rec['region'] }}</div>

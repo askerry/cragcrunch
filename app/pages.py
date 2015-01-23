@@ -5,6 +5,7 @@ import pagedata.user as uf
 import pagedata.climb as cf
 import pagedata.area as af
 import pagedata.home as hf
+import pandas as pd
 
 from config import rootdir
 
@@ -30,7 +31,8 @@ def getuserpage(g, inputdict, areaid=None):
         areaid=udict['mainarea']
     urecs=uf.getuserrecs(udict, g.db, areaid)
     uplotdata=uf.getuserplots(udict, g.db)
-    return udict, urecs, uplotdata
+    areas=uf.getmainareaoptions(g.db)
+    return udict, urecs, uplotdata, areas, udict['mainarea']
 
 ################     AREA PAGE    ####################
 
