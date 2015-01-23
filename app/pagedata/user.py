@@ -9,10 +9,14 @@ import numpy as np
 import pandas as pd
 import viz
 import misc
+from config import projectroot
+import pickle
 import json
 from flask import jsonify
 import home as hf
 import climb as cf
+import os
+
 
 from config import rootdir
 
@@ -54,13 +58,37 @@ def getuserplots(udict,db):
     
 def getuserrecs(udict, db):
     userid=udict['climberid']
-    #climbids=getusersimilarclimbs(udict, db)
+    climbids=getusersimilarclimbs(udict, db)
     climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
     climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
     return recclimbs
 
+def getusersimilarclimbs(udict, db):
+    graderange=getgraderange(udict,db)
+    candidates=db.session.query(ClimbTable).filter_by(mainarea=udict['mainarea']).where(between(ClimbTable.numerizedgrade, graderange[0], graderange[1])).all()
+    .filter(and_(ClimbTable.numerizedgrade >= graderange[0], ClimbTable.numerizedgrade <= graderange[1])
+    print len(candidates)
+    trainedclfdict=loadtrainedmodel(udict)
 
+
+def getgraderange(udict,db):
+    g_min = udict['g_min']
+    g_max = udict['g_max']
+    g_median = udict['g_median']
+    if g_max-g_min>16:
+        range=[g_min, g_max]
+    else:
+        range=[g_median-8, g_median+8]
+    return range
+
+
+def loadtrainedmodel(udict):
+    fname='user_%s_model.pkl'%(udict['climberid'])
+    filename=os.path.join(projectroot,'data','models',fname)
+    with open(filename, 'wb') as output:
+        trainedclfdict=pickle.load(filename)
+    return trainedclfdict
 
 def makejsontemplate():
     errdata={"name":"95% CI", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}

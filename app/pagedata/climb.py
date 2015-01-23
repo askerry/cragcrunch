@@ -84,6 +84,5 @@ def getsimilarclimbs(db, climbid, ClimbTable):
     ids=[float(el.climbid) for el in ids]
     simclimbids=[el for el in simids if el in ids]
     simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=climbid).first() for climbid in simclimbids]
-    print "getting recs"
     simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
     return simclimbdicts

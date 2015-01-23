@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import sklearn.metrics
 import sklearn.preprocessing
-
+import pickle
+import os
 from sklearn.cluster import KMeans, AffinityPropagation
 
 from sklearn.grid_search import GridSearchCV
@@ -22,7 +23,7 @@ def classifier(clfname):
     if clfname=='gnb':
         clf=GaussianNB()#.sigma_ .theta_
     elif clfname=='rfc':
-        clf=RandomForestClassifierWithCoef(n_estimators=100, oob_score=True)
+        clf=RandomForestClassifierWithCoef(n_estimators=100, oob_score=True, )
     elif clfname=='svm':
         clf=SVC(kernel='linear', probability=True, C='.01')
     elif clfname=='logistic':
@@ -231,15 +232,15 @@ def normalizewordcounts(climbdf, features,key):
     X=(X.T/desclen).T #normalize word counts by length of description
     climbdf.loc[climbs,features]=X
     return climbdf
-def getuserratings(sdf, cdf, u, features):
+def getuserratings(sdf, cdf, u, features, truecol):
     '''return X matrix of features, Y array of labels, list of climb indices'''
-    climbs=[val for val in sdf[(sdf['climber']==u) & sdf['starsscore']>0]['climb'].values if val in cdf.index.values] #all star ratings provided by user
-    climb_features=cdf.ix[climbs,:]
-    climbs=climb_features['climbid'].values
+    includedclimbs=[val for val in sdf[(sdf['climber']==u) & sdf['starsscore']>0]['climb'].values if val in cdf.index.values] #all star ratings provided by user
+    climb_features=cdf.loc[includedclimbs,:]
+    climbids=climb_features['climbid'].values
     selectedclimbscores=sdf[sdf['climber']==u].groupby('climb').mean()
-    Y=selectedclimbscores.ix[climbs,'starsscore'].values #true rating
-    X=cdf.loc[climbs,features].values #training features are word counts
-    return X, Y, climbs
+    Y=selectedclimbscores.loc[climbids,truecol].values #true rating
+    X=cdf.loc[climbids,features].values #training features are word counts
+    return X, Y, climbids
     
 def getuserspecificfeatures(user, sdf, climbs, featname):
     sdf=sdf[sdf['climber']==user].groupby('climb').mean().loc[climbs,:]
@@ -263,12 +264,17 @@ def addresult(i, inum, results, climbs, Y_test, ypred, u):
     return results
     
     
-def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10):
+def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=False, truecol='starsscore', datadir=None):
     summary={'score':[], 'user':[], 'ntest':[]}
     results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[]}
-    features=[x for x in cfeatures]
+    try:
+        features=[float(x) for x in cfeatures]
+    except:
+        features=[x for x in cfeatures]
     for u in users:
-        X, Y, climbs=getuserratings(sdf, cdf, u, cfeatures)
+        if dropself and u in features:
+            features.remove(u)
+        X, Y, climbs=getuserratings(sdf, cdf, u, cfeatures, truecol)
         for s in sfeatures:
             featvec=getuserspecificfeatures(u, sdf, climbs, s)
             X=np.hstack([X,featvec])
@@ -287,6 +293,19 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10):
                     summary=addsummary(summary, score, Y_test, u)
                     for inum,i in enumerate(test_i):
                         results=addresult(i,inum, results, climbs, Y_test, ypred, u)
+            if datadir is not None:
+                clf.fit(X, Y)
+                finalclf=savefinalmodel(X,Y,clf,u,features,datadir)
     resultsdf=pd.DataFrame(data=results)    
     summarydf=pd.DataFrame(data=summary) 
     return summarydf, resultsdf  
+    
+def savefinalmodel(X,Y,clf,u,features,datadir):
+    clf.fit(X, Y)
+    finalclf={'user':u, 'clf':clf, 'features':features}
+    fname='models/user_%s_model.pkl'%(u)
+    filename=os.path.join(datadir,fname)  
+    with open(filename, 'wb') as output:
+        pickler = pickle.Pickler(output, pickle.HIGHEST_PROTOCOL)
+        pickler.dump(finalclf)
+    return finalclf

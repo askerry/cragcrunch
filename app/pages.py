@@ -27,7 +27,6 @@ def getuserpage(g, inputdict):
     a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict=uf.getuserdict(a, g.db)
     urecs=uf.getuserrecs(udict, g.db)
-    print udict
     uplotdata=uf.getuserplots(udict, g.db)
     return udict, urecs, uplotdata
 

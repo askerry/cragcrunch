@@ -5,6 +5,7 @@ Created on Fri Jan 16 09:20:26 2015
 @author: amyskerry
 """
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
+from sqlalchemy import between
 import numpy as np
 import viz
 
@@ -17,7 +18,7 @@ from config import rootdir
     
 def gettopclimbs(db):
     #topclimbs = db.rawsql('select climbid, name from climb_prepped where pageviews> 30000 limit 10;')
-    topclimbs=db.session.query(ClimbTable).filter(ClimbTable.pageviews>20000).all()[:10]
+    topclimbs=db.session.query(ClimbTable).order_by(ClimbTable.pageviews.desc()).all()[:10]
     tlist=[{'name':c.name,'url':c.url, 'climbid':c.climbid, 'pageviews':int(c.pageviews), 'mainarea_name':db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name, 'region':c.region} for c in topclimbs]
     return tlist
 

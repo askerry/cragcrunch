@@ -77,6 +77,10 @@ class ClimberTable(Base):
     mixed_l = Column(String(30))
     mixed_f = Column(String(30))
     region = Column(String(70))
+    numhits = Column(Float)
+    g_min = Column(Float)
+    g_max = Column(Float)
+    g_median = Column(Float)
 
 '''
 class PhotoTable(Base):
