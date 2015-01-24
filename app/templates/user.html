@@ -50,12 +50,10 @@
 		</div>
 		</div>
 		</div>
-
 	<div id="userrecs">
 		<h4>Top climbs for you in 
-		<select class="dropdown">
+		<select id="dropdown">
 		{%  for key in areas.keys() %}
-			{{ key }}
 			{% if key == defaultarea %}
 				<option value="{{ key }}" selected> {{areas[key]}} </option>
 			{% else %}

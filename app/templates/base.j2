@@ -9,8 +9,6 @@
     <meta name="description" content="Insight Data Science Project">
     <meta name="keywords" content="rock climbing, data analysis, data science, visualization">
     <meta name="author" content="Amy E. Skerry">
-    <!--JQUERY-->
-    <script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
     <!-- Bootstrap -->
     <!--twitter bootstrap-->
@@ -21,7 +19,8 @@
     <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.2.0/less.min.js"></script>
     <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
-    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>-->
+    <!--JQUERY-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="http://code.highcharts.com/adapters/standalone-framework.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script> 
@@ -32,6 +31,25 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+<!--[
+    	<script>
+		$('select#dropdown').change(function(){
+		    alert('Select field value has changed to' + $('select#dropdown').val());
+		   $.ajax({
+		       type: 'GET',
+		      url: '/refreshrecs', // This is the url that will be requested
+		      data: {areaid: $('select#dropdown').val()},
+		      success: function(data) {
+					newrecs = data;
+					console.log(newrecs); // look at it!
+		    		},
+		      dataType: 'JSON'
+		    });
+		});
+		</script>
+-->
+
   </head>
   <body>
     <div id="page">
@@ -51,7 +69,7 @@
            <div class="collapse navbar-collapse">
              <ul class="nav navbar-nav">
                <li class="active"><a href="/home">Search</a></li>
-               <li><a href="/user/1856">Profile</a></li>
+               <li><a href="/user/2424">Profile</a></li>
                <li><a href="/about">About</a></li>
              </ul>
            </div><!--/.nav-collapse -->
@@ -67,5 +85,33 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+
+
+
+    <script>
+			$(document).ready(function(){
+//				$("#dropdown").css('color','blue');
+//
+//				var test = function(){
+//					var x="test";
+//					console.log(x);
+//					};
+//				$("#dropdown").change(test);
+	$('select#dropdown').change(function(){
+		    console.log($('select#dropdown').val())
+		   $.ajax({
+		      type: 'GET',
+		      url: '/refreshrecs', // This is the url that will be requested
+		      data: {areaid: $('select#dropdown'.val()) },
+		      success: function(data) {
+					newrecs = data;
+					console.log(newrecs); // look at it!
+		    		},
+		      dataType: 'JSON'
+		    });
+		});
+
+			});
+	</script>
   </body>
 </html>

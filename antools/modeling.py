@@ -8,6 +8,8 @@ import pickle
 import os
 from sklearn.cluster import KMeans, AffinityPropagation
 
+import utilities as uf
+
 from sklearn.grid_search import GridSearchCV
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LinearRegression,LogisticRegression, Lasso, Ridge, ElasticNet
@@ -22,9 +24,9 @@ class RandomForestClassifierWithCoef(RandomForestClassifier):
         
 def classifier(clfname):
     if clfname=='gnb':
-        clf=GaussianNB()#.sigma_ .theta_
+        clf=GaussianNB() #.sigma_ .theta_
     elif clfname=='rfc':
-        clf=RandomForestClassifierWithCoef(n_estimators=50, oob_score=True, )
+        clf=RandomForestClassifierWithCoef(n_estimators=10, oob_score=True)
     elif clfname=='svm':
         clf=SVC(kernel='linear', probability=True, C=.1)
     elif clfname=='logistic':
@@ -265,7 +267,7 @@ def addresult(i, inum, results, climbs, Y_test, ypred, u):
     return results
     
     
-def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=False, truecol='starsscore', datadir=None):
+def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=False, truecol='starsscore', datadir=None, getfeats=False):
     summary={'score':[], 'user':[], 'ntest':[]}
     results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[]}
     importantfeats=[]
@@ -273,8 +275,9 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
         features=[float(x) for x in cfeatures]
     except:
         features=[x for x in cfeatures]
+    climbers=[]
     for u in users:
-        if dropself and u in features:
+        if dropself and u in [str(f) for f in features]:
             features.remove(u)
         X, Y, climbs=getuserratings(sdf, cdf, u, cfeatures, truecol)
         for s in sfeatures:
@@ -282,18 +285,32 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
             X=np.hstack([X,featvec])
             features.append(s)
         if len(climbs)>minratings:
+            climbers.append(u)
             folds=sklearn.cross_validation.LeaveOneOut(len(climbs))
+            userfeats=[]
             for train_i, test_i in folds:
-                results, summary, feats=foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u)
-                importantfeats.append(feats)
+                results, summary, feats=foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u, features, getfeats)
+                userfeats.extend(list(feats))
+            userfeats=[str(word) for word in userfeats if not uf.isfloatable(str(word))]
+            importantfeats.append(userfeats)
             if datadir is not None:
                 clf.fit(X, Y)
                 finalclf=savefinalmodel(X,Y,clf,u,features,datadir)
+    importantfeats=makefeatdf(importantfeats, climbers)
     resultsdf=pd.DataFrame(data=results)    
     summarydf=pd.DataFrame(data=summary) 
     return summarydf, resultsdf, importantfeats  
+
+def makefeatdf(importantfeats, climbers):
+    allrelfeats=set([word for row in importantfeats for word in row])
+    featcounts={}
+    for feat in allrelfeats:
+        featcounts[feat]=[row.count(feat) for row in importantfeats]
+    df=pd.DataFrame(data=featcounts)
+    df['climber']=climbers
+    return df
     
-def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u):
+def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u, features, getfeats):
     X_train,X_test, Y_train, Y_test = X[train_i], X[test_i], Y[train_i], Y[test_i]
     normalizer=sklearn.preprocessing.StandardScaler(copy=True, with_mean=True, with_std=True)
     X_train=normalizer.fit_transform(X_train)
@@ -302,16 +319,19 @@ def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u):
         clf.fit(X_train, Y_train)
         ypred=clf.predict(X_test)
         score=clf.score(X_test, Y_test)
-        
         summary=addsummary(summary, score, Y_test, u)
         for inum,i in enumerate(test_i):
             results=addresult(i,inum, results, climbs, Y_test, ypred, u)
-        importantfeats=getfeatimportances(clf, 10)
+        if getfeats:
+            importantfeats=getfeatimportances(clf, np.array(features), 10)
+        else:
+            importantfeats=[]
     return results, summary, importantfeats
     
-def getfeatimportances(clf,k):
-    #coefs=clf.coefs_
-    return []
+def getfeatimportances(clf,features, k):
+    coefs=clf.coef_
+    feats=features[np.argsort(coefs)]
+    return feats[-k:]
     
 def savefinalmodel(X,Y,clf,u,features,datadir):
     clf.fit(X, Y)

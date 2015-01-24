@@ -113,7 +113,7 @@ def getmainareaoptions(db):
     areadf=pd.read_sql("SELECT * from area_prepped where area in (%s)" %','.join(str(r) for r in regionids), db.engine, index_col='index').sort(columns='name')
     areas = areadf['areaid'].values
     names = areadf['name'].values
-    return OrderedDict((aid,names[aidn]) for aidn,aid in enumerate(areas))
+    return OrderedDict((float(aid),str(names[aidn])) for aidn,aid in enumerate(areas))
 
 def getgraderange(udict,db):
     g_min = udict['g_min']

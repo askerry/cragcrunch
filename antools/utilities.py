@@ -98,6 +98,12 @@ def loadpickledobjects(filename):
             except:
                 remaining=0
     return objects
-    
+ 
+def isfloatable(x):   
+    try:
+        float(x)
+        return True
+    except:
+        return False
     
     

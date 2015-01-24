@@ -87,19 +87,17 @@ def view(searchid=0):
 @app.route('/user/<userid>')
 def user(userid=123):
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
-    print "XXXXXXX"
-    print defaultarea
-    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=defaultarea)
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea))
 
 @app.route('/about')
 def about():
     text='test text test text'
     return render_template('about.html', text=text)
 
-@app.route("/db_json")
+@app.route("/refreshrecs", methods=['GET', 'POST'])
 def updaterecs():
-    areaid=10
-    userid=2424
+    areaid=request.args.get('areaid')
+    #userid=request.args.get('userid')
     udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid)
     return jsonify({'recs':urecs})
 

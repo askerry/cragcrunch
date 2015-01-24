@@ -13,7 +13,7 @@ from sklearn.metrics import confusion_matrix
 
 
 def plotresults(df, truecol, predcol):
-    plt.figure(figsize=[3,2.5])
+    plt.figure(figsize=[4,3.5])
     if len(df[predcol].unique())<5:
         mat = confusion_matrix(df[truecol], df[predcol])
         labels=['1 star','2 stars','3 stars','4 stars']
@@ -33,8 +33,8 @@ def plotconfmat(conf, labels):
     heatmap = plt.pcolor(conf, cmap='Blues', vmax=100, vmin=0)
     plt.ylabel('true')
     plt.xlabel('predicted')
-    plt.xticks(np.arange(len(labels)),labels)
-    plt.yticks(np.arange(len(labels)),labels)
+    plt.xticks(np.arange(len(labels))+.5,labels)
+    plt.yticks(np.arange(len(labels))+.5,labels, rotation=90)
     plt.colorbar()
     
 def customlegend(colordict, loc=[1,0], alpha=1):
