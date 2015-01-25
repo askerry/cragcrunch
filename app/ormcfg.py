@@ -22,6 +22,7 @@ class AreaTable(Base):
     region = Column(String(20))
     country = Column(String(20))
     pageviews = Column(Float)
+    climbcounts = Column(Float)
 
 
 class ClimbTable(Base):

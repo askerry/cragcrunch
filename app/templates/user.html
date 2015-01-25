@@ -51,8 +51,19 @@
 		</div>
 		</div>
 	<div id="userrecs">
+		<div id="checkgroup">
+			<input type="checkbox" name="sportcheck" value='Sport' checked onchange="adjuststyle(this.value)">
+			<input type="checkbox" name="tradcheck" value='Trad' checked onchange="adjuststyle(this.value)">
+			<input type="checkbox" name="bouldercheck" value='Boulder' checked onchange="adjuststyle(this.value)">
+		</div>
+
+		<div class="sliderdiv">
+		  <div>easy<input id='gradeslider' type="range" min="1" max="5" value="3" step="1" onchange="adjustgrade(this.value)" />hard</div>
+		  <div class="step">difficulty</div>
+		<br>
+		</div>
 		<h4>Top climbs for you in 
-		<select id="dropdown">
+		<select id="dropdown" onchange="adjustarea(this.value)">
 		{%  for key in areas.keys() %}
 			{% if key == defaultarea %}
 				<option value="{{ key }}" selected> {{areas[key]}} </option>
@@ -62,12 +73,73 @@
 		{% endfor %}
 		</select>
 		</h4>
+		<div id="recbox">
 		      {% for rec in recs %}
 					<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
 					<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... {{ rec['mainarea_name'] }}, {{ rec['region'] }}</div>
 		      {% endfor %}
+		</div>
 	</div>
 	</div>
 </div>
+
+<script>
+    		//shift grade difficulty based on user response
+    		function adjustgrade(newgrade){
+				$.ajax({
+			      type: 'GET',
+			      url: '/refreshrecs', // This is the url that will be requested
+			      data: {areaid:{{defaultarea}}, userid:2424, changetype:'stylechange', gradeshift:newgrade, style: 'all'},
+			      success: function(data) {
+						newrecs = data;
+						console.log(newrecs); // look at it!
+			    		},
+			      dataType: 'JSON'
+			    });
+    		};
+    		//adjust style according to user pref
+    		function adjuststyle(newstyle){
+				$.ajax({
+			      type: 'GET',
+			      url: '/refreshrecs', // This is the url that will be requested
+			      data:  {areaid:{{defaultarea}}, userid:2424, changetype:'stylechange', gradeshift:0, style: 'all'},
+			      success: function(data) {
+						newrecs = data;
+						console.log(newrecs); // look at it!
+			    		},
+			      dataType: 'JSON'
+			    });
+    		};
+
+    		//adjust area based on user selection
+    		function adjustarea(newarea){
+    			console.log('TESTTTTTTTT')
+			   $.ajax({
+			      type: 'GET',
+			      url: '/refreshrecs', // This is the url that will be requested
+			      data: {areaid: newarea, userid:2424, changetype:'areachange', gradeshift:0, style: 'all'},
+			      success: function(newrecs) {
+			      		var str = 'test';
+			      		console.log(str)
+			      		console.log(newrecs); // look at it!
+			      		$('#recbox').hide();
+
+						for(var rec in newrecs){
+							console.log(rec)
+							var climbname=rec.name;
+							console.log(climbname)
+							var climbid=rec['climbid'];
+							var climbgrade=rec['grade'];
+							var climbarea=rec['climbid'];
+							var climbstyle=rec['mainarea_name'];
+							var climbregion=rec['region'];
+						}
+
+						$('#recbox').append(str);
+			    		},
+			      dataType: 'JSON'
+			    });
+				};
+</script>
 
 {% endblock %}

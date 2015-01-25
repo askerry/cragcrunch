@@ -71,6 +71,8 @@ def getuserrecs(udict, db, area):
     #climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
     climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
+    for d in recclimbs:
+        del d['_sa_instance_state']
     return recclimbs
 
 def getusersimilarclimbs(udict, db, area):
@@ -119,10 +121,7 @@ def getgraderange(udict,db):
     g_min = udict['g_min']
     g_max = udict['g_max']
     g_median = udict['g_median']
-    if g_max-g_min>16:
-        range=[g_min, g_max]
-    else:
-        range=[g_median-8, g_median+8]
+    range=[g_median-8, g_median+8]
     return range
 
 def loadtrainedmodel(udict):

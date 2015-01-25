@@ -9,6 +9,7 @@ import os
 from sklearn.cluster import KMeans, AffinityPropagation
 
 import utilities as uf
+import scipy.stats
 
 from sklearn.grid_search import GridSearchCV
 from sklearn.naive_bayes import GaussianNB
@@ -28,9 +29,9 @@ def classifier(clfname):
     elif clfname=='rfc':
         clf=RandomForestClassifierWithCoef(n_estimators=10, oob_score=True)
     elif clfname=='svm':
-        clf=SVC(kernel='linear', probability=True, C=.1)
+        clf=SVC(kernel='linear', probability=True, C=1)
     elif clfname=='logistic':
-        clf=LogisticRegression()
+        clf=LogisticRegression(C=1)
     return clf
     
 def regression(clfname):
@@ -226,20 +227,12 @@ def round2score(df, truecol, predcol):
 ########################
 #    Prep Prediction   #
 ########################
-def normalizewordcounts(climbdf, features,key):
-    '''replace word counts with word counts normalized by length of text'''
-    climbs=climbdf['climbid'].values
-    fullcontent=climbdf[key].values #len of description
-    X=climbdf.loc[climbs,features].values #training features are word counts
-    desclen=np.array([len(x) if isinstance(x,str) else 0 for x in fullcontent]) #get length of each description
-    X=(X.T/desclen).T #normalize word counts by length of description
-    climbdf.loc[climbs,features]=X
-    return climbdf
+
 def getuserratings(sdf, cdf, u, features, truecol):
     '''return X matrix of features, Y array of labels, list of climb indices'''
     includedclimbs=[val for val in sdf[(sdf['climber']==u) & sdf['starsscore']>0]['climb'].values if val in cdf.index.values] #all star ratings provided by user
-    climb_features=cdf.loc[includedclimbs,:]
-    climbids=climb_features['climbid'].values
+    climbdf=cdf.loc[includedclimbs,:]
+    climbids=climbdf['climbid'].values
     selectedclimbscores=sdf[sdf['climber']==u].groupby('climb').mean()
     Y=selectedclimbscores.loc[climbids,truecol].values #true rating
     X=cdf.loc[climbids,features].values #training features are word counts
@@ -284,6 +277,7 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
             featvec=getuserspecificfeatures(u, sdf, climbs, s)
             X=np.hstack([X,featvec])
             features.append(s)
+        print features
         if len(climbs)>minratings:
             climbers.append(u)
             folds=sklearn.cross_validation.LeaveOneOut(len(climbs))
@@ -305,16 +299,21 @@ def makefeatdf(importantfeats, climbers):
     allrelfeats=set([word for row in importantfeats for word in row])
     featcounts={}
     for feat in allrelfeats:
-        featcounts[feat]=[row.count(feat) for row in importantfeats]
+        featcounts[feat]=[float(row.count(feat))/len(row) for row in importantfeats]
     df=pd.DataFrame(data=featcounts)
     df['climber']=climbers
     return df
+
+def gettval(array):
+    t,p=scipy.stats.ttest_1samp(array, 0)
+    return [t,p]
     
 def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u, features, getfeats):
     X_train,X_test, Y_train, Y_test = X[train_i], X[test_i], Y[train_i], Y[test_i]
     normalizer=sklearn.preprocessing.StandardScaler(copy=True, with_mean=True, with_std=True)
     X_train=normalizer.fit_transform(X_train)
     X_test=normalizer.transform(X_test)
+    importantfeats=[]
     if len(set(Y_train))>1:
         clf.fit(X_train, Y_train)
         ypred=clf.predict(X_test)

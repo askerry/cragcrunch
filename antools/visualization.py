@@ -47,6 +47,9 @@ def customlegend(colordict, loc=[1,0], alpha=1):
 def alphapallete(palletename, n_colors, alpha):
     return [(tup[0],tup[1],tup[2], alpha) for tup in sns.color_palette(palletename, n_colors=n_colors)]
     
+    
+def plotROCcurve(resultsdf, threshrange):
+    pass
 
 #mapping
     

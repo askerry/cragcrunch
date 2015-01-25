@@ -5,20 +5,18 @@
 <br>
 <div class="contenthead">
 <div id="contenttitle">{{area['name']}}</div>                                  
-<div id="details">{{ area['mainarea_name'] }}, {{ area['region'] }}, {{ area['country'] }}</div>
+<div id="details">{% if area['mainarea_name' != '']%} {{ area['mainarea_name'] }}, {% endif %}{{ area['region'] }}, {{ area['country'] }}</div>
 </div>
+
 
 <div class="maincontent">
-<div>{{area['description']}}</div>
-<div>{{area['directions']}}</div>
-<div><a href="http://{{area['url']}}">View on MountainProject</a></div>
+<div>{{area['climbcount']}} climbs, <a href="http://{{area['url']}}">{{area['pageviews']}} views on MountainProject.com</a></div>
+<div><h4>Gear:</h4> {{area['directions']}}</div>
+<div><h4>Description:</h4> 
+{{area['description'] | safe}}
 </div>
-<h4>Most Popular Climbs </h4>
-	{% for e in area['popclimbs'].keys() %}
-        <a href="climb{{e}}">{{area['popclimbs'][e]}}</a>
-    {% endfor %}
+</div>
 <br>
 
 <br>
-{{plotdata}}
 {% endblock %}

@@ -3,6 +3,17 @@
     <form action="." method="POST">
         <span class="searchspan">Search for User, Climb, or Area: <input type="text" name="text"></span>
     </form>
+    <br>
+<!--
+    <form action="." method="POST">
+        <span class="searchspan">Search for User, Climb, or Area (CONSTRAINED): 
+        <select id="searchbox">
+        	{%  for possibility in avail %}
+				<option value="{{ possibility }}"> {{possibility}} </option>
+			{% endfor %}
+        </select></span>
+    </form>
+   -->
 <br>
 {% if (returntype=='result') %}
     <h4>Users</h4>

@@ -36,6 +36,11 @@ def getareadict(a,db):
     adict['popclimbs']={p['climbid']:p['name'] for p in popclimbs}
     adict['similarareas']=getsimilarareas(db,adict['areaid'])
     adict['allchildren']=allchildren
+    adict['pageviews']=int(adict['pageviews'])
+    try:
+        adict['climbcount']="%s climbs, " %int(adict['climbcount'])
+    except:
+        adict['climbcount']=''
     return adict
 
 def getsubareas(db, areaid):

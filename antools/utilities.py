@@ -7,8 +7,10 @@ Created on Fri Jan 16 10:11:44 2015
 
 import clean
 import miscdf
+import random as rd
 import numpy as np
 import pickle
+import pandas as pd
 
 def cleandf(df):
     '''apply various functions to clean string inputs from html'''
@@ -105,5 +107,32 @@ def isfloatable(x):
         return True
     except:
         return False
+ 
+def normalizewordcounts(climbdf, features,key):
+    '''replace word counts with word counts normalized by length of text'''
+    climbs=climbdf['climbid'].values
+    fullcontent=climbdf[key].values #len of description
+    X=climbdf.loc[climbs,features].values #training features are word counts
+    desclen=np.array([len(x) if isinstance(x,str) else 0 for x in fullcontent]) #get length of each description
+    X=(X.T/desclen).T #normalize word counts by length of description
+    climbdf.loc[climbs,features]=X
+    return climbdf
     
+def gettextfeats(cdf):
+    allterms=rd.holdterms+rd.descriptors+rd.easeterms+rd.safetyterms+rd.rockterms
+    alltermsdict={'holdterms':rd.holdterms,'descriptors':rd.descriptors,'easeterms':rd.easeterms,'safety':rd.safetyterms,'rockterms':rd.rockterms}
+    alltermsdict['allterms']=allterms
+    descripfeats=['%s_description' %(h) for h in allterms]
+    commentfeats=['%s_commentsmerged' %(h) for h in allterms]
+    #normalize all text by length of text
+    ndf_d=normalizewordcounts(cdf, descripfeats, 'description')[[col for col in cdf.columns if 'commentsmerged' not in col]]
+    ndf_c=normalizewordcounts(cdf, commentfeats, 'commentsmerged')[[col for col in cdf.columns if 'description' not in col]]
+    ndf=pd.merge(ndf_d, ndf_c, on='climbid', how="inner", suffixes=('', '_y'))
+    ndf=ndf[[col for col in ndf.columns if '_y' not in col]]
+    ndf_c_mat=ndf.loc[:,commentfeats].values
+    ndf_c_mat[np.isnan(ndf_c_mat)]=0
+    print np.any(np.isnan(ndf_c_mat))
+    ndf.loc[:,commentfeats]=ndf_c_mat
+    ndf.index=ndf.climbid.values
+    return allterms, alltermsdict, descripfeats, commentfeats, ndf
     

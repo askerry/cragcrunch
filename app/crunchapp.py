@@ -59,10 +59,12 @@ def teardown_request(exception):
 @app.route('/home')
 @app.route('/')
 def home():
+    #result, avail=pinf.initial_home(g)
     result=pinf.initial_home(g)
-    #result={}
+    #return render_template('home.html', returntype='noresult', result=result, avail=avail)
     return render_template('home.html', returntype='noresult', result=result)
 
+@app.route('/home', methods=['POST'])
 @app.route('/', methods=['POST'])
 def search():
     result=pinf.result_home(request, g)
@@ -96,9 +98,17 @@ def about():
 
 @app.route("/refreshrecs", methods=['GET', 'POST'])
 def updaterecs():
+    changetype=request.args.get('changetype')
+    print changetype
+    userid=request.args.get('userid')
+    print userid
     areaid=request.args.get('areaid')
-    #userid=request.args.get('userid')
-    udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid)
+    print areaid
+    if changetype=='areachange':
+        areaid=request.args.get('areaid')
+        userid=request.args.get('userid')
+        udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid)
+    print "SADGASGD"
     return jsonify({'recs':urecs})
 
 
