@@ -27,7 +27,7 @@
     <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
     <link href="../static/bootstrap-switch.css" rel="stylesheet">
     <script src="../static/js/bootstrap-switch.js"></script>
-
+    <script src="../static/js/bootbox.min.js"></script>
      <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />
 	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
 
@@ -66,6 +66,7 @@
                <li class="active"><a href="/home">Search</a></li>
                <li><a href="/user/2424">Profile</a></li>
                <li><a href="/about">About</a></li>
+               <li><a href="#" onclick=getnewuser();>I'm New!</a></li>
              </ul>
            </div><!--/.nav-collapse -->
          </div>
@@ -80,13 +81,21 @@
 
 
     <script>
+    			function checkusername(name){
+    				return name
+    			};
+    			function gotosetuppage(name){
+    				window.location.replace("/newuser/"+name);
+    			};
+    			function getnewuser(){
+					bootbox.prompt("Welcome to CragCrunch! Please enter a user name?", gotosetuppage);
+				};
 
 			$(document).ready(function(){
 
-				$("[name='sportcheck']").bootstrapSwitch('labelText', 'Sport','OffText', 'No','OnText', 'Yes');
-				$("[name='tradcheck']").bootstrapSwitch('labelText', 'Trad','OffText', 'No','OnText', 'Yes');
-				$("[name='bouldercheck']").bootstrapSwitch('labelText', 'Boulder','OffText', 'No','OnText', 'Yes');
-
+				$("#sportcheck").bootstrapSwitch('labelText', 'Sport','offText', 'No','onText', 'Yes');
+				$("#tradcheck").bootstrapSwitch('labelText', 'Trad','offText', 'No','onText', 'Yes');
+				$("#bouldercheck").bootstrapSwitch('labelText', 'Boulder','offText', 'No','onText', 'Yes');
 			});
 	</script>
   </body>

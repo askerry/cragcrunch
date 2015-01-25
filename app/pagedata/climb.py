@@ -64,9 +64,9 @@ def getclimbdict(c, db, getnest=False):
         cdict['length']=""
     cdict['pageviews']=int(cdict['pageviews'])
     if cdict['avgstars']==1:
-        cdict['avgstars']="%.2f star" %(cdict['avgstars'])
+        cdict['avgstars']="%.1f star" %(cdict['avgstars'])
     elif cdict['avgstars']>1:
-        cdict['avgstars']="%.2f stars" %(cdict['avgstars'])
+        cdict['avgstars']="%.1f stars" %(cdict['avgstars'])
     else:
         cdict['avgstars']="no stars"
     cdict['description']=cdict['description'].replace('. \n','<br><br>')

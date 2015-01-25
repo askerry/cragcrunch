@@ -125,6 +125,11 @@ a.subtlelink {
 	font-size:.9em;
 	color:#aab;
 }
+.mention{
+	font-size:1.5em;
+	margin-left:.5em;
+	color:grey;
+}
 .contenthead {
 	width:100%;
 	position:relative;
@@ -191,13 +196,22 @@ a.subtlelink {
 	height:100%;
 }
 
+#formbox{
+	background-color:white;
+	height:18%;
+	padding:.5em;
+}
+
 #recbox{
-	
+}
+
+#reccontainer{
+	position:relative;
+	margin-top:1em;
 }
 
 #checkgroup{
 	width:100%;
-	background-color:red;
 	text-align:center;
 }
 
@@ -208,24 +222,49 @@ a.subtlelink {
 
 
 .sliderdiv{
-	width:30em;
-	height:4em;
-	background-color:blue;
-	display:inline;
+	width:23em;
+	height:5em;
+	padding-top:.4em;
+	position:absolute
 }
 #gradeslider{
-	width:80%;
+	width:55%;
 	height:60%;
 	margin:auto;
-	background-color:red;
+	margin-left:5em;
+	display:inline;
 }
 
-.step{
-	width:20%;
+.caption{
+	width: 40%;
 	text-align:center;
 	margin:auto;
-	background-color:green;
+	padding-top:.5em;
+	margin-bottom:0em;
 }
+
+.sliderlabel{
+	padding:.1em;
+	position:absolute;
+	margin:1.5em;
+	margin-top:.7em;
+	display:inline;
+}
+.buttondiv{
+	right:1em;
+	height:5em;
+	width:24%;
+	display:inline;
+	position:absolute;
+	text-align:center;
+	padding:.5em;
+}
+#refreshbutton{
+	height:5em;
+	width:5em;
+}
+
+
 
 .plotrow{
 	height:50%;
@@ -288,9 +327,9 @@ a.subtlelink {
 /*       About Stuff       */
 /* *********************** */
 #logoimg {
-	height:6em;
+	height:14em;
 	right:0em;
-	bottom:0em;
+	top:3em;
 	display:inline;
 	position:absolute;
 }
@@ -299,9 +338,25 @@ a.subtlelink {
 	width:auto;
 }
 #faceimg {
-	height:12em;
+	height:35em;
 	right:0em;
-	bottom:0em;
+	top:26em;
 	display:inline;
 	position:absolute;
+}
+
+#imgpanel{
+	right:5em;
+	height:100%;
+	width:13%;
+	position:absolute;
+	top:0em;
+}
+
+#leftpanel{
+	padding-left:3em;
+	left:0em;
+	width:80%;
+	height:100%;
+	position:relative;
 }

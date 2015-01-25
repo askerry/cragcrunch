@@ -35,13 +35,14 @@ def result_home(request, g):
 ################     USER PAGE    ####################
 
 
-def getuserpage(g, inputdict, areaid=None):
+def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, boulder=True):
     climberid=inputdict['userid']
     a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict=uf.getuserdict(a, g.db)
     if areaid is None:
         areaid=udict['mainarea']
-    urecs=uf.getuserrecs(udict, g.db, areaid)
+    #urecs={}
+    urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder)
     uplotdata=uf.getuserplots(udict, g.db)
     areas=uf.getmainareaoptions(g.db)
     return udict, urecs, uplotdata, areas, udict['mainarea']

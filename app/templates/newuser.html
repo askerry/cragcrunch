@@ -1,0 +1,33 @@
+{% extends "base.j2" %}
+
+{% block content %}
+
+<h3>Welcome {{username}}!</h3>
+
+To find climbs that are right for you, we'll need to know a bit more about you.
+<br>
+<form>
+<h4>Gender:</h4>
+<select>
+	<option value='female'>Female</option>
+	<option value='male'>Male</option>
+	<option value='other'>Other</option>
+</select>
+<h4>State:</h4>
+<select>
+	{% for state in states.keys()%}
+		<option value={{state}}>{{states[states]}}</option>
+	{% endfor %}
+</select>
+<h4>Where do you usually climb?</h4>
+<select>
+	{% for area in areas.keys()%}
+		<option value={{area}}>{{areas[area]}}</option>
+	{% endfor %}
+</select>
+<br>
+<br>
+<input type="submit" value="Create Profile">
+</form>
+
+{% endblock %}
