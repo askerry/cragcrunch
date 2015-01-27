@@ -1,6 +1,7 @@
 __author__ = 'amyskerry'
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy import Column, Integer, Float, String, Boolean, Date, ForeignKey, Text
 from misc import terms
 
@@ -8,7 +9,7 @@ Base = declarative_base()
 
 class AreaTable(Base):
     __tablename__ = 'area_prepped'
-    areaid = Column(Integer, primary_key=True, autoincrement=True)
+    areaid = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     area = Column(Float, ForeignKey('area_prepped.areaid'))
     name = Column(String(70))
     url = Column(String(200))
@@ -27,7 +28,7 @@ class AreaTable(Base):
 
 class ClimbTable(Base):
     __tablename__ = 'climb_prepped'
-    climbid = Column(Integer, primary_key=True, autoincrement=True)
+    climbid = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     area = Column(Integer, ForeignKey('area_prepped.areaid'))
     region = Column(String(20))
     name = Column(String(70))
@@ -54,14 +55,14 @@ for c in terms:
 
 class ClimberTable(Base):
     __tablename__ = 'climber_prepped'
-    climberid = Column(Integer, primary_key=True, autoincrement=True)
-    mainarea = Column(Integer, ForeignKey('Area.areaid'))
+    climberid = Column(Integer, primary_key=True, autoincrement=True, nullable=False, index=True)
+    mainarea = Column(Integer, ForeignKey('area_prepped.areaid'))
     name = Column(String(70))
     url = Column(String(200))
     gender = Column(String(30))
     personal = Column(String(200))
     age = Column(Integer)
-    favclimbs_parsed = Column(Integer, ForeignKey('Climb.climbid'))
+    favclimbs_parsed = Column(Integer, ForeignKey('climb_prepped.climbid'))
     favclimbs = Column(String(200))
     interests = Column(String(200))
     climbstyles = Column(String(200))
@@ -80,9 +81,15 @@ class ClimberTable(Base):
     mixed_f = Column(String(30))
     region = Column(String(70))
     numhits = Column(Float)
-    g_min = Column(Float)
-    g_max = Column(Float)
-    g_median = Column(Float)
+    g_min_Sport = Column(Float)
+    g_max_Sport = Column(Float)
+    g_median_Sport = Column(Float)
+    g_min_Trad = Column(Float)
+    g_max_Trad = Column(Float)
+    g_median_Trad = Column(Float)
+    g_min_Boulder = Column(Float)
+    g_max_Boulder = Column(Float)
+    g_median_Boulder = Column(Float)
 
 '''
 class PhotoTable(Base):
@@ -102,9 +109,9 @@ class PhotoTable(Base):
 class TicksTable(Base):
     __tablename__ = 'ticks_prepped'
     ticksid = Column(Integer, primary_key=True, autoincrement=True)
-    climb = Column(Integer, ForeignKey('Climb.climbid'))
+    climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
     climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('Climber.climberid'))
+    climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
     note = Column(Text)#String(5000)
     date = Column(Date)
@@ -113,9 +120,9 @@ class TicksTable(Base):
 class CommentsTable(Base):
     __tablename__ = 'comments_prepped'
     commentsid = Column(Integer, primary_key=True, autoincrement=True)
-    climb = Column(Integer, ForeignKey('Climb.climbid'))
+    climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
     climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('Climber.climberid'))
+    climber = Column(Integer, ForeignKey('climb_prepped.climberid'))
     url = Column(String(200))
     comment = Column(Text)#String(10000)
     date = Column(Date)
@@ -125,18 +132,18 @@ class StarsTable(Base):
     __tablename__ = 'stars_prepped'
     starid = Column(Integer, primary_key=True, autoincrement=True)
     starsscore = Column(String(20))
-    climb = Column(Integer, ForeignKey('Climb.climbid'))
+    climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
     climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('Climber.climberid'))
+    climber = Column(Integer, ForeignKey('climb_prepped.climberid'))
     url = Column(String(200))
     name = Column(String(200))
 
 class GradesTable(Base):
     __tablename__ = 'grades_prepped'
     gradesid = Column(Integer, primary_key=True, autoincrement=True)
-    climb = Column(Integer, ForeignKey('Climb.climbid'))
+    climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
     climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('Climber.climberid'))
+    climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
     grade = Column(String(30))
     name = Column(String(200))

@@ -20,7 +20,6 @@ from sqlalchemy import and_
 import sys
 from collections import OrderedDict
 
-
 rootdir=os.getcwd()
 while 'Projects' in rootdir:
     rootdir=os.path.dirname(rootdir)
@@ -28,6 +27,8 @@ dirname=os.path.join(rootdir, 'Projects', 'cragcrunch/')
 sys.path.append(dirname)
 import antools
 from config import rootdir, projectroot
+import antools.randomstuff as rd
+
 
 
 ##################################################
@@ -68,6 +69,7 @@ def getuserplots(udict,db):
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
     userid=udict['climberid']
     climbids=getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder)
+    print climbids
     #climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
     climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
@@ -76,15 +78,18 @@ def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
     return recclimbs
 
 def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
-    graderange=getgraderange(udict,db, gradeshift)
+    graderanges={}
+    for style in ('Sport', 'Trad', 'Boulder'):
+        graderanges[style]=getgraderange(udict,db, gradeshift, style)
     styles=[]
     if sport: styles.append('Sport');
     if trad: styles.append('Trad');
     if boulder: styles.append('Boulder')
-    print styles
-    candidates=db.session.query(ClimbTable).filter_by(mainarea=area).filter(and_(ClimbTable.numerizedgrade >= graderange[0], ClimbTable.numerizedgrade <= graderange[1], ClimbTable.style.in_(styles))).all()
-    candidates=[cf.getclimbdict(c, db) for c in candidates]
-    trainedclfdict=loadtrainedmodel(udict)
+    candidates=[]
+    for style in styles:
+        thesecandidates=db.session.query(ClimbTable).filter_by(mainarea=area).filter(and_(ClimbTable.numerizedgrade >= graderanges[style][0], ClimbTable.numerizedgrade <= graderanges[style][1], (ClimbTable.style == style))).all()
+        candidates.extend([cf.getclimbdict(c, db) for c in thesecandidates])
+    trainedclfdict=loadtrainedmodel(udict) ##add logic for new users here
     classorder=list(trainedclfdict['clf'].classes_)
     print "processing %s candidate regions" %len(candidates)
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
@@ -93,13 +98,19 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
         datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classorder)
     preddf=pd.DataFrame(data=datadict)
     preddf=preddf.sort(columns=['pred','prob'], ascending=False)
-    print preddf.iloc[:10]
-    return preddf.iloc[:10,:].climbid.values
+    if len(preddf[(preddf['pred']==4) & (preddf['prob']>=.9)])>10:
+        preddf=preddf[(preddf['pred']==4) & (preddf['prob']>=.9)]
+        indices=preddf.climbid.values
+        np.random.shuffle(indices)
+        return indices[:10]
+    else:
+        return preddf.iloc[:10,:].climbid.values
 
 def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classorder):
     cid=climb['climbid']
+    ufeatures= trainedclfdict['features']
     if cid in Xdf.index.values:
-        row=Xdf.loc[cid,:]
+        row=Xdf.loc[cid,['climbid']+ufeatures]
         del row['climbid']
         featurevector=row.values
         pred=trainedclfdict['clf'].predict(featurevector)[0]
@@ -120,14 +131,20 @@ def getmainareaoptions(db):
     areadf=pd.read_sql("SELECT * from area_prepped where area in (%s)" %','.join(str(r) for r in regionids), db.engine, index_col='index').sort(columns='name')
     areas = areadf['areaid'].values
     names = areadf['name'].values
-    return OrderedDict((float(aid),str(names[aidn])) for aidn,aid in enumerate(areas))
+    return OrderedDict((float(aid),str(names[aidn])) for aidn,aid in enumerate(areas) if '*' not in str(names[aidn]))
 
-def getgraderange(udict,db, gradeshift):
-    g_min = udict['g_min']
-    g_max = udict['g_max']
-    g_median = udict['g_median']
-    range=[g_median-8, g_median+8]
-    range=[g+float(gradeshift) for g in range]
+def getgraderange(udict,db, gradeshift, style):
+    g_min = udict['g_min_%s' %style]
+    g_max = udict['g_max_%s' %style]
+    g_median = udict['g_median_%s' %style]
+    if style=='Boulder':
+        range=[g_median-3, g_median+3]
+        range=[g+float(gradeshift)/1.5 for g in range]
+    else:
+        range=[g_median-5, g_median+5]
+        range=[g+float(gradeshift) for g in range]
+    if range[1]<0:
+        range[1]=1
     return range
 
 def loadtrainedmodel(udict):
@@ -192,7 +209,3 @@ def getuserpredictors(usdf,t,minn=6):
     labels=predictions.index.values
     sems=[standarderrorcorr(r, len(usdf)) for r in corrs]
     return corrs, labels, sems
-
-def getstates(db):
-    states=db.session.query(AreaTable).filter_by(region='World').all()
-    return {state.areaid:state.name for state in states}

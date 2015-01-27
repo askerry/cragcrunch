@@ -8,18 +8,28 @@ Created on Fri Jan 16 12:49:34 2015
 import scipy.stats
 import numpy as np
 import clean
-import random as rd
+import randomstuff as rd
 
 def getavg(starid, climber, sdf=None):
     '''for each climber's rating, get the average of that climber's rating on all other climbs'''
     udf=sdf[(sdf['climber']==climber) & (sdf['starid']!=starid)]
     return udf['starsscore'].mean()
 
-def getclimberdata(climberid, hdf=None, cdf=None):
+def getclimberdata(climberid, style='', hdf=None, cdf=None):
     '''get the easiest, hardest, and median difficulty of the climbs climberid has touched'''
     climbshit=hdf[hdf['climber']==climberid].climb.unique()
-    gradeshit=cdf.loc[climbshit,'numerizedgrade'].values
-    return min(gradeshit), max(gradeshit),np.median(gradeshit)
+    styledf=cdf.loc[cdf['style']==style]
+    climbshit=[c for c in climbshit if c in styledf.climbid.unique()]
+    gradeshit=styledf.loc[climbshit,'numerizedgrade'].values
+    try:
+        return min(gradeshit), max(gradeshit),np.median(gradeshit)
+    except:
+        if style=='Boulder':
+            return 11, 14, 17
+        if style=='Sport':
+            return 34, 39, 46
+        elif style=='Trad':
+            return 25, 28, 31
 
 def getnumhits(climberid, hdf=None):
     '''how many climbs has this climber touched?'''

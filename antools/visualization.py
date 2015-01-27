@@ -10,6 +10,9 @@ import numpy as np
 import seaborn as sns
 from matplotlib.patches import Rectangle
 from sklearn.metrics import confusion_matrix
+from collections import OrderedDict as OD
+import scipy
+from mpl_toolkits.basemap import Basemap
 
 
 def plotresults(df, truecol, predcol):
@@ -52,8 +55,28 @@ def plotROCcurve(resultsdf, threshrange):
     pass
 
 #mapping
+
+def categorizecontinuous(array, bins=10):
+    counts, binedges=np.histogram(array, bins=bins)
+    return np.digitize(array, binedges)
+
+def mostfrequent(array):
+    return scipy.stats.mode(array)[0][0]
     
+def measurearea(areadf, climbdf, featurename, agg='mean'):
+    '''take feature and compute function over it for all climbs within each main area'''
+    climbdf=climbdf.loc[pd.notnull(climbdf['mainarea'])]
+    if agg=='mean':
+        areafeats=climbdf.groupby('mainarea').mean()[[featurename]]
+    elif agg=='count':
+        areafeats=climbdf.groupby('mainarea').count()[[featurename]]
+    elif agg=='mode':
+        areafeats=climbdf.groupby('mainarea').apply(mostfrequent)[[featurename]]
+    mapdf=areafeats.join(areadf[['latitude', 'longitude']], how='left')
+    return mapdf
+
 def mapfeature(coords, coordlabels, colordict, center=(33.73,-100.45),size='country'):
+    '''take a list of coordinates, labels, and colors, and plots them on USA map'''
     dmap=mapit(coords=center, size='country')
     for coordn, coord in enumerate(coords):
         if coordlabels[coordn] in colordict.keys():
@@ -63,13 +86,9 @@ def mapfeature(coords, coordlabels, colordict, center=(33.73,-100.45),size='coun
         dmap=plotloc(dmap, coords=coord, markersize=5, color=color)
     customlegend(colordict)
     return dmap
-    
-def legendhack(colordict):
-    keys=colordict.keys()
-    print keys
-    sns.palplot([colordict[key] for key in keys])    
-    
+
 def prepmapvars(mapdf, featurename=None):
+    '''take dataframe of coordinates and features and return appropriate lists for mapping'''
     mapdf=mapdf.loc[~np.isnan(mapdf['latitude'])]
     mapdf=mapdf.loc[[val!=None for val in mapdf[featurename].values]]
     try:
@@ -88,7 +107,14 @@ def prepmapvars(mapdf, featurename=None):
     else:
         colors=alphapallete('cool', len(labels), .6)
     colordict=OD([(label,colors[labeln]) for labeln,label in enumerate(labels)])
-    return coords, coordlabels, colordict    
+    return coords, coordlabels, colordict        
+    
+    
+    
+def legendhack(colordict):
+    keys=colordict.keys()
+    print keys
+    sns.palplot([colordict[key] for key in keys])    
 
 def mapit(lat=None, lon=None, coords=None, size='city', w=None, h=None, figsize=[20,6], projection='mill', bluemarble=False, landcolor=(.8,.5,.2,.03), lakecolor=(0,.1,.6,.1), resolution='i', fillcolor=(0,.1,.6,.1)):
     f=plt.figure(figsize=figsize)

@@ -2,6 +2,7 @@
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 from sqlalchemy import func
 import pagedata.user as uf
+import pagedata.newuser as nuf
 import pagedata.climb as cf
 import pagedata.area as af
 import pagedata.home as hf
@@ -69,3 +70,16 @@ def getclimbpage(g, inputdict):
     del cdict['_sa_instance_state']
     crecs=cf.getsimilarclimbs(g.db, climbid, ClimbTable)
     return cdict, crecs
+
+##############     NEW USER PAGE    ##################
+
+def getnewuseroptions(g):
+    states=nuf.getstates(g.db)
+    areas=uf.getmainareaoptions(g.db)
+    bouldergrades=nuf.getbouldergrades()
+    routegrades=nuf.getroutegrades()
+    return states, areas, bouldergrades, routegrades
+
+def adduser(g, request):
+    udict=nuf.addtodb(g.db, request)
+    return udict

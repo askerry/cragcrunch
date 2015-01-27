@@ -7,7 +7,7 @@ Created on Fri Jan 16 10:11:44 2015
 
 import clean
 import miscdf
-import random as rd
+import randomstuff as rd
 import numpy as np
 import pickle
 import pandas as pd
@@ -131,7 +131,6 @@ def gettextfeats(cdf):
     ndf=ndf[[col for col in ndf.columns if '_y' not in col]]
     ndf_c_mat=ndf.loc[:,commentfeats].values
     ndf_c_mat[np.isnan(ndf_c_mat)]=0
-    print np.any(np.isnan(ndf_c_mat))
     ndf.loc[:,commentfeats]=ndf_c_mat
     ndf.index=ndf.climbid.values
     return allterms, alltermsdict, descripfeats, commentfeats, ndf

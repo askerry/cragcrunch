@@ -99,28 +99,29 @@ def about():
 
 @app.route("/refreshrecs", methods=['GET', 'POST'])
 def updaterecs():
-    changetype=request.args.get('changetype')
-    if changetype=='areachange':
-        areaid=request.args.get('areaid')
-        userid=request.args.get('userid')
-        udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid)
-    elif changetype=='otherchange':
-        areaid=request.args.get('areaid')
-        userid=request.args.get('userid')
-        gs=request.args.get('gradeshift')
-        js2bool={'true':True, 'false':False}
-        sport=js2bool[request.args.get('sportcheck')]
-        trad=js2bool[request.args.get('tradcheck')]
-        boulder=js2bool[request.args.get('bouldercheck')]
-        print sport, trad, boulder
-        udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid, gradeshift=gs, sport=sport, trad=trad, boulder=boulder)
+    areaid=request.args.get('areaid')
+    userid=request.args.get('userid')
+    gs=request.args.get('gradeshift')
+    js2bool={'true':True, 'false':False}
+    sport=js2bool[request.args.get('sportcheck')]
+    trad=js2bool[request.args.get('tradcheck')]
+    boulder=js2bool[request.args.get('bouldercheck')]
+    print sport, trad, boulder
+    udict, urecs, uplotdata, areas, udict['mainarea']=pinf.getuserpage(g, {'userid':userid}, areaid=areaid, gradeshift=gs, sport=sport, trad=trad, boulder=boulder)
     return jsonify({'recs':urecs})
 
 @app.route("/newuser/<username>", methods=['GET', 'POST'])
 def newuser(username):
-    states=uf.getstates(g.db)
-    areas=uf.getmainareaoptions(g.db)
-    return render_template('newuser.html', username=username, states=states, areas=areas)
+    states, areas, bouldergrades, routegrades=pinf.getnewuseroptions(g)
+    return render_template('newuser.html', username=username, states=states, areas=areas, bouldergrades=bouldergrades, routegrades=routegrades)
+
+@app.route("/newuser/preferences", methods=['GET', 'POST'])
+def newuserpred():
+    print "ASDFASDF"
+    udict=pinf.adduser(g, request)
+    print udict
+    return render_template('newuserprefs.html', udict=udict)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

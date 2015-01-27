@@ -52,7 +52,7 @@
 	<div id="userrecs">
 		<div id="formbox">
 		<div id="checkgroup">
-			<input type="checkbox" id="sportcheck" value='Sport' checked>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<input type="checkbox" id="sportcheck" value='Sport' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 			<input type="checkbox" id="tradcheck" value='Trad' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 			<input type="checkbox" id="bouldercheck" value='Boulder' checked>
 		</div>
@@ -60,15 +60,15 @@
 		<div class="sliderdiv">
 			<div class="caption"><b>Adjust Difficulty</b></div>
 	        <div class="sliderlabel">Easier</div>
-	  		<input id='gradeslider' type="range" min="-19" max="19" value="0" step="2" />
+	  		<input id='gradeslider' type="range" min="-25" max="25" value="0" step="2" />
 	  		<div class="sliderlabel">Harder</div>
 		 </div>
-		 <div class="buttondiv" onclick="adjustother();"><img id="refreshbutton" src="../static/img/refresh.jpg" alt="refresh"></div>
+		 <div class="buttondiv" onclick="refreshrecs();"><img id="refreshbutton" src="../static/img/refresh.jpg" alt="refresh"></div>
 
 		 </div>
 		<div id="reccontainer">
 		<h4>Top climbs for you in 
-		<select id="dropdown" onchange="adjustarea(this.value)">
+		<select id="dropdown" onchange="refreshrecs()">
 		{%  for key in areas.keys() %}
 			{% if key == defaultarea %}
 				<option value="{{ key }}" selected> {{areas[key]}} </option>
@@ -93,6 +93,7 @@
 			function updaterec(data) {
 	      		console.log('got data!')
 	      		newrecs=data['recs']
+	      	    console.log(newrecs)
 				for(r in newrecs){
 					var rec=newrecs[r]
 					var climbname=rec['name'];
@@ -111,25 +112,14 @@
 				$('#recbox').show();
 	    		};
 
-    		//adjust style and grade according to user pref
-    		function adjustother(){
-    			$('#recbox').empty();
-				$.ajax({
-			      type: 'GET',
-			      url: '/refreshrecs', // This is the url that will be requested
-			      data:  {areaid:$('#dropdown').val(), userid:{{user['climberid']}}, changetype:'otherchange', gradeshift:$('#gradeslider').val(), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
-			      success: updaterec,
-			      dataType: 'JSON'
-			    });
-    		};
 
-    		//adjust area based on user selection
-    		function adjustarea(newarea){
+    		//adjust recs based on user selection
+    		function refreshrecs(){
     		   $('#recbox').empty();
 			   $.ajax({
 			      type: 'GET',
 			      url: '/refreshrecs', // This is the url that will be requested
-			      data: {areaid: newarea, userid:{{user['climberid']}}, changetype:'areachange', gradeshift:$('#gradeslider').val(), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
+			      data: {areaid: $('#dropdown').val(), userid:{{user['climberid']}}, gradeshift:$('#gradeslider').val(), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
 			      success: updaterec,
 			      dataType: 'JSON'
 			    });

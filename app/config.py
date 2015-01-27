@@ -25,3 +25,14 @@ class Cfg():
 DBCFG=Cfg(projectroot, host, user, passwd, dbname='climbdb')
 
 
+# model parameters
+
+from sklearn.ensemble import RandomForestClassifier
+
+class RandomForestClassifierWithCoef(RandomForestClassifier):
+    '''extension of the RandomForectClassifier class that allows me to call coef_ instead of feature_importances_ (for ease/consistency with APIs of other models)'''
+    def fit(self, *args, **kwargs):
+        super(RandomForestClassifierWithCoef, self).fit(*args, **kwargs)
+        self.coef_ = self.feature_importances_
+
+clf=RandomForestClassifierWithCoef(n_estimators=75, oob_score=True)

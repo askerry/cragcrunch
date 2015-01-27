@@ -6,25 +6,59 @@
 
 To find climbs that are right for you, we'll need to know a bit more about you.
 <br>
-<form>
+<form action="preferences" method="POST">
+<input type="hidden" name="name" value="{{username}}">
+
 <h4>Gender:</h4>
-<select>
+<select name='gender' class="defaultselect">
 	<option value='female'>Female</option>
 	<option value='male'>Male</option>
 	<option value='other'>Other</option>
 </select>
 <h4>State:</h4>
-<select>
+<select name="state" class="defaultselect">
 	{% for state in states.keys()%}
-		<option value={{state}}>{{states[states]}}</option>
+		<option value={{state}}>{{states[state]}}</option>
 	{% endfor %}
 </select>
 <h4>Where do you usually climb?</h4>
-<select>
+<select name="mainarea" class="defaultselect">
+	<option value='Empty'> </option>
 	{% for area in areas.keys()%}
 		<option value={{area}}>{{areas[area]}}</option>
 	{% endfor %}
 </select>
+<h4>What styles do you climb?</h4>
+<div id="stylediv">
+<div id="checkgroup">
+	<input type="checkbox" id="sportcheck" name="sportcheck" value='Sport' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+	<input type="checkbox" id="tradcheck" name="tradcheck" value='Trad' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+	<input type="checkbox" id="bouldercheck" name="bouldercheck" value='Boulder' checked>
+</div>
+</div>
+
+<h4>What's your average sport grade?</h4>
+<select name="sportgrade" class="defaultselect">
+	<option value='Empty'> Not Applicable </option>
+	{% for r in routegrades.keys()%}
+		<option value={{r}}>{{routegrades[r]}}</option>
+	{% endfor %}
+</select>
+<h4>What's your average trad grade?</h4>
+<select name="tradgrade" class="defaultselect">
+	<option value='Empty'> Not Applicable </option>
+	{% for r in routegrades.keys()%}
+		<option value={{r}}>{{routegrades[r]}}</option>
+	{% endfor %}
+</select>
+<h4>What's your average boulder grade?</h4>
+<select name="bouldergrade" class="defaultselect">
+	<option value='Empty'> Not Applicable </option>
+	{% for b in bouldergrades.keys()%}
+		<option value={{b}}>{{bouldergrades[b]}}</option>
+	{% endfor %}
+</select>
+
 <br>
 <br>
 <input type="submit" value="Create Profile">

@@ -25,8 +25,11 @@
     <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.2.0/less.min.js"></script>
     <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
-    <link href="../static/bootstrap-switch.css" rel="stylesheet">
+    <link href="../static/css/bootstrap-switch.css" rel="stylesheet">
     <script src="../static/js/bootstrap-switch.js"></script>
+    <link href="../static/css/slider.css" rel="stylesheet">
+    <script src="../static/js/bootstrap-slider.js"></script>
+    <script src="../static/js/bootbox.min.js"></script>
     <script src="../static/js/bootbox.min.js"></script>
      <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />
 	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
@@ -93,9 +96,10 @@
 
 			$(document).ready(function(){
 
-				$("#sportcheck").bootstrapSwitch('labelText', 'Sport','offText', 'No','onText', 'Yes');
-				$("#tradcheck").bootstrapSwitch('labelText', 'Trad','offText', 'No','onText', 'Yes');
-				$("#bouldercheck").bootstrapSwitch('labelText', 'Boulder','offText', 'No','onText', 'Yes');
+				$("#sportcheck").bootstrapSwitch({off:'No',on:'Yes',labelText:'Sport',size: 'sm'});
+				$("#tradcheck").bootstrapSwitch({labelText:'Trad',off:'No',on:'Yes'});
+				$("#bouldercheck").bootstrapSwitch({labelText:'Boulder',off:'No',on:'Yes'});
+
 			});
 	</script>
   </body>

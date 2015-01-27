@@ -5,6 +5,8 @@ import pandas as pd
 import sklearn.metrics
 import sklearn.preprocessing
 import pickle
+import matplotlib.pyplot as plt
+import seaborn as sns
 import os
 from sklearn.cluster import KMeans, AffinityPropagation
 
@@ -270,14 +272,14 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
         features=[x for x in cfeatures]
     climbers=[]
     for u in users:
+        userfeats=[x for x in features]
         if dropself and u in [str(f) for f in features]:
             features.remove(u)
         X, Y, climbs=getuserratings(sdf, cdf, u, cfeatures, truecol)
         for s in sfeatures:
             featvec=getuserspecificfeatures(u, sdf, climbs, s)
             X=np.hstack([X,featvec])
-            features.append(s)
-        print features
+            userfeats.append(s)
         if len(climbs)>minratings:
             climbers.append(u)
             folds=sklearn.cross_validation.LeaveOneOut(len(climbs))
@@ -293,13 +295,13 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
     importantfeats=makefeatdf(importantfeats, climbers)
     resultsdf=pd.DataFrame(data=results)    
     summarydf=pd.DataFrame(data=summary) 
-    return summarydf, resultsdf, importantfeats  
+    return summarydf, resultsdf, importantfeats
 
 def makefeatdf(importantfeats, climbers):
     allrelfeats=set([word for row in importantfeats for word in row])
     featcounts={}
     for feat in allrelfeats:
-        featcounts[feat]=[float(row.count(feat))/len(row) for row in importantfeats]
+        featcounts[feat]=[float(row.count(feat))/len(row) if len(row)>0 else 0 for row in importantfeats]
     df=pd.DataFrame(data=featcounts)
     df['climber']=climbers
     return df
@@ -344,4 +346,61 @@ def savefinalmodel(X,Y,clf,u,features,datadir):
         except:
             print "pickle fail"
     return finalclf
+    
+def regress(X,y):
+    from sklearn.linear_model import LinearRegression
+    clf= LinearRegression()
+    clf.fit(X, y)
+    R2=clf.score(X, y)
+    predicted_y=clf.predict(X)
+    residual_error=y-predicted_y
+    return R2, residual_error, predicted_y
+
+def iterativeregression(avgs, plotit=False, limit=None):
+    features=avgs.columns
+    keptfeatures,varexplained_full,varexplained_ind, iterationpredictions=[],[],[],[]
+    initialdata=avgs[features].values
+    y=avgs[features].values # y starts as initialdata and subsequently becomes the residuals
+    if limit is None:
+        limit=len(features)
+    for i in range(limit):
+        R2s=[]
+        for f in range(len(features)): #regress each isolated feature against the data
+            if f not in keptfeatures: #(if the feature has not already been selected)
+                X = np.array([item[f] for item in initialdata]).reshape(len(y),1)
+                R2, residual_error, predy = regress(X,y)
+                R2s.append(R2)
+            else:
+                R2s.append(0)
+        fn=R2s.index(np.max(R2s)) # best feature
+        keptfeatures.append(fn)
+        #recompute the relevant X vector and get its inidividual varexplained (in the fulldataset)
+        keeperX = np.array([item[fn] for item in initialdata]).reshape(len(y),1)
+        R2, residual_error, predy = regress(keeperX,initialdata)
+        varexplained_ind.append(R2)
+        #generate full X (of all kept features) to get the residuals
+        fullX = np.array([item[keptfeatures] for item in initialdata])
+        R2, residual_error, predy = regress(fullX,initialdata)
+        iterationpredictions.append(predy)
+        y = residual_error # the residuals are now our outcome variable for the subsequent iteration
+        varexplained_full.append(R2)
+    resultingfeatures=[features[fn] for fn in keptfeatures]
+    print (', ').join(resultingfeatures)
+    if plotit:
+        f,ax=plt.subplots(2,1, figsize=[14,8])
+        ax[0].plot(range(len(varexplained_full)), varexplained_full)
+        ax[0].set_xlabel('features')
+        ax[0].set_ylabel('total variance explained (cumulative)')
+        ax[0].set_xticks(range(len(resultingfeatures)))
+        ax[0].set_xticklabels(resultingfeatures, rotation=90)
+        ax[1].plot(range(len(varexplained_ind)), varexplained_ind)
+        ax[1].set_xlabel('features')
+        ax[1].set_ylabel('individual feature R-squared')
+        ax[1].set_xticks(range(len(resultingfeatures)))
+        ax[1].set_xticklabels(resultingfeatures, rotation=90)
+        plt.tight_layout()
+        sns.despine()
+    results={'df':avgs, 'predictions':iterationpredictions, 'features':resultingfeatures, 'varexp_full':varexplained_full, 'varexp_ind':varexplained_ind}
+    return results
+    
     
