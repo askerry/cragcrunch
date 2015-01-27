@@ -90,9 +90,11 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
         thesecandidates=db.session.query(ClimbTable).filter_by(mainarea=area).filter(and_(ClimbTable.numerizedgrade >= graderanges[style][0], ClimbTable.numerizedgrade <= graderanges[style][1], (ClimbTable.style == style))).all()
         candidates.extend([cf.getclimbdict(c, db) for c in thesecandidates])
     trainedclfdict=loadtrainedmodel(udict) ##add logic for new users here
+    features=trainedclfdict['features']
     classorder=list(trainedclfdict['clf'].classes_)
     print "processing %s candidate regions" %len(candidates)
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
+    Xdf=Xdf[features]
     datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}
     for climb in candidates:
         datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classorder)
@@ -148,11 +150,23 @@ def getgraderange(udict,db, gradeshift, style):
     return range
 
 def loadtrainedmodel(udict):
-    fname='user_%s_model.pkl'%(udict['climberid'])
-    filename=os.path.join(rootdir,'Projects/cragcrunch/data','models',fname)
-    with open(filename, 'r') as inputfile:
-        trainedclfdict=pickle.load(inputfile)
-    return trainedclfdict
+    try:
+        fname='user_%s_model.pkl'%(udict['climberid'])
+        filename=os.path.join(rootdir,'Projects/cragcrunch/data','models',fname)
+        with open(filename, 'r') as inputfile:
+            trainedclfdict=pickle.load(inputfile)
+        return trainedclfdict
+    except:
+        try:
+            fname='newuser_%s_model.pkl'%(udict['climberid'])
+            filename=os.path.join(rootdir,'Projects/cragcrunch/data','models',fname)
+            with open(filename, 'r') as inputfile:
+                trainedclfdict=pickle.load(inputfile)
+            return trainedclfdict
+        except:
+            return None
+
+
 
 def makejsontemplate():
     errdata={"name":"95% CI", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}

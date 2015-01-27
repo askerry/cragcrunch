@@ -4,11 +4,14 @@ import numpy as np
 import pandas as pd
 
 routetypes=['Trad', 'Sport', 'Toprope', 'Boulder', 'Ice', 'Miaxed', 'Aid', 'Alpine']
-holdterms=['crimp','pinch','jug','sloper','ledge','pocket','sidepull','dyno', 'deadpoint','heelhook','toehook','bat-hang', 'undercling', 'crack', 'flake', 'arete','gaston', 'layback','hand crack', 'flaring crack','fingers crack', 'wide crack','thin crack', 'offwidth', 'chimney','diahedral','corner', 'traverse']
-descriptors=['steep','overhang','slab','technical','thin', 'ramp', 'overhung','sporty','vertical', 'boulder', 'bouldery']
-easeterms=['easy','hard','stiff','pumpy','beginner','hang','hung','take','difficult', 'committing', 'crux', 'soft','sandbag', 'awkward','creative','comfortable']
-safetyterms=['runout','spicy','exciting','nervous','sketchy','no pro', 'deck', 'eats gear', 'easy to protect','fall','rusty','clipping','swing', 'tenuous', 'minimal pro', 'mental']
+holdterms=['crimp','pinch','jug','sloper','ledge','pocket','sidepull','dyno', 'deadpoint','heelhook','toehook','bat-hang', 'undercling', 'crack', 'flake', 'arete','gaston', 'layback','handcrack', 'flaringcrack','fingerscrack', 'widecrack','thincrack', 'offwidth', 'chimney','diahedral','corner', 'traverse']
+descriptors=['steep','overhung','slab','technical','thin', 'ramp','sporty','vertical', 'boulder']
+easeterms=['easy','hard','stiff','pump','beginner','hung','take','difficult', 'committing', 'crux', 'soft','sandbag', 'awkward','creative','comfortable']
+safetyterms=['runout','spicy','exciting','nervous','sketchy','pro', 'deck', 'gear', 'protect','fall','rusty','clipping','swing', 'tenuous', 'nopro', 'mental']
 rockterms=['granite', 'limestone', 'schist', 'patina','sandstone', 'conglomerate', 'quartzite', 'gneiss', 'basalt']
+
+
+
 terms=holdterms+descriptors+easeterms+safetyterms+rockterms
 termtypes={'rock type':rockterms, 'ease factors':easeterms, 'hold types':holdterms,'safety factors': safetyterms, 'face descriptions':descriptors}
 

@@ -35,4 +35,4 @@ class RandomForestClassifierWithCoef(RandomForestClassifier):
         super(RandomForestClassifierWithCoef, self).fit(*args, **kwargs)
         self.coef_ = self.feature_importances_
 
-clf=RandomForestClassifierWithCoef(n_estimators=75, oob_score=True)
+clf=RandomForestClassifierWithCoef(n_estimators=40, oob_score=True) #n_estimators selected from CV performance on exploratory (NH) data

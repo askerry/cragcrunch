@@ -110,10 +110,11 @@ def isfloatable(x):
  
 def normalizewordcounts(climbdf, features,key):
     '''replace word counts with word counts normalized by length of text'''
+    climbdf=climbdf.copy()
     climbs=climbdf['climbid'].values
     fullcontent=climbdf[key].values #len of description
     X=climbdf.loc[climbs,features].values #training features are word counts
-    desclen=np.array([len(x) if isinstance(x,str) else 0 for x in fullcontent]) #get length of each description
+    desclen=np.array([float(len(x)) if isinstance(x,str) else 0 for x in fullcontent]) #get length of each description
     X=(X.T/desclen).T #normalize word counts by length of description
     climbdf.loc[climbs,features]=X
     return climbdf

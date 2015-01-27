@@ -76,8 +76,9 @@ def getclimbdict(c, db, getnest=False):
     return cdict
     
 def getsimilarclimbs(db, climbid, ClimbTable):
-    projdir=os.path.join(rootdir, 'Projects','cragcrunch','data', 'user_sim_matrix.csv')
-    df=pd.read_csv(projdir)
+    #projdir=os.path.join(rootdir, 'Projects','cragcrunch','data', 'user_sim_matrix.csv')
+    #df=pd.read_csv(projdir)
+    df=pd.read_sql('select * from simclimbs', db.engine, index_col='index')
     climbindices=np.argsort(df.loc[climbid,:].values)[-6:-1]
     simids=df.columns.values[climbindices].astype(float)
     ids=db.session.query(ClimbTable).all()

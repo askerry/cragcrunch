@@ -94,7 +94,7 @@ def modelnewuser(db, userdf):
 def savefinalmodel(X,Y,clf,u,features,datadir):
     clf.fit(X, Y)
     finalclf={'user':u, 'clf':clf, 'features':features}
-    fname='models/user_%s_model.pkl'%(u)
+    fname='models/newuser_%s_model.pkl'%(u)
     filename=os.path.join(datadir,fname)
     with open(filename, 'wb') as output:
         pickler = pickle.Pickler(output, pickle.HIGHEST_PROTOCOL)

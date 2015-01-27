@@ -19,6 +19,7 @@ from sklearn.linear_model import LinearRegression,LogisticRegression, Lasso, Rid
 from sklearn.svm import SVC, SVR
 from sklearn.ensemble import RandomForestClassifier
 
+
 class RandomForestClassifierWithCoef(RandomForestClassifier):
     '''extension of the RandomForectClassifier class that allows me to call coef_ instead of feature_importances_ (for ease/consistency with APIs of other models)'''
     def fit(self, *args, **kwargs):
@@ -174,8 +175,10 @@ def computelocationmatrix(cdf, adf, allclimbs):
     del locdf['area']
     return locdf.dropna()
 
-def gettopbottom(df, n=20):
+def gettopbottom_old(df, candidates, n=20):
     '''take similarity matrix and identify n most and least similar climbs'''
+    candidates=[c for c in candidates if c in df.columns]
+    df=df.loc[candidates,candidates]
     colnames=[str(val) for val in range(0,n+1)]
     colnames=colnames+['-'+str(val) for val in range(n,0,-1)]
     data={val:[] for val in colnames}
@@ -187,6 +190,49 @@ def gettopbottom(df, n=20):
             data[c].append(selected[cn])
     data['climbid']=df.index.values
     return pd.DataFrame(index=df.index.values, data=data)
+    
+def gettopbottom(simdf, climbid, allcandidates, n=10):
+    '''take similarity matrix and identify n most and least similar climbs'''
+    candidates=[c for c in allcandidates if c in simdf.columns]
+    if len(candidates)<n*2 or climbid not in simdf.index.values:
+        similar, dissimilar=[np.nan for x in range(n)],[np.nan for x in range(n)]
+        for i in range(n):
+            try:
+                similar[i]=allcandidates[i]
+                dissimilar[i]=allcandidates[(-i+1)]
+            except:
+                pass
+        return similar, dissimilar
+    row=simdf.loc[climbid,candidates]
+    indices=list(np.argsort(row.values)) #sorted from nearest to furthest
+    uind_near=np.array(indices[:n])
+    uind_far=np.array(indices[-(n+1):])
+    try:
+        similar=np.array(candidates)[uind_near]
+        dissimilar=np.array(candidates)[uind_far]
+        return similar, dissimilar
+    except:
+        return [np.nan for x in range(n)],[np.nan for x in range(n)]
+    
+def getsimilarclimbcandidates(climbid, cdf):
+    numerizedgrade=cdf.loc[cdf['climbid']==climbid,'numerizedgrade'].values[0]
+    style=cdf.loc[cdf['climbid']==climbid,'style'].values[0]
+    region=cdf.loc[cdf['climbid']==climbid,'region'].values[0]
+    if style=='Boulder':
+        graderange=[numerizedgrade-2, numerizedgrade+2]
+    else:
+        graderange=[numerizedgrade-3, numerizedgrade+3]
+    if len(cdf)>20:
+        cdf=cdf[cdf['region']==region]
+    if len(cdf)>20:
+        cdf=cdf[cdf['style']==style]
+    if len(cdf)>20:
+        cdf=cdf[(cdf['numerizedgrade']<=graderange[1]) & (cdf['numerizedgrade']>=graderange[0])]
+    if len(cdf)>20:
+        cdf=cdf[cdf['avgstars']>=2]
+    cdf=cdf[cdf['climbid']!=climbid]
+    cdf=cdf.sort(columns=['avgstars','pageviews'], ascending=False)
+    return cdf.climbid.values
 
 def getmatches(climbname, u_preddf, cdf, adf, arr):
     '''get info subset of climbs specified by <arr>'''
@@ -217,7 +263,7 @@ def round2score(df, truecol, predcol):
     trues=df[truecol].values
     acc= sklearn.metrics.accuracy_score(trues,preds)
     f1=sklearn.metrics.f1_score(trues,preds, pos_label=4)
-    precision=sklearn.metrics.precision_score(trues,preds, pos_label=4)
+    precision=sklearn.metrics.precision_score(trues,preds, pos_label=4, average='weighted')
     recall=sklearn.metrics.recall_score(trues,preds, pos_label=4)
     "**********Results for %s**********" %(predcol)
     print "4 way accuracy %.3f" %acc
@@ -254,17 +300,18 @@ def addsummary(summary, score, Y_test, u):
     summary['user'].append(u)
     summary['ntest'].append(len(Y_test))
     return summary
-def addresult(i, inum, results, climbs, Y_test, ypred, u):
+def addresult(i, inum, results, climbs, Y_test, ypred, yprob, u):
     results['climbid'].append(climbs[i])
     results['true_rating'].append(Y_test[inum])
     results['feat_pred'].append(ypred[inum])
+    results['prob'].append(yprob)
     results['user'].append(u)
     return results
     
     
 def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=False, truecol='starsscore', datadir=None, getfeats=False):
     summary={'score':[], 'user':[], 'ntest':[]}
-    results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[]}
+    results={'user':[],'climbid':[],'true_rating':[], 'feat_pred':[], 'prob':[]}
     importantfeats=[]
     try:
         features=[float(x) for x in cfeatures]
@@ -272,14 +319,14 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
         features=[x for x in cfeatures]
     climbers=[]
     for u in users:
-        userfeats=[x for x in features]
         if dropself and u in [str(f) for f in features]:
             features.remove(u)
         X, Y, climbs=getuserratings(sdf, cdf, u, cfeatures, truecol)
         for s in sfeatures:
             featvec=getuserspecificfeatures(u, sdf, climbs, s)
             X=np.hstack([X,featvec])
-            userfeats.append(s)
+            if s not in features:
+                features.append(s)
         if len(climbs)>minratings:
             climbers.append(u)
             folds=sklearn.cross_validation.LeaveOneOut(len(climbs))
@@ -291,11 +338,11 @@ def classify(clf,users, sfeatures,cfeatures, cdf, sdf, minratings=10, dropself=F
             importantfeats.append(userfeats)
             if datadir is not None:
                 clf.fit(X, Y)
-                finalclf=savefinalmodel(X,Y,clf,u,features,datadir)
+                finalclf=savefinalmodel(X,Y,clf,u,userfeats,datadir)
     importantfeats=makefeatdf(importantfeats, climbers)
     resultsdf=pd.DataFrame(data=results)    
     summarydf=pd.DataFrame(data=summary) 
-    return summarydf, resultsdf, importantfeats
+    return summarydf, resultsdf, importantfeats, 
 
 def makefeatdf(importantfeats, climbers):
     allrelfeats=set([word for row in importantfeats for word in row])
@@ -319,10 +366,11 @@ def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u, features, 
     if len(set(Y_train))>1:
         clf.fit(X_train, Y_train)
         ypred=clf.predict(X_test)
+        yprob=clf.predict_proba(X_test)
         score=clf.score(X_test, Y_test)
         summary=addsummary(summary, score, Y_test, u)
         for inum,i in enumerate(test_i):
-            results=addresult(i,inum, results, climbs, Y_test, ypred, u)
+            results=addresult(i,inum, results, climbs, Y_test, ypred, yprob, u)
         if getfeats:
             importantfeats=getfeatimportances(clf, np.array(features), 10)
         else:

@@ -49,10 +49,10 @@ listgrades_route=getroutegrades()
     
 
 routetypes=['Trad', 'Sport', 'Toprope', 'Boulder', 'Ice', 'Miaxed', 'Aid', 'Alpine']
-holdterms=['crimp','pinch','jug','sloper','ledge','pocket','sidepull','dyno', 'deadpoint','heelhook','toehook','bat-hang', 'undercling', 'crack', 'flake', 'arete','gaston', 'layback','hand crack', 'flaring crack','fingers crack', 'wide crack','thin crack', 'offwidth', 'chimney','diahedral','corner', 'traverse']
-descriptors=['steep','overhang','slab','technical','thin', 'ramp', 'overhung','sporty','vertical', 'boulder', 'bouldery']
-easeterms=['easy','hard','stiff','pumpy','beginner','hang','hung','take','difficult', 'committing', 'crux', 'soft','sandbag', 'awkward','creative','comfortable']
-safetyterms=['runout','spicy','exciting','nervous','sketchy','no pro', 'deck', 'eats gear', 'easy to protect','fall','rusty','clipping','swing', 'tenuous', 'minimal pro', 'mental']
+holdterms=['crimp','pinch','jug','sloper','ledge','pocket','sidepull','dyno', 'deadpoint','heelhook','toehook','bat-hang', 'undercling', 'crack', 'flake', 'arete','gaston', 'layback','handcrack', 'flaringcrack','fingerscrack', 'widecrack','thincrack', 'offwidth', 'chimney','diahedral','corner', 'traverse']
+descriptors=['steep','overhung','slab','technical','thin', 'ramp','sporty','vertical', 'boulder']
+easeterms=['easy','hard','stiff','pump','beginner','hung','take','difficult', 'committing', 'crux', 'soft','sandbag', 'awkward','creative','comfortable']
+safetyterms=['runout','spicy','exciting','nervous','sketchy','pro', 'deck', 'gear', 'protect','fall','rusty','clipping','swing', 'tenuous', 'nopro', 'mental']
 rockterms=['granite', 'limestone', 'schist', 'patina','sandstone', 'conglomerate', 'quartzite', 'gneiss', 'basalt']
 
 states = {
@@ -115,31 +115,3 @@ states = {
         'WY': 'Wyoming'
 }
 
-
-reducedfeats=['ledge_description',
- 'ledge_commentsmerged',
- 'pageviews',
- 'corner_description',
- 'corner_commentsmerged',
- 'crux_description',
- 'crux_commentsmerged',
- 'traverse_description',
- 'traverse_commentsmerged',
- 'thin_description',
- 'thin_commentsmerged',
- 'hard_description',
- 'hard_commentsmerged',
- 'easy_description',
- 'easy_commentsmerged',
- 'slab_description',
- 'slab_commentsmerged',
- 'numerizedgrade',
- 'crack_description',
- 'crack_commentsmerged',
- 'steep_description',
- 'steep_commentsmerged',
- 'pitch',
- 'flake_description',
- 'flake_commentsmerged',
- 'arete_description',
- 'arete_commentsmerged']
