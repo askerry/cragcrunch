@@ -199,7 +199,7 @@ def gettopbottom(simdf, climbid, allcandidates, n=10):
         for i in range(n):
             try:
                 similar[i]=allcandidates[i]
-                dissimilar[i]=allcandidates[(-i+1)]
+                dissimilar[i]=allcandidates[-(i+1)]
             except:
                 pass
         return similar, dissimilar
@@ -212,7 +212,16 @@ def gettopbottom(simdf, climbid, allcandidates, n=10):
         dissimilar=np.array(candidates)[uind_far]
         return similar, dissimilar
     except:
-        return [np.nan for x in range(n)],[np.nan for x in range(n)]
+        try:
+            for i in range(n):
+                try:
+                    similar[i]=allcandidates[i]
+                    dissimilar[i]=allcandidates[-(i+1)]
+                except:
+                    pass
+            return similar, dissimilar
+        except:
+            return [np.nan for x in range(n)],[np.nan for x in range(n)]
     
 def getsimilarclimbcandidates(climbid, cdf):
     numerizedgrade=cdf.loc[cdf['climbid']==climbid,'numerizedgrade'].values[0]
@@ -258,18 +267,24 @@ def getsimilar(climbname, u_preddf, cdf, adf):
 #     Evaluation       #
 ########################
 
-def round2score(df, truecol, predcol):
+def round2score(df, truecol, predcol, summary):
     preds=[np.round(x) for x in df[predcol].values]
     trues=df[truecol].values
     acc= sklearn.metrics.accuracy_score(trues,preds)
-    f1=sklearn.metrics.f1_score(trues,preds, pos_label=4)
-    precision=sklearn.metrics.precision_score(trues,preds, pos_label=4, average='weighted')
-    recall=sklearn.metrics.recall_score(trues,preds, pos_label=4)
+    precisiondf=df[df[predcol]==4] #TP/TP+FP
+    precision=np.mean([precisiondf[predcol]==precisiondf[truecol]])
+    recalldf=df[df[truecol]==4] #TP/TP+FN
+    recall=np.mean([recalldf[predcol]==recalldf[truecol]])
+    f1= 2 * (precision * recall) / (precision + recall)
     "**********Results for %s**********" %(predcol)
     print "4 way accuracy %.3f" %acc
     print "4 way f1 %.3f" %f1
     print "4 way precision %.3f" %precision
     print "4 way recall %.3f" %recall
+    summary['f1'].append(f1)
+    summary['acc'].append(acc)
+    summary['precision'].append(precision)
+    summary['recall'].append(recall)
     return acc, precision, recall, f1
     
 ########################
@@ -366,7 +381,9 @@ def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u, features, 
     if len(set(Y_train))>1:
         clf.fit(X_train, Y_train)
         ypred=clf.predict(X_test)
-        yprob=clf.predict_proba(X_test)
+        classorder=list(clf.classes_)
+        yprobs=clf.predict_proba(X_test)[0]
+        yprob=yprobs[classorder.index(ypred[0])]
         score=clf.score(X_test, Y_test)
         summary=addsummary(summary, score, Y_test, u)
         for inum,i in enumerate(test_i):

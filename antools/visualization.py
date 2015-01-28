@@ -54,6 +54,27 @@ def alphapallete(palletename, n_colors, alpha):
 def plotROCcurve(resultsdf, threshrange):
     pass
 
+def plotcomparisons(comparisonlabels, resultsdict):
+    means,sems,labels=[],[],[]
+    for x in comparisonlabels:
+        vals=resultsdict[x][0].groupby('user').mean().score.values
+        #print "%s:  M(std)=%.3f(%.2f), t(%s)=%.3f, p=%.3f" %(x, np.mean(vals), np.std(vals), len(vals)-1, scipy.stats.ttest_1samp(vals, 0)[0], scipy.stats.ttest_1samp(vals, 0)[1])
+        means.append(np.mean(vals))
+        sems.append(np.std(vals)/np.sqrt(len(vals)))
+        labels.append(x)
+    f,ax=plt.subplots(figsize=[8,3])
+    ax.bar(range(len(means)), means, yerr=sems)
+    ax.set_xticks(np.arange(len(means))+.5)
+    x=ax.set_xticklabels(labels, rotation=90)
+    
+def accbyN(resultsdict, usesdf, name):
+    df=resultsdict[name][0].groupby('user').mean()[['score']].join(usesdf.groupby('climber').count()['climb'], how='left')
+    df=df.rename(columns={'climb':'# climbs rated', 'score':'accuracy'})
+    f,ax=plt.subplots(figsize=[4,2])
+    #df.plot('# climbs rated','accuracy', kind='scatter', grid=False,ax=ax)
+    #sns.despine()
+    sns.jointplot('# climbs rated','accuracy', data=df, kind='kde')
+
 #mapping
 
 def categorizecontinuous(array, bins=10):

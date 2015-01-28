@@ -90,11 +90,9 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
         thesecandidates=db.session.query(ClimbTable).filter_by(mainarea=area).filter(and_(ClimbTable.numerizedgrade >= graderanges[style][0], ClimbTable.numerizedgrade <= graderanges[style][1], (ClimbTable.style == style))).all()
         candidates.extend([cf.getclimbdict(c, db) for c in thesecandidates])
     trainedclfdict=loadtrainedmodel(udict) ##add logic for new users here
-    features=trainedclfdict['features']
     classorder=list(trainedclfdict['clf'].classes_)
     print "processing %s candidate regions" %len(candidates)
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
-    Xdf=Xdf[features]
     datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}
     for climb in candidates:
         datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classorder)
@@ -111,10 +109,15 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
 def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classorder):
     cid=climb['climbid']
     ufeatures= trainedclfdict['features']
+    print "XXX"
+    print len(ufeatures)
     if cid in Xdf.index.values:
         row=Xdf.loc[cid,['climbid']+ufeatures]
+        print row
+        print len(row)
         del row['climbid']
         featurevector=row.values
+        print len(featurevector)
         pred=trainedclfdict['clf'].predict(featurevector)[0]
         datadict['pred'].append(pred)
         datadict['prob'].append(trainedclfdict['clf'].predict_proba(featurevector)[0][classorder.index(pred)])
