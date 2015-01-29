@@ -10,6 +10,7 @@ import pickle
 import os
 import timeit
 from config import fulldir
+import pandas as pd
 
 
 # create application
@@ -101,6 +102,7 @@ def updaterecs():
     areaid=request.args.get('areaid')
     userid=request.args.get('userid')
     gs=request.args.get('gradeshift')
+    print gs
     #this seems janky?
     js2bool={'true':True, 'false':False}
     sport=js2bool[request.args.get('sportcheck')]
@@ -117,10 +119,19 @@ def newuser(username):
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
-    print "ASDFASDF"
     udict=pinf.adduser(g, request)
-    print udict
-    return render_template('newuserprefs.html', udict=udict)
+    features=['crimp', 'boulder','flake']
+    return render_template('newuserprefs.html', udict=udict, redfeats=features)
+
+@app.route("/checkavailability", methods=["POST"])
+def checkavailability():
+    desiredname=request.args.get('desiredname')
+    results=g.db.session
+    matches=pd.read_sql("SELECT name from climber_prepped where name = '%s'" %desiredname, g.db.engine, index_col='index')['name'].unique()
+    if len(matches)==0:
+        return jsonify({'exists':False})
+    else:
+        return jsonify({'exists':True})
 
 
 if __name__ == '__main__':

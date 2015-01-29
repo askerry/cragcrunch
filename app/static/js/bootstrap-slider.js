@@ -369,6 +369,28 @@
 		})
 	};
 
+    $.fn.slider = function (option, val) {
+    
+        if (typeof option == 'string') {
+            if (this.length) {
+                var data = this.eq(0).data('slider');
+                if (data)
+                    return data[option](val);
+    
+                return null;
+            }
+        }
+    
+        return this.each(function () {
+            var $this = $(this),
+                data = $this.data('slider'),
+                options = typeof option === 'object' && option;
+            if (!data) {
+                $this.data('slider', (data = new Slider(this, $.extend({}, $.fn.slider.defaults, options))));
+            }
+        })
+    };
+
 	$.fn.slider.defaults = {
 		min: 0,
 		max: 10,

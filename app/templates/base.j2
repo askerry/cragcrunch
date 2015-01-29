@@ -22,7 +22,7 @@
 
     <!--JQUERY-->
      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="../static/js/jquery-1.11.2.min.js"></script>
     <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
     <script src="../static/js/less-2.3.1.min.js"></script>
     <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
@@ -32,13 +32,11 @@
     <script src="../static/js/bootstrap-slider.js"></script>
     <script src="../static/js/bootbox.min.js"></script>
     <script src="../static/js/bootbox.min.js"></script>
-     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />
-	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
+    <!--  <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />-->
+	<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>-->
 
-    <script src="http://code.highcharts.com/adapters/standalone-framework.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script> 
-    <script type="text/javascript" src="https://code.highcharts.com/highcharts-more.js"></script> 
+    <script type="text/javascript" src="../static/js/highcharts.js"></script>
+    <script type="text/javascript" src="../static/js/highcharts-more.js"></script> 
     
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>
@@ -72,7 +70,7 @@
                <li><a href="/about">About</a></li>
                <li><a href="#" onclick=getnewuser();>I'm New!</a></li>
                <li>    
-               		<form action="." method="POST">
+               		<form action="../home" method="POST">
         				<input id="searchbox" type="text" name="text" placeholder="Search for climb, area, or user">
     				</form>
     			</li>
@@ -90,16 +88,32 @@
 
     <script>
     			function checkusername(name){
-    				return name
+    					$.ajax({
+					      type: 'POST',
+					      url: '/checkavailability', // This is the url that will be requested
+					      data: {desiredname:name},
+					      success: acceptreject,
+					      dataType: 'JSON'
+					    });
     			};
+    			function acceptreject(data){  
+    				exists=data['exists'] 
+    				console.log(exists)
+    				if exists=true {
+    					bootbox.prompt("User name "+name+" is taken or invalid. Please provide a new name.", gotosetuppage);
+    				}
+    				else
+    				{
+    					gotosetuppage(name)
+    				}
+				};  
     			function gotosetuppage(name){
     				window.location.replace("/newuser/"+name);
     			};
     			function getnewuser(){
-					bootbox.prompt("Welcome to CragCrunch! Please enter a user name?", gotosetuppage);
+					bootbox.prompt("Welcome to CragCrunch! Please enter a user name.", checkusername);
 				};
 				function go2user(){
-					console.log()
 					var userid = $('#dropdown').val()
     				window.location.replace("/user/"+userid.toString());
 				};
@@ -109,6 +123,10 @@
 				$("#sportcheck").bootstrapSwitch({off:'No',on:'Yes',labelText:'Sport',size: 'sm'});
 				$("#tradcheck").bootstrapSwitch({labelText:'Trad',off:'No',on:'Yes'});
 				$("#bouldercheck").bootstrapSwitch({labelText:'Boulder',off:'No',on:'Yes'});
+				$('#gradeslider').slider()
+				$('#gradeslider').slider('setValue', "0")
+
+	
 
 			});
 	</script>

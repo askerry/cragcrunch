@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<div id="contenthead" class="row">
+<div class="row">
 	<div id="contenttitle" class="col-md-6">{{climb['name']}}</div>                                  
 	<div id="details" class="col-md-6">{{climb['style']}}, {{climb['grade']}}, {{climb['area_name']}}, {{ climb['mainarea_name'] }}, {{ climb['region'] }}</div>
 </div>
@@ -26,8 +26,8 @@
 		<div class="boxheader"><span class="boxtitle">Similar Climbs</span></div>
 		{% for rec in recs %}
 			<div class="contenthead">
-				<div id="contenttitle" class="secondary"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                                  
-				<div id="details" class="secondary"><span class="jleft">{{rec['style']}}, {{rec['grade']}} </span><span class="jright">{{ rec['mainarea_name'] }}, {{ rec['region'] }}</span></div>
+				<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                                  
+				<div class="tagline">{{rec['style']}}, {{rec['grade']}}, {{ rec['mainarea_name'] }}, {{ rec['region'] }}</div>
 			</div>
 		{% endfor %}
 	</div>

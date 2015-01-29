@@ -56,17 +56,18 @@ def getuserdict(u,db):
 
 def getuserplots(udict,db):
     userid=udict['climberid']
-    userstars=db.session.query(StarsTable).filter_by(climber=userid).all()
-    sdf=misc.convertsqlobj2df(userstars) ##WTF why did i do it this way
+    sdf=pd.read_sql("SELECT * from stars_prepped where climber = '%s'" %userid, db.engine, index_col='index')
     userclimbs=sdf.climb.unique()
-    climbdata=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(userclimbs)).all()
-    cdf=misc.convertsqlobj2df(climbdata)
+    userclimbstring=','.join([str(el) for el in userclimbs])
+    cdf=pd.read_sql("SELECT * from climb_prepped where climbid in(%s)" %userclimbstring, db.engine, index_col='index')
     djsons=[]
-    for tn,t in enumerate(['hold types','face descriptions','ease factors','safety factors']):
-        usdf=getuserstarsbywords(sdf, cdf, userid, misc.termtypes[t])
-        corrs, labels, sems=getuserpredictors(usdf,t, minn=6)
-        plotid="plotcontainer%s" %tn
-        djsons.append(pushdata(corrs, sems, labels, '', t, 'preference score', plotid))
+    redfeatfile=os.path.join(dirname,'data','learnedfeatures.pkl')
+    with open(redfeatfile, 'r') as inputfile:
+        feats=pickle.load(inputfile)['reducedtextfeats']
+    bterms=['easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']
+    usdf=getuserstarsbywords(sdf, cdf, userid, feats, blockterms=bterms)
+    corrs, labels, sems=getuserpredictors(usdf)
+    djsons.append(pushdata(corrs, sems, labels, 'Feature Preference', 'Climb Features', 'preference score', "plotcontainer0"))
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
@@ -207,16 +208,18 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     return djson
 
 
-def getuserstarsbywords(sdf, cdf, climberid, terms):
+def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
+    terms=[t for t in terms if t not in blockterms]
     sdf=sdf[sdf['climber']==climberid]
     sdf=pd.merge(sdf, cdf, left_on='climb', right_on=['climbid'], how='left')
-    dcols=[c+'_description' for c in terms]
+    dcols=[c for c in terms if '_description' in c]
     dlen=np.array([len(x) if isinstance(x,str) else 0 for x in sdf.description.values])
-    ccols=[c+'_commentsmerged' for c in terms]
+    ccols=[c for c in terms if '_commentsmerged' in c]
     clen=np.array([len(x) if isinstance(x,str) else 0 for x in sdf.commentsmerged.values])
     dvals=(sdf[dcols].values.T/dlen).T
     cvals=(sdf[ccols].values.T/clen).T
     mvals=np.nanmean([cvals,dvals], axis=0)
+    terms=list(set([t[:t.index('_')] for t in terms if '_' in t]))
     ndf=pd.DataFrame(index=sdf['climb'], data=mvals, columns=terms)
     ndf['starsscore']=sdf['starsscore'].values
     return ndf[['starsscore']+terms]
@@ -224,7 +227,7 @@ def getuserstarsbywords(sdf, cdf, climberid, terms):
 def standarderrorcorr(r,n):
     return (1-r**2)/np.sqrt(n-1)
 
-def getuserpredictors(usdf,t,minn=6):
+def getuserpredictors(usdf):
     predictions=usdf.corr().loc['starsscore'][1:].dropna()
     corrs=predictions.values
     labels=predictions.index.values

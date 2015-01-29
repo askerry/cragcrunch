@@ -13,25 +13,12 @@ from config import rootdir
 
 ################     HOME PAGE    ####################
 
-'''
-def initial_home(g):
-    avail=hf.getall(g)
-    return hf.gettopclimbs(g.db), avail
-'''
 def initial_home(g):
     climbs=hf.gettopclimbs(g.db)
     users=hf.getusers(g.db)
     t=timeit.default_timer()
     return climbs,users
-'''
-def result_home_meh(request, g):
-    print "AAAA"
-    print request.form['name']
-    name=request.form['name']
-    result=hf.matchname(name, g)
-    print result
-    return result
-'''
+
 def result_home(request, g):
     text = request.form['text']
     finds=hf.findmatch(text, g)

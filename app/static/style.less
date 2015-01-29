@@ -104,6 +104,7 @@ html, body {
     margin:auto;
     width: @contentwidth;
     padding: @contentpadder;
+    padding-top:1%;
 }
 .jleft{
 	left:0em;
@@ -112,13 +113,20 @@ html, body {
 	right:0em;
 }
 
+.row{
+	margin-bottom:1em;
+	padding-top:1em;
+	padding-bottom:1em;
+	background-color:#999;
+}
+
 /* *********************** */
 /*       Misc Stuff        */
 /* *********************** */
 
 #searchbox{
 	font-size:1.3em;
-	width:20em;
+	width:16em;
 	height:2em;
 	margin-top:.35em;
 	margin-left:.75em;
@@ -152,31 +160,33 @@ a.emplink{
 
 #contenttitle {
 	font-size:2.5em;
+	line-height:.9em;
 	height:100%;
 }
 
 #details {
 	font-size:1.3em;
-	color:blue;
-	right:0em;
-	bottom:0em;
-	height:100%;
 	text-align:right;
 }
 
 .maincontent{
 	line-height:1.2em;
-	margin-top:2em;
+	margin-top:1em;
 	overflow:hidden;
 }
 
 .maincontent div{
-	margin-top:1.5em;
-	margin-bottom:.75em;
+	margin-top:.5em;
+	margin-bottom:.25em;
 }
 
 #blurb{
 	background-color:green;
+	padding:1em;
+}
+
+.boost{
+	font-size:1.3em;
 }
 
 /* *********************** */
@@ -224,6 +234,7 @@ a.emplink{
 	width:50%;
 	left:0em;
 	height:100%;
+	padding-top:.5em;
 
 }
 
@@ -232,6 +243,7 @@ a.emplink{
 	background-color:gray;
 	width:50%;
 	padding:1em;
+	padding-top:.5em;
 	height:80%;
 }
 
@@ -240,7 +252,7 @@ a.emplink{
 	height:19%;
 	padding:.5em;
 	padding-top:1em;
-	min-width:32em;
+	min-width:30em;
 }
 
 #recbox{
@@ -248,7 +260,6 @@ a.emplink{
 
 #reccontainer{
 	position:relative;
-	margin-top:1em;
 	margin-bottom:1.5em;
 }
 
@@ -265,36 +276,37 @@ a.emplink{
 
 
 .sliderdiv{
-	width:23em;
+	width:90%;
+	margin:auto;
 	height:5em;
 	padding-top:.4em;
-	display:inline;
+	background-color:green;
 }
 #gradeslider{
-	width:55%;
-	height:60%;
-	margin:auto;
-	display:inline;
+width:60%;
 }
 
 .sliderlabel{
 	display:inline;
-	margin-left:.5em;
-	margin-right:.5em;
+	margin-left:2%;
+	margin-right:2%;
 }
 .buttondiv{
-	right:1em;
-	height:5em;
-	width:24%;
+	height:100%;
 	display:inline;
 	text-align:center;
-	padding:.5em;
+	background-color:red;
+	width:30%;
+	padding:5%;
 }
 #refreshbutton{
-	height:5em;
-	width:5em;
+	height:80%;
+	width:auto;
 }
 
+.bootstrap-switch-label{
+	margin:0em;
+}
 
 
 .plotrow{
@@ -310,10 +322,9 @@ a.emplink{
 
 #plotcontainer0{
 	height: 48%;
-	width:90%; 
+	width:95%; 
 	left:0em;
-	margin:1%;
-	margin-right:.5%;
+	margin-right:.5em;
 	overflow:hidden;
 }
 
@@ -322,7 +333,6 @@ a.emplink{
 	text-align:right;
 }
 .recroute{
-	color:purple;
 	font-size:1.2em;
 }
 
@@ -330,11 +340,8 @@ a.emplink{
 /*       About Stuff       */
 /* *********************** */
 #logoimg {
-	height:14em;
-	right:0em;
-	top:3em;
-	display:inline;
-	position:absolute;
+	float:right;
+	height:9em;
 }
 .fitimg{
 	height:100%;
