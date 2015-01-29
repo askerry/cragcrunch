@@ -11,7 +11,7 @@ import viz
 import pandas as pd
 import os
 from copy import deepcopy
-
+import timeit
 from config import rootdir
 
 
@@ -42,16 +42,11 @@ def getareanest(areaid, db,areanest=None, nestednames=None):
 
 
 def getclimbdict(c, db, getnest=False):
-    cdict=deepcopy(c.__dict__)
+    #t=timeit.default_timer()
+    #cdict=deepcopy(c.__dict__)
+    cdict=c.__dict__
+    #print "copy: %.6f" %(timeit.default_timer()-t)
     cdict['climbid']=int(cdict['climbid'])
-    cdict['areaname']=db.session.query(AreaTable).filter_by(areaid=int(c.area)).first().name
-    cdict['mainarea']=db.session.query(AreaTable).filter_by(areaid=int(c.area)).first().mainarea
-    try:
-        cdict['mainarea_name']=db.session.query(AreaTable).filter_by(areaid=cdict['mainarea']).first().name
-        cdict['region']=db.session.query(AreaTable).filter_by(areaid=cdict['mainarea']).first().region
-    except:
-        cdict['mainarea_name']=''
-        cdict['region']=db.session.query(AreaTable).filter_by(areaid=cdict['area']).first().region
     if cdict['length']>0:
         cdict['length']="%s ft" %int(cdict['length'])
     else:
@@ -76,10 +71,8 @@ def getclimbdict(c, db, getnest=False):
     return cdict
     
 def getsimilarclimbs(db, climbid, ClimbTable):
-    df=pd.read_sql('select * from simclimbs', db.engine, index_col='index')
+    df=pd.read_sql('select * from simclimbs', db.engine, index_col='climbid')
     simclimbids=df.loc[climbid,:].values[1:6].astype(int)
-    print simclimbids
     simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=c).first() for c in simclimbids]
-    print simclimbobjs
     simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
     return simclimbdicts

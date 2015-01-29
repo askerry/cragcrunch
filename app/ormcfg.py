@@ -47,6 +47,8 @@ class ClimbTable(Base):
     submittedby = Column(String(70))
     commentsmerged = Column(Text)
     numerizedgrade = Column(Float)
+    mainarea_name = Column(String(70))
+    area_name = Column(String(70))
 
 for c in terms:
     setattr(ClimbTable,c+'_description', Column(Integer))
@@ -90,20 +92,6 @@ class ClimberTable(Base):
     g_max_Boulder = Column(Float)
     g_median_Boulder = Column(Float)
 
-'''
-class PhotoTable(Base):
-    __tablename__ = 'Photo'
-    photoid = Column(Integer, primary_key=True, autoincrement=True)
-    poster = Column(Integer, ForeignKey('Climber.climberid'))
-    climb = Column(Integer, ForeignKey('Climb.climbid'))
-    climblink = Column(String(200))
-    area = Column(Integer, ForeignKey('Area.areaid'))
-    arealink = Column(String(200))
-    url = Column(String(200))
-    name = Column(String(200))
-    date = Column(Date)
-    photo = Column(Text)
-'''
 
 class TicksTable(Base):
     __tablename__ = 'ticks_prepped'
@@ -146,14 +134,3 @@ class GradesTable(Base):
     url = Column(String(200))
     grade = Column(String(30))
     name = Column(String(200))
-
-'''
-class ToDosTable(Base):
-    __tablename__ = 'todos_prepped'
-    todosid = Column(Integer, primary_key=True, autoincrement=True)
-    climb = Column(Integer, ForeignKey('Climb.climbid'))
-    climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('Climber.climberid'))
-    url = Column(String(200))
-    name = Column(String(200))
-'''

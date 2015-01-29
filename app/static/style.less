@@ -34,6 +34,7 @@
 
 /*  sizing  */
 @containerwidth:100%;
+@contentheight:70em;
 @minheight:1500px;
 @headerwidth:100%;
 @contentwidth:96%;
@@ -48,11 +49,9 @@ html, body {
 
 #page {
     margin: 0 auto;
-    overflow:auto;
 	width: @containerwidth;
-    min-height: @minheight;
-    background-color:@maincolor;
-    position: relative;
+    background-color:#ddd;
+    //position: relative;
     font-size: @fontbase;
     .my-font-family .light;
     margin-bottom:1%;
@@ -102,18 +101,28 @@ html, body {
 #content {
     top:0em;
     background-color:@contentcolor;
-    position: relative;
     margin:auto;
     width: @contentwidth;
     padding: @contentpadder;
+}
+.jleft{
+	left:0em;
+}
+.jright{
+	right:0em;
 }
 
 /* *********************** */
 /*       Misc Stuff        */
 /* *********************** */
 
-.searchspan{
-	font-size:1.8em;
+#searchbox{
+	font-size:1.3em;
+	width:20em;
+	height:2em;
+	margin-top:.35em;
+	margin-left:.75em;
+	padding-left:.5em;
 }
 
 a {
@@ -125,32 +134,40 @@ a.subtlelink {
 	font-size:.9em;
 	color:#aab;
 }
+a.neutrallink{
+	color:#ccb
+}
+a.emplink{
+	fontsize:1.2em;
+}
 .mention{
 	font-size:1.5em;
 	margin-left:.5em;
 	color:grey;
 }
-.contenthead {
-	width:100%;
-	position:relative;
-
+#contenthead {
+	height:5em;
+	background-color: red;
 }
 
 #contenttitle {
 	font-size:2.5em;
-	display:inline;
+	height:100%;
 }
 
 #details {
 	font-size:1.3em;
+	color:blue;
 	right:0em;
 	bottom:0em;
-	display:inline;
-	position:absolute;
+	height:100%;
+	text-align:right;
 }
 
 .maincontent{
 	line-height:1.2em;
+	margin-top:2em;
+	overflow:hidden;
 }
 
 .maincontent div{
@@ -158,16 +175,41 @@ a.subtlelink {
 	margin-bottom:.75em;
 }
 
+#blurb{
+	background-color:green;
+}
+
 /* *********************** */
 /*       Climb Stuff        */
 /* *********************** */
 
 #contenttitle.secondary {
-	font-size:1.2em;
-	padding-left:3em;
+	font-size:1.4em;
+	padding-left:.5em;
+	margin-bottom:1em;
+	line-height:3.3em;
 }
 #details.secondary {
-	font-size:1em;
+	font-size:1.1em;
+	top:2.9em;
+}
+
+#contenttitle.smaller{
+	fontsize:1.7em;
+}
+#details.smaller {
+	font-size:1.3em;
+}
+
+.boxheader{
+	width:100%;
+	height:3em;
+	background-color:gray;
+	padding:.2em;
+}
+
+.boxtitle{
+	font-size:1.8em;
 }
 /* *********************** */
 /*       User Stuff        */
@@ -175,12 +217,10 @@ a.subtlelink {
 
 .usercontent{
 	width:100%;
-	position:relative;
-	height:700px;
+	margin-top:2em;
 }
 
 #profile{
-	position:absolute;
 	width:50%;
 	left:0em;
 	height:100%;
@@ -188,18 +228,19 @@ a.subtlelink {
 }
 
 #userrecs{
-	position:absolute;
 	right:0em;
 	background-color:gray;
 	width:50%;
 	padding:1em;
-	height:100%;
+	height:80%;
 }
 
 #formbox{
 	background-color:white;
-	height:18%;
+	height:19%;
 	padding:.5em;
+	padding-top:1em;
+	min-width:32em;
 }
 
 #recbox{
@@ -208,11 +249,13 @@ a.subtlelink {
 #reccontainer{
 	position:relative;
 	margin-top:1em;
+	margin-bottom:1.5em;
 }
 
 #checkgroup{
 	width:100%;
 	text-align:center;
+	margin-bottom:1em;
 }
 
 #dropdown {
@@ -225,37 +268,25 @@ a.subtlelink {
 	width:23em;
 	height:5em;
 	padding-top:.4em;
-	position:absolute
+	display:inline;
 }
 #gradeslider{
 	width:55%;
 	height:60%;
 	margin:auto;
-	margin-left:5em;
 	display:inline;
-}
-
-.caption{
-	width: 40%;
-	text-align:center;
-	margin:auto;
-	padding-top:.5em;
-	margin-bottom:0em;
 }
 
 .sliderlabel{
-	padding:.1em;
-	position:absolute;
-	margin:1.5em;
-	margin-top:.7em;
 	display:inline;
+	margin-left:.5em;
+	margin-right:.5em;
 }
 .buttondiv{
 	right:1em;
 	height:5em;
 	width:24%;
 	display:inline;
-	position:absolute;
 	text-align:center;
 	padding:.5em;
 }
@@ -279,38 +310,10 @@ a.subtlelink {
 
 #plotcontainer0{
 	height: 48%;
-	width:48%; 
+	width:90%; 
 	left:0em;
-	position:absolute;
 	margin:1%;
 	margin-right:.5%;
-	overflow:hidden;
-}
-#plotcontainer1{
-	height: 48%;
-	width:48%; 
-	right:0em;
-	position:absolute;
-	margin:1%;
-	overflow:hidden;
-	margin-left:.5%;
-}
-#plotcontainer2{
-	height: 48%;
-	width:48%; 
-	left:0em;
-	position:absolute;
-	margin:1%;
-	right-left:.5%;
-	overflow:hidden;
-}
-#plotcontainer3{
-	height: 48%;
-	width:48%; 
-	right:0em;
-	position:absolute;
-	margin:1%;
-	margin-left:.5%;
 	overflow:hidden;
 }
 
@@ -390,3 +393,10 @@ a.subtlelink {
    width: 12em;
 }
 
+
+.col-md-8{
+	background-color:blue;
+}
+.col-md-4{
+	background-color:green;
+}

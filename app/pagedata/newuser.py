@@ -1,6 +1,7 @@
 __author__ = 'amyskerry'
 
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
+from flask import current_app
 import numpy as np
 import pandas as pd
 import viz
@@ -93,7 +94,7 @@ def modelnewuser(db, userdf):
 
 def savefinalmodel(X,Y,clf,u,features,datadir):
     clf.fit(X, Y)
-    finalclf={'user':u, 'clf':clf, 'features':features}
+    finalclf={'user':u, 'clf':clf, 'finalfeats':features}
     fname='models/newuser_%s_model.pkl'%(u)
     filename=os.path.join(datadir,fname)
     with open(filename, 'wb') as output:
@@ -102,6 +103,7 @@ def savefinalmodel(X,Y,clf,u,features,datadir):
             pickler.dump(finalclf)
         except:
             print "pickle fail"
+    current_app.modeldicts['newuser_%s_model.pkl'%(u)]=clf
     return finalclf
 
 def getscore(featdf,f,val):

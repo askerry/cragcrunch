@@ -6,6 +6,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 import pages as pinf
 import pagedata.user as uf
+import pickle
+import os
+import timeit
+from config import fulldir
 
 
 # create application
@@ -45,25 +49,20 @@ def check_db_connection():
 @app.before_request
 def before_request():
     g.db = connect_db()
-    print "opened connection"
 
 @app.teardown_request
 def teardown_request(exception):
     db = getattr(g, 'db', None)
     if db is not None:
         db.close()
-    print "closed connection"
-
 
 #views
 
 @app.route('/home')
 @app.route('/')
 def home():
-    #result, avail=pinf.initial_home(g)
-    result=pinf.initial_home(g)
-    #return render_template('home.html', returntype='noresult', result=result, avail=avail)
-    return render_template('home.html', returntype='noresult', result=result)
+    climbs,users=pinf.initial_home(g)
+    return render_template('home.html', returntype='noresult', climbs=climbs, users=users)
 
 @app.route('/home', methods=['POST'])
 @app.route('/', methods=['POST'])
@@ -102,6 +101,7 @@ def updaterecs():
     areaid=request.args.get('areaid')
     userid=request.args.get('userid')
     gs=request.args.get('gradeshift')
+    #this seems janky?
     js2bool={'true':True, 'false':False}
     sport=js2bool[request.args.get('sportcheck')]
     trad=js2bool[request.args.get('tradcheck')]
@@ -124,4 +124,14 @@ def newuserpred():
 
 
 if __name__ == '__main__':
+    modeldir=os.path.join(fulldir, 'data/models')
+    modelfiles=os.listdir(modeldir)
+    app.modeldict={}
+    for filename in modelfiles:
+        try:
+            with open(os.path.join(modeldir, filename), 'r') as inputfile:
+                model=pickle.load(inputfile)
+        except:
+            model=[]
+        app.modeldict[filename]=model
     app.run(debug=True, host='0.0.0.0')

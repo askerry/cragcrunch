@@ -225,7 +225,11 @@ def gettopbottom(simdf, climbid, allcandidates, n=10):
     
 def getsimilarclimbcandidates(climbid, cdf):
     numerizedgrade=cdf.loc[cdf['climbid']==climbid,'numerizedgrade'].values[0]
+    if np.isnan(numerizedgrade):
+        numerizedgrade=0
     style=cdf.loc[cdf['climbid']==climbid,'style'].values[0]
+    if style=='TR':
+        style='Sport'
     region=cdf.loc[cdf['climbid']==climbid,'region'].values[0]
     if style=='Boulder':
         graderange=[numerizedgrade-2, numerizedgrade+2]
@@ -236,9 +240,17 @@ def getsimilarclimbcandidates(climbid, cdf):
     if len(cdf)>20:
         cdf=cdf[cdf['style']==style]
     if len(cdf)>20:
-        cdf=cdf[(cdf['numerizedgrade']<=graderange[1]) & (cdf['numerizedgrade']>=graderange[0])]
+        tcdf=cdf[(cdf['numerizedgrade']<=graderange[1]) & (cdf['numerizedgrade']>=graderange[0])]
+        if len(tcdf)<10:
+            cdf=cdf[(cdf['numerizedgrade']<=graderange[1]+12) & (cdf['numerizedgrade']>=graderange[0]-12)]
+        else:
+            cdf=tcdf
     if len(cdf)>20:
-        cdf=cdf[cdf['avgstars']>=2]
+        tcdf=cdf[cdf['avgstars']>=2]
+        if len(tcdf)<10:
+            cdf=cdf[cdf['avgstars']>=1]
+        else:
+            cdf=tcdf
     cdf=cdf[cdf['climbid']!=climbid]
     cdf=cdf.sort(columns=['avgstars','pageviews'], ascending=False)
     return cdf.climbid.values

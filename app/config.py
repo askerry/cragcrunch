@@ -7,8 +7,11 @@ rootdir=os.getcwd()
 while 'Projects' in rootdir:
     rootdir=os.path.dirname(rootdir)
 sys.path.append(os.path.join(rootdir, 'Projects', 'credentials'))
-from sqlcfg import projectroot, host, user, passwd
+from sqlcfg import host, user, passwd
 
+projectroot='/Projects/cragcrunch/'
+
+fulldir=os.path.join(rootdir, 'Projects/cragcrunch')
 
 #database parameters
 

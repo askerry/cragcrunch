@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>console.log('rendering...')</script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +24,7 @@
      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.2.0/less.min.js"></script>
+    <script src="../static/js/less-2.3.1.min.js"></script>
     <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
     <link href="../static/css/bootstrap-switch.css" rel="stylesheet">
     <script src="../static/js/bootstrap-switch.js"></script>
@@ -66,10 +67,15 @@
            </div>
            <div class="collapse navbar-collapse">
              <ul class="nav navbar-nav">
-               <li class="active"><a href="/home">Search</a></li>
+               <li class="active"><a href="/home">Home</a></li>
                <li><a href="/user/2424">Profile</a></li>
                <li><a href="/about">About</a></li>
                <li><a href="#" onclick=getnewuser();>I'm New!</a></li>
+               <li>    
+               		<form action="." method="POST">
+        				<input id="searchbox" type="text" name="text" placeholder="Search for climb, area, or user">
+    				</form>
+    			</li>
              </ul>
            </div><!--/.nav-collapse -->
          </div>
@@ -77,7 +83,6 @@
       </div>
       <div id="content">   
           {% block content %}{% endblock %}
-      </div>
       </div>
     </div>
 
@@ -92,6 +97,11 @@
     			};
     			function getnewuser(){
 					bootbox.prompt("Welcome to CragCrunch! Please enter a user name?", gotosetuppage);
+				};
+				function go2user(){
+					console.log()
+					var userid = $('#dropdown').val()
+    				window.location.replace("/user/"+userid.toString());
 				};
 
 			$(document).ready(function(){

@@ -4,6 +4,7 @@ Created on Fri Jan 16 09:12:37 2015
 
 @author: amyskerry
 """
+from flask import current_app
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
 import pandas as pd
@@ -17,7 +18,9 @@ import home as hf
 import climb as cf
 import os
 from sqlalchemy import and_
+from sqlalchemy.sql.expression import between
 import sys
+import timeit
 from collections import OrderedDict
 
 rootdir=os.getcwd()
@@ -69,7 +72,8 @@ def getuserplots(udict,db):
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
     userid=udict['climberid']
     climbids=getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder)
-    print climbids
+    print "OUT"
+    print timeit.default_timer()
     #climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
     climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
@@ -86,16 +90,26 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     if trad: styles.append('Trad');
     if boulder: styles.append('Boulder')
     candidates=[]
+    print timeit.default_timer()
     for style in styles:
-        thesecandidates=db.session.query(ClimbTable).filter_by(mainarea=area).filter(and_(ClimbTable.numerizedgrade >= graderanges[style][0], ClimbTable.numerizedgrade <= graderanges[style][1], (ClimbTable.style == style))).all()
+        thesecandidates=db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea==area), ClimbTable.numerizedgrade.between(graderanges[style][0],graderanges[style][1]), (ClimbTable.style == style))).all()
         candidates.extend([cf.getclimbdict(c, db) for c in thesecandidates])
-    trainedclfdict=loadtrainedmodel(udict) ##add logic for new users here
+    trainedclfdict, modeltype=loadtrainedmodel(udict) ##add logic for new users here
     classorder=list(trainedclfdict['clf'].classes_)
+    classdict={pred:classorder.index(pred) for pred in [1,2,3,4]}
     print "processing %s candidate regions" %len(candidates)
-    Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
+
+    if modeltype=='full':
+        Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
+    else:
+        Xdf = pd.read_sql("SELECT * from final_X_matrix_red", db.engine, index_col='index')
     datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}
+    print "A"
+    print timeit.default_timer()
     for climb in candidates:
-        datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classorder)
+        datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classdict)
+    print "B"
+    print timeit.default_timer()
     preddf=pd.DataFrame(data=datadict)
     preddf=preddf.sort(columns=['pred','prob'], ascending=False)
     if len(preddf[(preddf['pred']==4) & (preddf['prob']>=.9)])>10:
@@ -106,27 +120,25 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     else:
         return preddf.iloc[:10,:].climbid.values
 
-def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classorder):
+def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classdict):
+    '''take individual candidate and score with model'''
     cid=climb['climbid']
-    ufeatures= trainedclfdict['features']
-    print "XXX"
-    print len(ufeatures)
+    ufeatures= trainedclfdict['finalfeats']
     if cid in Xdf.index.values:
         row=Xdf.loc[cid,['climbid']+ufeatures]
-        print row
-        print len(row)
         del row['climbid']
         featurevector=row.values
-        print len(featurevector)
         pred=trainedclfdict['clf'].predict(featurevector)[0]
         datadict['pred'].append(pred)
-        datadict['prob'].append(trainedclfdict['clf'].predict_proba(featurevector)[0][classorder.index(pred)])
+        datadict['prob'].append(trainedclfdict['clf'].predict_proba(featurevector)[0][classdict[pred]])
         datadict['climbid'].append(cid)
         datadict['style'].append(climb['style'])
         datadict['mainarea'].append(['mainarea'])
         datadict['grade'].append(['grade'])
-        hit = len(pd.read_sql("SELECT * from hits_prepped where climber = %s and climb = %s" %(udict['climberid'],cid), db.engine, index_col='index'))
-        datadict['hit'].append(hit)
+        #ultimately want a record of climbs the user has done so that we can exclude them, but I'm leaving this out for speed reasons right now
+        #hit = len(pd.read_sql("SELECT * from hits_prepped where climber = %s and climb = %s" %(udict['climberid'],cid), db.engine, index_col='index'))
+        #datadict['hit'].append(hit)
+        datadict['hit'].append(0)
     return datadict
 
 def getmainareaoptions(db):
@@ -155,20 +167,12 @@ def getgraderange(udict,db, gradeshift, style):
 def loadtrainedmodel(udict):
     try:
         fname='user_%s_model.pkl'%(udict['climberid'])
-        filename=os.path.join(rootdir,'Projects/cragcrunch/data','models',fname)
-        with open(filename, 'r') as inputfile:
-            trainedclfdict=pickle.load(inputfile)
-        return trainedclfdict
+        clf=current_app.modeldict[fname]
+        return clf, 'full'
     except:
-        try:
-            fname='newuser_%s_model.pkl'%(udict['climberid'])
-            filename=os.path.join(rootdir,'Projects/cragcrunch/data','models',fname)
-            with open(filename, 'r') as inputfile:
-                trainedclfdict=pickle.load(inputfile)
-            return trainedclfdict
-        except:
-            return None
-
+        fname='newuser_%s_model.pkl'%(udict['climberid'])
+        clf=current_app.modeldict[fname]
+        return clf, 'reduced'
 
 
 def makejsontemplate():

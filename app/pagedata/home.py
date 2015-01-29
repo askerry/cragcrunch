@@ -8,7 +8,7 @@ from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTabl
 from sqlalchemy import between
 import numpy as np
 import viz
-
+from collections import OrderedDict
 from config import rootdir
 
 
@@ -17,21 +17,30 @@ from config import rootdir
 ##################################################
     
 def gettopclimbs(db):
-    #topclimbs = db.rawsql('select climbid, name from climb_prepped where pageviews> 30000 limit 10;')
-    topclimbs=db.session.query(ClimbTable).order_by(ClimbTable.pageviews.desc()).all()[:10]
+    '''get top climbs by pageviews for naive viewers'''
+    topclimbs=db.session.query(ClimbTable).order_by(ClimbTable.pageviews.desc()).limit(10).all()
     tlist=[{'name':c.name,'url':c.url, 'climbid':c.climbid, 'pageviews':int(c.pageviews), 'mainarea_name':db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name, 'region':c.region} for c in topclimbs]
     return tlist
 
+def getusers(db):
+    '''get list of all possible users in the databse'''
+    climbers=db.session.query(ClimberTable).all()
+    names=[climber.name for climber in climbers]
+    ids=[climber.name for climber in climbers]
+    sortedindices=np.argsort(names)
+    return OrderedDict((ids[i],names[i]) for i in sortedindices)
+
 def getall(g):
+    '''get all areas, climbs, climbers'''
     areas=g.db.session.query(AreaTable).all()
     climbs=g.db.session.query(ClimbTable).all()
     climbers=g.db.session.query(ClimberTable).all()
     return ['']+[climber.name for climber in climbers]+[climb.name for climb in climbs]+[area.name for area in areas]
 
+'''
 def matchname(name, g):
     try:
         name=str(name)
-        print name
         matchids={'climbs':[],'areas':[], 'users':[]}
         climbmatches=g.db.session.query(ClimbTable).filter_by(name=name).all()
         for c in climbmatches:
@@ -51,10 +60,10 @@ def matchname(name, g):
         return matchids
     except:
         return {'users':[{}],'areas':[{}],'climbds':[{}]}
-
-
+'''
 
 def findmatch(text,g):
+    '''take search text and return info on areas, climbs, and users'''
     text=text.strip()
     if text !='':
         matchids={'climbs':[],'areas':[], 'users':[]}
@@ -79,5 +88,5 @@ def findmatch(text,g):
             matchids['users'].append(ud)
         return matchids
     else:
-        return {'users':[{}],'areas':[{}],'climbds':[{}]}
+        return {'users':[{}],'areas':[{}],'climbids':[{}]}
     

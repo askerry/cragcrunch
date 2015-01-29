@@ -55,6 +55,7 @@ def plotROCcurve(resultsdf, threshrange):
     pass
 
 def plotcomparisons(comparisonlabels, resultsdict):
+    '''compare performance of different models'''
     means,sems,labels=[],[],[]
     for x in comparisonlabels:
         vals=resultsdict[x][0].groupby('user').mean().score.values
@@ -68,12 +69,10 @@ def plotcomparisons(comparisonlabels, resultsdict):
     x=ax.set_xticklabels(labels, rotation=90)
     
 def accbyN(resultsdict, usesdf, name):
+    '''plot accuracy as a function of N'''
     df=resultsdict[name][0].groupby('user').mean()[['score']].join(usesdf.groupby('climber').count()['climb'], how='left')
     df=df.rename(columns={'climb':'# climbs rated', 'score':'accuracy'})
-    f,ax=plt.subplots(figsize=[4,2])
-    #df.plot('# climbs rated','accuracy', kind='scatter', grid=False,ax=ax)
-    #sns.despine()
-    sns.jointplot('# climbs rated','accuracy', data=df, kind='kde')
+    sns.jointplot('# climbs rated','accuracy', data=df, kind='kde', stat_func=None)
 
 #mapping
 

@@ -7,6 +7,7 @@ import pagedata.climb as cf
 import pagedata.area as af
 import pagedata.home as hf
 import pandas as pd
+import timeit
 
 from config import rootdir
 
@@ -18,7 +19,10 @@ def initial_home(g):
     return hf.gettopclimbs(g.db), avail
 '''
 def initial_home(g):
-    return hf.gettopclimbs(g.db)
+    climbs=hf.gettopclimbs(g.db)
+    users=hf.getusers(g.db)
+    t=timeit.default_timer()
+    return climbs,users
 '''
 def result_home_meh(request, g):
     print "AAAA"
@@ -43,7 +47,7 @@ def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, 
     if areaid is None:
         areaid=udict['mainarea']
     #urecs={}
-    urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder)
+    urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder) #time suck
     uplotdata=uf.getuserplots(udict, g.db)
     areas=uf.getmainareaoptions(g.db)
     return udict, urecs, uplotdata, areas, udict['mainarea']
@@ -64,11 +68,11 @@ def getareapage(g, inputdict):
 
 
 def getclimbpage(g, inputdict):
-    climbid=int(inputdict['climbid'])
+    climbid=int(float(inputdict['climbid']))
     c=g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
     cdict=cf.getclimbdict(c, g.db, getnest=True)
-    del cdict['_sa_instance_state']
     crecs=cf.getsimilarclimbs(g.db, climbid, ClimbTable)
+    del cdict['_sa_instance_state']
     return cdict, crecs
 
 ##############     NEW USER PAGE    ##################
