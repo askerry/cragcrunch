@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import viz
 import misc
-from config import projectroot
 import pickle
 import json
 from flask import jsonify
@@ -22,14 +21,8 @@ from sqlalchemy.sql.expression import between
 import sys
 import timeit
 from collections import OrderedDict
-
-rootdir=os.getcwd()
-while 'Projects' in rootdir:
-    rootdir=os.path.dirname(rootdir)
-dirname=os.path.join(rootdir, 'Projects', 'cragcrunch/')
-sys.path.append(dirname)
-import antools
-from config import rootdir, projectroot
+from config import fulldir
+sys.path.append(fulldir)
 import antools.randomstuff as rd
 
 
@@ -59,23 +52,30 @@ def getuserplots(udict,db):
     sdf=pd.read_sql("SELECT * from stars_prepped where climber = '%s'" %userid, db.engine, index_col='index')
     userclimbs=sdf.climb.unique()
     userclimbstring=','.join([str(el) for el in userclimbs])
-    cdf=pd.read_sql("SELECT * from climb_prepped where climbid in(%s)" %userclimbstring, db.engine, index_col='index')
+    try:
+        cdf=pd.read_sql("SELECT * from climb_prepped where climbid in(%s)" %userclimbstring, db.engine, index_col='index')
+    except:
+        pass
     djsons=[]
-    redfeatfile=os.path.join(dirname,'data','learnedfeatures.pkl')
+    redfeatfile=os.path.join(fulldir,'data','learnedfeatures.pkl')
     with open(redfeatfile, 'r') as inputfile:
         feats=pickle.load(inputfile)['reducedtextfeats']
-    bterms=['easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']
-    usdf=getuserstarsbywords(sdf, cdf, userid, feats, blockterms=bterms)
-    corrs, labels, sems=getuserpredictors(usdf)
-    djsons.append(pushdata(corrs, sems, labels, 'Feature Preference', 'Climb Features', 'preference score', "plotcontainer0"))
+    try:
+        usdf=getuserstarsbywords(sdf, cdf, userid, feats, blockterms=rd.blockterms)
+        corrs, labels, sems=getuserpredictors(usdf)
+    except:
+        featdict=current_app.modeldicts['feats_%s' %int(userid)]
+        labels=featdict.keys()
+        corrs=[float(featdict[l]) for l in labels]
+        print corrs
+        corrs=[(c-2.5)/2 for c in corrs]
+        sems=[0 for c in corrs]
+    djsons.append(pushdata(corrs, sems, labels, '', 'Climb Features', 'preference score', "plotcontainer0"))
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
     userid=udict['climberid']
     climbids=getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder)
-    print "OUT"
-    print timeit.default_timer()
-    #climbids=[c['climbid'] for c in hf.gettopclimbs(db)]
     climbobjs=db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     recclimbs=[cf.getclimbdict(c, db) for c in climbobjs]
     for d in recclimbs:
@@ -91,26 +91,19 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     if trad: styles.append('Trad');
     if boulder: styles.append('Boulder')
     candidates=[]
-    print timeit.default_timer()
     for style in styles:
         thesecandidates=db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea==area), ClimbTable.numerizedgrade.between(graderanges[style][0],graderanges[style][1]), (ClimbTable.style == style))).all()
         candidates.extend([cf.getclimbdict(c, db) for c in thesecandidates])
-    trainedclfdict, modeltype=loadtrainedmodel(udict) ##add logic for new users here
+    trainedclfdict, modeltype=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
-    classdict={pred:classorder.index(pred) for pred in [1,2,3,4]}
-    print "processing %s candidate regions" %len(candidates)
-
+    classdict={pred:classorder.index(pred) for pred in [1,2,3,4] if pred in classorder}
     if modeltype=='full':
         Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
     else:
         Xdf = pd.read_sql("SELECT * from final_X_matrix_red", db.engine, index_col='index')
     datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}
-    print "A"
-    print timeit.default_timer()
     for climb in candidates:
         datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classdict)
-    print "B"
-    print timeit.default_timer()
     preddf=pd.DataFrame(data=datadict)
     preddf=preddf.sort(columns=['pred','prob'], ascending=False)
     if len(preddf[(preddf['pred']==4) & (preddf['prob']>=.9)])>10:
@@ -124,7 +117,9 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
 def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classdict):
     '''take individual candidate and score with model'''
     cid=climb['climbid']
-    ufeatures= trainedclfdict['finalfeats']
+    ufeatures = trainedclfdict['finalfeats']
+    if 'avgstars' not in ufeatures:
+        ufeatures=['other_avg']+ufeatures
     if cid in Xdf.index.values:
         row=Xdf.loc[cid,['climbid']+ufeatures]
         del row['climbid']
@@ -143,6 +138,7 @@ def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classdict):
     return datadict
 
 def getmainareaoptions(db):
+    '''get list of possible main areas'''
     localdf=pd.read_sql("SELECT * from area_prepped where country = 'USA'", db.engine, index_col='index').sort(columns='name')
     regions=[x for x in localdf.region.unique() if x !='World']
     regionids=[float(localdf[localdf['name']==r].areaid.values[0]) for r in regions]
@@ -152,6 +148,7 @@ def getmainareaoptions(db):
     return OrderedDict((float(aid),str(names[aidn])) for aidn,aid in enumerate(areas) if '*' not in str(names[aidn]))
 
 def getgraderange(udict,db, gradeshift, style):
+    '''get range of rasonable grades'''
     g_min = udict['g_min_%s' %style]
     g_max = udict['g_max_%s' %style]
     g_median = udict['g_median_%s' %style]
@@ -166,23 +163,25 @@ def getgraderange(udict,db, gradeshift, style):
     return range
 
 def loadtrainedmodel(udict):
+    '''load up pretrained model to run against candidates'''
     try:
         fname='user_%s_model.pkl'%(udict['climberid'])
-        clf=current_app.modeldict[fname]
+        clf=current_app.modeldicts[fname]
         return clf, 'full'
     except:
         fname='newuser_%s_model.pkl'%(udict['climberid'])
-        clf=current_app.modeldict[fname]
+        clf=current_app.modeldicts[fname]
         return clf, 'reduced'
 
 
 def makejsontemplate():
-    errdata={"name":"95% CI", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
+    '''make dummy template for highcharts'''
+    errdata={"name":"Standard Error", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
     coldata={"name":"Preference Score","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
     series=[coldata, errdata]
     jsondict={}
     jsondict["chart"]={"type":"errorbar", "renderTo":"plotcontainer", "backgroundColor":'#FFFFFF'}
-    for item in {'margin': [10, 10, 110, 65]}.items():
+    for item in {'margin': [1, 10, 110, 65]}.items():
         jsondict["chart"][item[0]]=item[1]
     jsondict["series"]=series
     jsondict["legend"]={'enabled':False}
@@ -190,25 +189,26 @@ def makejsontemplate():
     jsondict["credits"]={'enabled':False}
     jsondict["title"]={"text": "default title"}
     jsondict["xAxis"]=[{"categories": ["a", "b", "c", "d"],'labels':{'rotation':-75}, "title": {"text": "xlabel","style": {"color": 'black'}}}]
-    jsondict["yAxis"]=[{"labels": {"style": {"fontSize":"8px","fontFamily": 'Verdana, sans-serif',"color": 'black'}}, "max":-1, "max":1, "title": {"text": "","style": {"color": 'black'}}}]
-
+    jsondict["yAxis"]=[{"gridLineColor": '#FFFFFF',"labels": {"style": {"fontSize":"8px","fontFamily": 'Verdana, sans-serif',"color": 'white'}},"title": {"text": "","style": {"color": 'black'}}}]
     return jsondict
+
 def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
+    '''push actual data to the template'''
     jsondict=makejsontemplate()
     jsondict['chart']['renderTo']=plotid
     jsondict['series'][0]['data']=list(means)
-    jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
+    jsondict['series'][1]['data']=[0 for el in means]
+    #jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
     jsondict['xAxis'][0]['categories']=list(labels)
     jsondict['title']['text']=title
-    if plotid in ('plotcontainer0', 'plotcontainer2'):
-        jsondict['yAxis'][0]['title']['text']=ylabel
-        jsondict["chart"]['margin'][3]=40
+    jsondict['yAxis'][0]['title']['text']=ylabel
     jsondict['xAxis'][0]['title']['text']=xlabel
     djson=json.dumps(jsondict)
     return djson
 
 
 def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
+    '''get df relating user star ratings and word frequencies'''
     terms=[t for t in terms if t not in blockterms]
     sdf=sdf[sdf['climber']==climberid]
     sdf=pd.merge(sdf, cdf, left_on='climb', right_on=['climbid'], how='left')
@@ -225,6 +225,7 @@ def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
     return ndf[['starsscore']+terms]
 
 def standarderrorcorr(r,n):
+    "standard error on a pearson r"
     return (1-r**2)/np.sqrt(n-1)
 
 def getuserpredictors(usdf):

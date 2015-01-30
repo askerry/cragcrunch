@@ -17,17 +17,13 @@ import sys
 from collections import OrderedDict
 import pickle
 import pdb
-
-rootdir=os.getcwd()
-while 'Projects' in rootdir:
-    rootdir=os.path.dirname(rootdir)
-dirname=os.path.join(rootdir, 'Projects', 'cragcrunch/')
-sys.path.append(dirname)
-import antools
-from config import rootdir, projectroot,clf
+from config import fulldir,clf
+sys.path.append(fulldir)
 import antools.randomstuff as rd
+import config
 
 def getstates(db):
+    '''get ordered dict of all possible states'''
     states=db.session.query(AreaTable).filter_by(region='World').all()
     states={state.name:state.areaid for state in states if state.name!='* In Progress'}
     alphastates=sorted(states.keys())
@@ -40,6 +36,7 @@ def getroutegrades():
     return rd.listgrades_route
 
 def addtodb(db, request):
+    '''take basic user info and save user to be'''
     styles=[]
     if request.form['sportcheck']=='Sport':
         styles.append('Sport')
@@ -77,17 +74,20 @@ def addtodb(db, request):
     del ndict['_sa_instance_state']
     return ndict
 
-def modelnewuser(db, userdf):
-    newuserfeats=rd.reducedfeats
-    samplesdf=pd.read_sql('select * from fakesamples', db.engine)
-    featdf=pd.read_sql('select * from fakesamples', db.engine)
-    Y=np.array(rateallclimbs(userdf, samplesdf, featdf, newuserfeats))
+def modelnewuser(db, userdict, userid):
+    '''take a dataframe of user expressed preferences and build a model of them'''
+    with open(config.redfeatfile, 'r') as inputfile:
+        newuserfeats=pickle.load(inputfile)['reducedtextfeats']
+    samplesdf=pd.read_sql('select * from fakesamples', db.engine, index_col='index')
+    featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
+    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, newuserfeats))
     X=samplesdf.values
     clf.fit(X,Y)
-    finalclf=savefinalmodel(X,Y,clf,userdf['user'].values[0],newuserfeats,os.path.join(rootdir, projectroot, 'data'))
-    return clf
+    finalclf=savefinalmodel(X,Y,clf,userid,newuserfeats,os.path.join(fulldir, 'data'))
+    return finalclf
 
 def savefinalmodel(X,Y,clf,u,features,datadir):
+    '''save that user's model'''
     clf.fit(X, Y)
     finalclf={'user':u, 'clf':clf, 'finalfeats':features}
     fname='models/newuser_%s_model.pkl'%(u)
@@ -98,7 +98,8 @@ def savefinalmodel(X,Y,clf,u,features,datadir):
             pickler.dump(finalclf)
         except:
             print "pickle fail"
-    current_app.modeldicts['newuser_%s_model.pkl'%(u)]=clf
+    current_app.modeldicts['newuser_%s_model.pkl'%int(u)]=finalclf
+    print "added newuser_%s_model.pkl" %int(u)
     return finalclf
 
 def getscore(featdf,f,val):
@@ -106,18 +107,21 @@ def getscore(featdf,f,val):
     rowvals=list(featdf[featdf['feature']==f][[1,2,3,4]].values[0])
     return rowvals.index(val)+1
 
-def rateclimb(userdf, sampledf, featdf, reducedfeats):
+def rateclimb(userdict, sampledf, featdf, reducedfeats, samplesdf):
     '''compute users rating of the climb given their expressed preferences and the climb's features'''
     ratings=[]
     for f in reducedfeats:
         value=sampledf[f]
         fscore=getscore(featdf,f,value)
-        userscore=userdf[userdf['feature']==f]['pref'].values[0]
+        try:
+            userscore=userdict[f]
+        except:
+            userscore=2.5
         ratings.append(4-np.abs(fscore-userscore))
-    return np.mean(ratings)
+    return round(np.mean(ratings))
 
 
-def rateallclimbs(userdf, samplesdf, featdf, reducedfeats):
+def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     '''get climber's ratings on all climbs in sample set'''
-    ratings=samplesdf.apply(lambda x:rateclimb(userdf, x[:], featdf, reducedfeats), axis=1)
+    ratings=samplesdf.apply(lambda x:rateclimb(userdict, x[:], featdf, reducedfeats, samplesdf), axis=1)
     return ratings

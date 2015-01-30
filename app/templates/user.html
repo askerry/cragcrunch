@@ -7,23 +7,13 @@
 	<div id="contenttitle" class="col-md-4">{{user['name']}} </div>                                  
 	<div id="details" class="col-md-8">{%if user['gender']!=''%}{{user['gender']}},{%endif%} {%if user['gender']!=''%}{{ user['age'] }}{%endif%} {{user['mainarea_name']}}, {{user['country']}}</div>
 </div>
-<div class="row">
-	<div class="col-md-8" id="profile">
-	<span class="boost">{%if user['climbstyles']!='nan'%} Climbs {{user['climbstyles']}}. {% endif %}View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
-		<div id="plotbox">
-				<div id="plotcontainer0">
-					<script>
-						var plotdata='{{plotdata[0] | safe}}';
-						var jsondata=JSON.parse(plotdata);
-						var chart = new Highcharts.Chart(jsondata);
-					</script>
-				</div>
-		</div>
-	</div>
-	<div class="col-md-4" id="userrecs">
-		<div id="reccontainer">
-		<span class="boost">Top climbs for {{user['name']}} in 
-		<select id="dropdown" class="defaultselect" onchange="refreshrecs()">
+
+<hr class="headline">
+
+<div class="col-md-7" id="userrecs">
+	<div id="reccontainer">
+		<span class="boost">Top climbs for {{user['name']}} in </span>
+		<select id="areadropdown" class="defaultselect" onchange="refreshrecs()">
 		{%  for key in areas.keys() %}
 			{% if key == defaultarea %}
 				<option value="{{ key }}" selected> {{areas[key]}} </option>
@@ -32,7 +22,6 @@
 			{% endif %}
 		{% endfor %}
 		</select>
-		</span>
 		<hr>
 		<div id="recbox">
 		      {% for rec in recs %}
@@ -43,19 +32,31 @@
 		</div>
 			<div id="formbox">
 		<div id="checkgroup">
-			<input type="checkbox" id="sportcheck" value='Sport' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="tradcheck" value='Trad' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="bouldercheck" value='Boulder' checked>
+			<input type="checkbox" id="sportcheck" value='Sport' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<input type="checkbox" id="tradcheck" value='Trad' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<input type="checkbox" id="bouldercheck" value='Boulder' checked onchange="refreshrecs();">
 		</div>
 
 		<div class="sliderdiv">
 	        <div class="sliderlabel">Easier</div>
-	  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="show" onechange="showval();">
+	  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="show" onchange="refreshrecs();">
 	  		<div class="sliderlabel">Harder</div>
-	  		<div class="buttondiv" onclick="refreshrecs();"><img id="refreshbutton" src="../static/img/refresh.jpg" alt="refresh"></div>
 		</div>
+	 </div>
+</div>
 
-		 </div>
+<div class="row">
+	<div class="col-md-5" id="profile">
+		<div id="plotbox">
+				<div id="plotcontainer0">
+					<script>
+						var plotdata='{{plotdata[0] | safe}}';
+						var jsondata=JSON.parse(plotdata);
+						var chart = new Highcharts.Chart(jsondata);
+					</script>
+				</div>
+		</div>
+	<span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
 	</div>
 </div>
 <script>
@@ -90,11 +91,16 @@
 			   $.ajax({
 			      type: 'GET',
 			      url: '/refreshrecs', // This is the url that will be requested
-			      data: {areaid: $('#dropdown').val(), userid:{{user['climberid']}}, gradeshift:$('#gradeslider').slider('getValue'), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
+			      data: {areaid: $('#areadropdown').val(), userid:{{user['climberid']}}, gradeshift:$('#gradeslider').slider('getValue'), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
 			      success: updaterec,
 			      dataType: 'JSON'
 			    });
 				};
+
+			$(document).ready(function(){
+				$('#gradeslider').on('slide', refreshrecs);
+			});
+
 </script>
 
 {% endblock %}

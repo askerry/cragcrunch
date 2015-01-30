@@ -1,15 +1,24 @@
 # generates page of climb info
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
+from flask import current_app
 from sqlalchemy import func
 import pagedata.user as uf
 import pagedata.newuser as nuf
 import pagedata.climb as cf
 import pagedata.area as af
+import config
+import os
+import pickle
 import pagedata.home as hf
 import pandas as pd
 import timeit
+from config import fulldir,clf
+import sys
+sys.path.append(fulldir)
+import antools.randomstuff as rd
 
-from config import rootdir
+
+from config import fulldir
 
 ################     HOME PAGE    ####################
 
@@ -63,6 +72,18 @@ def getclimbpage(g, inputdict):
     return cdict, crecs
 
 ##############     NEW USER PAGE    ##################
+
+def getuserinput(request, features):
+    with open(config.redfeatfile, 'r') as inputfile:
+        features=pickle.load(inputfile)['reducedtextfeats']
+    features=[f for f in features if f not in rd.blockterms]
+    features=list(set([f[:f.index('_')] for f in features if '_' in f]))
+    userid=float(request.form['userid'])
+    featdict={}
+    for feat in features:
+        featdict[feat]=request.form['pref_%s' %feat]
+    current_app.modeldicts['feats_%s' %int(userid)]=featdict
+    return userid, featdict
 
 def getnewuseroptions(g):
     states=nuf.getstates(g.db)

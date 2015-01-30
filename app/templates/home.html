@@ -5,9 +5,10 @@
 	<div id="contenttitle" class="col-md-6">Welcome to CragCrunch</div>                                  
 	<div id="details" class="col-md-6">Discover new rock climbing routes that are right for you</div>
 </div>
+<hr class="headline">
 
 <div class="row">
-	<div class="col-md-8">
+	<div class="col-md-9">
 {% if (returntype=='result') %}
 	    <h4>Users</h4>
 	    <ul class=entries>
@@ -31,7 +32,8 @@
 	    </ul>
 {% else %}
 		<h4>Explore User Profiles</h4>
-		    <select id="dropdown" class="defaultselect" onchange="go2user();">
+		    <select id="userdropdown" class="defaultselect" onchange="go2user();">
+		    	<option value="0"> Select User </option>
 				{%  for key in users.keys() %}
 						<option value="{{ key }}"> {{users[key]}} </option>
 				{% endfor %}
@@ -44,7 +46,7 @@
 	      </ul>
 {% endif %}
 	</div>
-	<div class="col-md-4" id='blurb'>
+	<div class="col-md-3" id='blurb'>
 		<p><img id='logoimg'class='fitimg' src="../static/img/logo.jpg" alt="logo">A given climbing area or national park often contains hundres or thousands of individual rock routes, and climbers will only tackle a handful of the routes on a trip. Every climb is unique (e.g. different types of holds and faces) and demands its own blend of mental and physical skills, and individual climbers come to the crag with their own skills, preferences, and goals. CragCrunch provides a framework for discovering new climbing routes that are right for YOU. The key feature of this system is a recommendation engine that makes personalized suggestions based on a user-specific preference model. For users who have not built up an extensive climbing history, CragCrunch also provides for each climb suggestions of similar climbs. So look up a route you love and CragCrunch will suggest other climbs to add to your tick list.</p>
 	</div>
 </div>

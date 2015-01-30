@@ -26,6 +26,7 @@ for i in range(0,16):
     for l in ['-','','+']:
         bouldergrades.append('V'+str(i)+l)
         
+blockterms=['easy', 'hard', 'clipping', 'gear', 'easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']        
         
 ndictgrades={c:clean.numerizegrades(c, gradelists=[grades]) for c in grades}
 ndictgrades_r={item[1]:item[0] for item in ndictgrades.items()}

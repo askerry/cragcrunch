@@ -7,23 +7,27 @@
 	<div id="contenttitle" class="col-md-6">{{climb['name']}}</div>                                  
 	<div id="details" class="col-md-6">{{climb['style']}}, {{climb['grade']}}, {{climb['area_name']}}, {{ climb['mainarea_name'] }}, {{ climb['region'] }}</div>
 </div>
+<hr class="headline">
 <div class="row">
 	<div class="col-md-8">
 		<div class="maincontent">
-			<div>--> <a href="../view/area{{climb['area']}}">{{climb['area_name']}}</a>{% for n in climb['nest'] %}
+			<div><span class="miniboost">--> <a href="../view/area{{climb['area']}}">{{climb['area_name']}}</a>{% for n in climb['nest'] %}
 				---> <a href="../view/area{{n[0]}}">{{n[1]}}</a>
 			{% endfor %}
-			</div>
+			</span></div>
+			<br>
 			<div>{{climb['avgstars']}}, <a href="http://{{climb['url']}}">{{climb['pageviews']}} views on MountainProject.com</a></div>
 				<div>{{climb['pitch']}} {% if climb['length']!=''%}, {{climb['length']}} {% endif %}</div>
 				<div><h4>Gear:</h4> {{climb['protection']}}</div>
 				<div><h4>Description:</h4> 
 				{{climb['description'] | safe}}
+				<br>
 				</div>
 			</div>
 		</div>
 	<div class="col-md-4">
 		<div class="boxheader"><span class="boxtitle">Similar Climbs</span></div>
+		<hr>
 		{% for rec in recs %}
 			<div class="contenthead">
 				<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                                  

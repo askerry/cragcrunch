@@ -4,8 +4,20 @@
 
 {{ udict }}
 
-{% for feature in redfeats %}
-	{{feature}}
+<form action="../newuser/createprofile" method="POST">
+{% for feature in redfeats %}	<div class="sliderdiv">
+	{{feature}}:
+        <div class="sliderlabel">Hate</div>
+  		<input class='prefslider' name="pref_{{feature}}" type="text" class="span2" data-slider-min="1" data-slider-max="4" data-slider-step="1" value=1 data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="hide">
+  		<div class="sliderlabel">Love</div>
+	</div>
 {% endfor %}
+<input type="submit" value="Save Preferences">
+<input type="hidden" name="userid" value={{udict['climberid']}}>
+</form>
+
+<script>
+	
+</script>
 
 {% endblock %}

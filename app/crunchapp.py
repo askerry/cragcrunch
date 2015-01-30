@@ -3,15 +3,18 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from ormcfg import ClimberTable
 from sqlalchemy.sql import text
 import pages as pinf
 import pagedata.user as uf
+import pagedata.newuser as nuf
+
 import pickle
 import os
 import timeit
+import config
 from config import fulldir
 import pandas as pd
-
 
 # create application
 app = Flask(__name__)
@@ -120,29 +123,41 @@ def newuser(username):
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
     udict=pinf.adduser(g, request)
-    features=['crimp', 'boulder','flake']
+    with open(config.redfeatfile, 'r') as inputfile:
+        features=pickle.load(inputfile)['reducedtextfeats']
+    features=list(set([f[:f.index('_')] for f in features if '_' in f]))
     return render_template('newuserprefs.html', udict=udict, redfeats=features)
 
-@app.route("/checkavailability", methods=["POST"])
+@app.route("/newuser/createprofile", methods=['GET', 'POST'])
+def createuserprofile():
+    with open(config.redfeatfile, 'r') as inputfile:
+        features=pickle.load(inputfile)['reducedtextfeats']
+    userid,featdict=pinf.getuserinput(request, features)
+    clf=nuf.modelnewuser(g.db, featdict, userid)
+    app.modeldicts[filename]=clf
+    userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea))
+
+
+@app.route("/checkavailability", methods=["GET"])
 def checkavailability():
     desiredname=request.args.get('desiredname')
-    results=g.db.session
-    matches=pd.read_sql("SELECT name from climber_prepped where name = '%s'" %desiredname, g.db.engine, index_col='index')['name'].unique()
+    matches=g.db.session.query(ClimberTable).filter_by(name=desiredname).all()
     if len(matches)==0:
-        return jsonify({'exists':False})
+        return jsonify({'exists':False, 'name':desiredname})
     else:
-        return jsonify({'exists':True})
+        return jsonify({'exists':True, 'name':desiredname})
 
 
 if __name__ == '__main__':
     modeldir=os.path.join(fulldir, 'data/models')
     modelfiles=os.listdir(modeldir)
-    app.modeldict={}
+    app.modeldicts={}
     for filename in modelfiles:
         try:
             with open(os.path.join(modeldir, filename), 'r') as inputfile:
                 model=pickle.load(inputfile)
         except:
             model=[]
-        app.modeldict[filename]=model
+        app.modeldicts[filename]=model
     app.run(debug=True, host='0.0.0.0')

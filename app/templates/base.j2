@@ -88,8 +88,9 @@
 
     <script>
     			function checkusername(name){
+    					console.log(name)
     					$.ajax({
-					      type: 'POST',
+					      type: 'GET',
 					      url: '/checkavailability', // This is the url that will be requested
 					      data: {desiredname:name},
 					      success: acceptreject,
@@ -98,23 +99,27 @@
     			};
     			function acceptreject(data){  
     				exists=data['exists'] 
+    				name=data['name']
     				console.log(exists)
-    				if exists=true {
-    					bootbox.prompt("User name "+name+" is taken or invalid. Please provide a new name.", gotosetuppage);
+    				if (exists==true) {
+    					console.log("name found")
+    					bootbox.prompt("User name "+name+" is taken or invalid. Please provide a new name.", checkusername);
     				}
     				else
     				{
+    					console.log("you're good")
     					gotosetuppage(name)
     				}
 				};  
     			function gotosetuppage(name){
+    				console.log(name)
     				window.location.replace("/newuser/"+name);
     			};
     			function getnewuser(){
 					bootbox.prompt("Welcome to CragCrunch! Please enter a user name.", checkusername);
 				};
 				function go2user(){
-					var userid = $('#dropdown').val()
+					var userid = $('#userdropdown').val()
     				window.location.replace("/user/"+userid.toString());
 				};
 
@@ -123,10 +128,10 @@
 				$("#sportcheck").bootstrapSwitch({off:'No',on:'Yes',labelText:'Sport',size: 'sm'});
 				$("#tradcheck").bootstrapSwitch({labelText:'Trad',off:'No',on:'Yes'});
 				$("#bouldercheck").bootstrapSwitch({labelText:'Boulder',off:'No',on:'Yes'});
-				$('#gradeslider').slider()
-				$('#gradeslider').slider('setValue', "0")
-
-	
+				gradeslider=$('#gradeslider').slider()
+				gradeslider.slider('setValue', "0")
+				prefslider=$(".prefslider").slider()
+				prefslider.slider('setValue', "1")
 
 			});
 	</script>

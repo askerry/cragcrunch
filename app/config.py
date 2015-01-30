@@ -7,11 +7,14 @@ rootdir=os.getcwd()
 while 'Projects' in rootdir:
     rootdir=os.path.dirname(rootdir)
 sys.path.append(os.path.join(rootdir, 'Projects', 'credentials'))
+dirname=os.path.join(rootdir, 'Projects', 'cragcrunch')
 from sqlcfg import host, user, passwd
 
-projectroot='/Projects/cragcrunch/'
 
+
+projectroot='/Projects/cragcrunch/'
 fulldir=os.path.join(rootdir, 'Projects/cragcrunch')
+redfeatfile=os.path.join(fulldir,'data','learnedfeatures.pkl')
 
 #database parameters
 

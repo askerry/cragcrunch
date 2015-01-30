@@ -23,9 +23,13 @@ To find climbs that are right for you, we'll need to know a bit more about you.
 </select>
 <h4>Where do you usually climb?</h4>
 <select name="mainarea" class="defaultselect">
-	<option value='Empty'> </option>
 	{% for area in areas.keys()%}
-		<option value={{area}}>{{areas[area]}}</option>
+		{% if area==453 %}
+			<option value="{{area}}" selected> Yosemite </option>
+		{% else %}
+			<option value={{area}}>{{areas[area]}}</option>
+		{% endif %}
+		}
 	{% endfor %}
 </select>
 <h4>What styles do you climb?</h4>
