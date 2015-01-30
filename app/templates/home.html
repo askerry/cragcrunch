@@ -2,8 +2,8 @@
 {% block content %}
 
 <div class="row">
-	<div id="contenttitle" class="col-md-6">Welcome to CragCrunch</div>                                  
-	<div id="details" class="col-md-6">Discover new rock climbing routes that are right for you</div>
+	<div id="contenttitle" class="col-md-6"><b>CragCrunch</b></div>                                  
+	<div id="details" class="col-md-6">Discover new rock climbing routes for you</div>
 </div>
 <hr class="headline">
 
@@ -31,14 +31,14 @@
 	    {% endfor %}
 	    </ul>
 {% else %}
-		<h4>Explore User Profiles</h4>
+		<h3>Explore User Profiles</h3>
 		    <select id="userdropdown" class="defaultselect" onchange="go2user();">
 		    	<option value="0"> Select User </option>
 				{%  for key in users.keys() %}
 						<option value="{{ key }}"> {{users[key]}} </option>
 				{% endfor %}
 			</select>
-	    <h4>Browse Popular Climbs</h4>
+	    <h3>Browse Popular Climbs</h3>
 	      <ul class=entries>
 	      {% for entry in climbs %}
 	        <li><a href="view/climb{{ entry['climbid']}}">{{ entry['name']}}</a>, <a href="view/area{{entry['mainarea']}}">{{ entry['mainarea_name'] }}</a>, {{ entry['region'] }} <a class="subtlelink" href="http://{{entry['url']}}">({{ entry['pageviews'] }} views on MP)</a></li>
@@ -47,7 +47,7 @@
 {% endif %}
 	</div>
 	<div class="col-md-3" id='blurb'>
-		<p><img id='logoimg'class='fitimg' src="../static/img/logo.jpg" alt="logo">A given climbing area or national park often contains hundres or thousands of individual rock routes, and climbers will only tackle a handful of the routes on a trip. Every climb is unique (e.g. different types of holds and faces) and demands its own blend of mental and physical skills, and individual climbers come to the crag with their own skills, preferences, and goals. CragCrunch provides a framework for discovering new climbing routes that are right for YOU. The key feature of this system is a recommendation engine that makes personalized suggestions based on a user-specific preference model. For users who have not built up an extensive climbing history, CragCrunch also provides for each climb suggestions of similar climbs. So look up a route you love and CragCrunch will suggest other climbs to add to your tick list.</p>
+		<p><img id='logoimg'class='fitimg' src="../static/img/logo.jpg" alt="logo">Every rock climb is different, demanding its own blend of mental and physical skills, and every climber comes to the crag with their unique skills, preferences, and goals. A climbing area or park often contains hundres or thousands of individual climbing routes, and a climber can only tackle a handful of the routes on a trip. CragCrunch provides a framework for discovering new climbing routes that are right for YOU.</p>
 	</div>
 </div>
  

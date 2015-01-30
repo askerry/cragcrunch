@@ -2,15 +2,17 @@
 
 {% block content %}
 
-{{ udict }}
+{{udict}}
 
-<form action="../newuser/createprofile" method="POST">
-{% for feature in redfeats %}	<div class="sliderdiv">
-	{{feature}}:
-        <div class="sliderlabel">Hate</div>
-  		<input class='prefslider' name="pref_{{feature}}" type="text" class="span2" data-slider-min="1" data-slider-max="4" data-slider-step="1" value=1 data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="hide">
-  		<div class="sliderlabel">Love</div>
-	</div>
+<h4>Tell us your preferences</h4>
+<form action="../newuser/createprofile" onsubmit="getswitchvals" method="POST">
+{% for feature in redfeats.keys() %}	
+<div class="sliderdiv">
+	<span class="miniboost">{{redfeats[feature]}}:</span>
+        <div class="sliderlabel2">Hate 'em</div>
+  		<input class='prefslider' name="pref_{{feature}}" type="text" class="span2" data-slider-min="1" data-slider-max="4" data-slider-step="1" value=2 data-slider-value="2" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="hide">
+  		<div class="sliderlabel2">Love 'em</div>
+</div>
 {% endfor %}
 <input type="submit" value="Save Preferences">
 <input type="hidden" name="userid" value={{udict['climberid']}}>

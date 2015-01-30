@@ -27,7 +27,9 @@ for i in range(0,16):
         bouldergrades.append('V'+str(i)+l)
         
 blockterms=['easy', 'hard', 'clipping', 'gear', 'easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']        
-        
+labeldict={'ledge':'good belay ledges','undercling':'underclings','steep':'steep climbs','pump':'pumpy climbs','clipping':'exciting clipping','arete':'aretes','crack':'cracks','gear':'good gear placements','slab':'slabs','crimp':'crimps','traverse':'traverses','technical':'technical climbs','crux':'tough cruxes','vertical':'vertical climbs','boulder':'bouldery moves','corner':'corners'}
+
+
 ndictgrades={c:clean.numerizegrades(c, gradelists=[grades]) for c in grades}
 ndictgrades_r={item[1]:item[0] for item in ndictgrades.items()}
 ndictbouldergrades={c:clean.numerizegrades(c, gradelists=[bouldergrades]) for c in bouldergrades}

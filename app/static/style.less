@@ -166,11 +166,14 @@ a.emplink{
 	margin-top:.6em;
 	font-size:1.3em;
 	text-align:right;
+	text-transform: uppercase;
+	letter-spacing: .1em;
 }
 
 .maincontent{
 	line-height:1.2em;
 	margin-top:1em;
+	margin-bottom:1em;
 	overflow:hidden;
 }
 
@@ -180,13 +183,26 @@ a.emplink{
 }
 
 #blurb{
-	padding:1em;
+	padding:.7em;
 	background-color:#ddd;
-	color:white;
+	color:black;
+	font-size:1.1em;
 }
 
-.boost{
+#block{
+	width:100%;
+	height:5%;
+	background-color:blue;
+}
+
+#rectitle{
 	font-size:1.9em;
+	display:inline;
+}
+
+#selectdiv{
+	height:100%;
+	display:inline;
 }
 .miniboost{
 	font-size:1.2em;
@@ -221,8 +237,8 @@ a.emplink{
 .boxheader{
 	width:100%;
 	height:3em;
-	padding:.8em;
-	background-color:black;
+	padding:.4em;
+	background-color:rgb(33,37,39);
 	color:white;
 }
 
@@ -241,7 +257,6 @@ a.emplink{
 #profile{
 	height:100%;
 	padding:2em;
-
 }
 
 #userrecs{
@@ -253,7 +268,7 @@ a.emplink{
 
 #formbox{
 	background-color:gray;
-	height:15%;
+	height:10%;
 	padding:.5em;
 	padding-top:1em;
 }
@@ -279,18 +294,21 @@ a.emplink{
 }
 #areadropdown {
 	width:14em;
-	margin-left:1em;
 }
 
 .sliderdiv{
 	width:90%;
 	margin:auto;
-	height:5em;
+	height:3em;
 	padding-top:.4em;
 	text-align:center
 }
 #gradeslider{
-width:90%;
+	width:90%;
+}
+
+#infobox{
+	width:70%;
 }
 
 .sliderlabel{
@@ -299,6 +317,14 @@ width:90%;
 	margin-right:5%;
 	font-size:1.1em;
 	color:white;
+}
+
+.sliderlabel2{
+	display:inline;
+	margin-left:2%;
+	margin-right:2%;
+	font-size:1.1em;
+	color:black;
 }
 
 .bootstrap-switch-label{
@@ -328,11 +354,13 @@ width:90%;
 .tagline{
 	width:100%;
 	text-align:right;
+	padding:.15em;
 	margin-bottom:1em;
+	background-color:#eee;
+	color:black;
 }
 .recroute{
 	font-size:1.2em;
-	margin-bottom:.1em;
 }
 
 /* *********************** */
@@ -377,6 +405,12 @@ width:90%;
 	width:29em;
 }
 
+#submitbox{
+	height:100%;
+	text-align:center;
+	padding-top:9%;
+}
+
 
 /*   stole this from some blog somewhere    */
 .defaultselect {
@@ -396,7 +430,7 @@ width:90%;
    padding: 5px 10px;
    text-overflow: ellipsis;
    white-space: nowrap;
-   width: 12em;
+   width: 10em;
 }
 
 

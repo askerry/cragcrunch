@@ -38,11 +38,11 @@ def getroutegrades():
 def addtodb(db, request):
     '''take basic user info and save user to be'''
     styles=[]
-    if request.form['sportcheck']=='Sport':
+    if request.form['sportcheckhidden']=='true':
         styles.append('Sport')
-    if request.form['tradcheck']=='Trad':
+    if request.form['tradcheckhidden']=='true':
         styles.append('Trad')
-    if request.form['bouldercheck']=='Boulder':
+    if request.form['bouldercheckhidden']=='true':
         styles.append('Boulder')
 
     styles=', '.join(styles)

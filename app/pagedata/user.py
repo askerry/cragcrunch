@@ -66,11 +66,12 @@ def getuserplots(udict,db):
     except:
         featdict=current_app.modeldicts['feats_%s' %int(userid)]
         labels=featdict.keys()
+        labels=[labeldict[l] for l in labels]
         corrs=[float(featdict[l]) for l in labels]
         print corrs
         corrs=[(c-2.5)/2 for c in corrs]
         sems=[0 for c in corrs]
-    djsons.append(pushdata(corrs, sems, labels, '', 'Climb Features', 'preference score', "plotcontainer0"))
+    djsons.append(pushdata(corrs, sems, labels, "Route Preferences for %s" %udict['name'], '', 'preference score', "plotcontainer0"))
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
@@ -181,7 +182,7 @@ def makejsontemplate():
     series=[coldata, errdata]
     jsondict={}
     jsondict["chart"]={"type":"errorbar", "renderTo":"plotcontainer", "backgroundColor":'#FFFFFF'}
-    for item in {'margin': [1, 10, 110, 65]}.items():
+    for item in {'margin': [1, 20, 110, 65]}.items():
         jsondict["chart"][item[0]]=item[1]
     jsondict["series"]=series
     jsondict["legend"]={'enabled':False}
@@ -199,7 +200,7 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict['series'][0]['data']=list(means)
     jsondict['series'][1]['data']=[0 for el in means]
     #jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
-    jsondict['xAxis'][0]['categories']=list(labels)
+    jsondict['xAxis'][0]['categories']=[rd.labeldict[l] for l in labels]
     jsondict['title']['text']=title
     jsondict['yAxis'][0]['title']['text']=ylabel
     jsondict['xAxis'][0]['title']['text']=xlabel

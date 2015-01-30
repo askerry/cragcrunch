@@ -8,12 +8,14 @@ from sqlalchemy.sql import text
 import pages as pinf
 import pagedata.user as uf
 import pagedata.newuser as nuf
-
+import sys
 import pickle
 import os
 import timeit
 import config
 from config import fulldir
+sys.path.append(fulldir)
+import antools.randomstuff as rd
 import pandas as pd
 
 # create application
@@ -105,7 +107,6 @@ def updaterecs():
     areaid=request.args.get('areaid')
     userid=request.args.get('userid')
     gs=request.args.get('gradeshift')
-    print gs
     #this seems janky?
     js2bool={'true':True, 'false':False}
     sport=js2bool[request.args.get('sportcheck')]
@@ -122,10 +123,12 @@ def newuser(username):
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
+    print request.form
     udict=pinf.adduser(g, request)
     with open(config.redfeatfile, 'r') as inputfile:
         features=pickle.load(inputfile)['reducedtextfeats']
     features=list(set([f[:f.index('_')] for f in features if '_' in f]))
+    features={f:rd.labeldict[f] for f in features if f not in rd.blockterms}
     return render_template('newuserprefs.html', udict=udict, redfeats=features)
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
