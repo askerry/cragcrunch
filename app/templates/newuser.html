@@ -4,12 +4,12 @@
 
 <h3>Welcome {{username}}!</h3>
 
-To find climbs that are right for you, we'll need to know a bit more about you.
+<span class="miniboost">To find climbs that are right for you, we'll need to know a bit more about you.</span>
 <br>
 <form action="preferences" method="POST" onsubmit="DoSubmit();">
 <input type="hidden" name="name" value="{{username}}">
 <div class="row">
-	<div class="col-md-9">
+	<div class="col-md-10">
 		<div id="infobox" class="row">
 			<div class="col-md-3">
 				<h4>Gender:</h4>
@@ -50,7 +50,7 @@ To find climbs that are right for you, we'll need to know a bit more about you.
 		</div>
 		</div>
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-3">
 
 				<h4>What's your average sport grade?</h4>
 				<select name="sportgrade" class="defaultselect">
@@ -60,7 +60,7 @@ To find climbs that are right for you, we'll need to know a bit more about you.
 					{% endfor %}
 				</select>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-3">
 
 				<h4>What's your average trad grade?</h4>
 				<select name="tradgrade" class="defaultselect">
@@ -70,7 +70,7 @@ To find climbs that are right for you, we'll need to know a bit more about you.
 					{% endfor %}
 				</select>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-6">
 
 				<h4>What's your average boulder grade?</h4>
 				<select name="bouldergrade" class="defaultselect">
@@ -82,7 +82,7 @@ To find climbs that are right for you, we'll need to know a bit more about you.
 			</div>
 		</div>
 	</div>
-	<div class="col-md-3" id="submitbox">
+	<div class="col-md-2" id="submitbox">
 		<input type="submit" id="submit" value="Create Profile" class="btn btn-primary">
 		<input type="hidden" name="sportcheckhidden" id="sportcheckhidden" value=true>
 		<input type="hidden" name="tradcheckhidden" id="tradcheckhidden" value=true>

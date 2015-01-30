@@ -16,14 +16,19 @@
      }
 }
 
+@dark:rgb(33,37,39);
 @basefontcolor:black;
-@backgroundcolor:black;
+@backgroundcolor:@dark;
 @linkcolor:#2233AA;
-@clickedcolor:#554499;
-@maincolor:#ddd;
-@headercolor:#0077CC;
+@basegray:#ddd;
 @contentcolor:white;
-@containercolor:@maincolor;
+@subtlecolor:#aab;
+@neutralcolor:#ccb;
+@barcolor:#eee;
+
+@clickedcolor:#554499;
+@accentcolor:#0077CC;
+
 
 /*  font/spacing sizes  */
 @fontbase:14px;
@@ -50,8 +55,7 @@ html, body {
 #page {
     margin: 0 auto;
 	width: @containerwidth;
-    background-color:#ddd;
-    //position: relative;
+    background-color:@basegray;
     font-size: @fontbase;
     .my-font-family .light;
     margin-bottom:1%;
@@ -77,7 +81,7 @@ html, body {
 }
 
 .navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active {
-	 background-color:#ddd;
+	 background-color:@basegray;
 	 color:black;
 }
 
@@ -139,13 +143,14 @@ a {
 
 a.subtlelink {
 	font-size:.9em;
-	color:#aab;
+	color:@subtlecolor;
 }
 a.neutrallink{
-	color:#ccb
+	color:@neutralcolor;
 }
 a.emplink{
-	fontsize:1.2em;
+	font-size:1.4em;
+	color:@linkcolor;
 }
 .mention{
 	font-size:1.5em;
@@ -184,7 +189,7 @@ a.emplink{
 
 #blurb{
 	padding:.7em;
-	background-color:#ddd;
+	background-color:@basegray;
 	color:black;
 	font-size:1.1em;
 }
@@ -192,7 +197,6 @@ a.emplink{
 #block{
 	width:100%;
 	height:5%;
-	background-color:blue;
 }
 
 #rectitle{
@@ -238,7 +242,7 @@ a.emplink{
 	width:100%;
 	height:3em;
 	padding:.4em;
-	background-color:rgb(33,37,39);
+	background-color:@dark;
 	color:white;
 }
 
@@ -267,10 +271,19 @@ a.emplink{
 }
 
 #formbox{
-	background-color:gray;
+	background-color:@dark;
 	height:10%;
+	width:70%;
+	margin:auto;
 	padding:.5em;
 	padding-top:1em;
+}
+
+#xaxis{
+	background-color:red;
+	width:60%;
+	margin-left:35%;
+	height:3em;
 }
 
 #recbox{
@@ -355,12 +368,13 @@ a.emplink{
 	width:100%;
 	text-align:right;
 	padding:.15em;
-	margin-bottom:1em;
-	background-color:#eee;
+	margin-bottom:.75em;
+	background-color:@barcolor;
+	font-size:.9em;
 	color:black;
 }
 .recroute{
-	font-size:1.2em;
+	font-size:1.3em;
 }
 
 /* *********************** */
@@ -380,6 +394,13 @@ a.emplink{
 	top:26em;
 	display:inline;
 	position:absolute;
+}
+
+#abouttitle {
+	font-size:2.5em;
+	line-height:.9em;
+	height:100%;
+	display:inline;
 }
 
 #imgpanel{

@@ -29,7 +29,7 @@
 		<div id="recbox">
 		      {% for rec in recs %}
 					<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
-					<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... <a href="../view/climb{{ rec['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
+					<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... <a href="../view/area{{ rec['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
 		      {% endfor %}
 		</div>
 		</div>
@@ -51,13 +51,14 @@
 <div class="row">
 	<div class="col-md-5" id="profile">
 		<div id="plotbox">
-				<div id="plotcontainer0">
+				<div id="plotcontainer">
 					<script>
 						var plotdata='{{plotdata[0] | safe}}';
 						var jsondata=JSON.parse(plotdata);
 						var chart = new Highcharts.Chart(jsondata);
 					</script>
 				</div>
+			<div id="xaxis"></div>
 		</div>
 	<span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
 	</div>

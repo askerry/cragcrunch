@@ -66,12 +66,13 @@ def getuserplots(udict,db):
     except:
         featdict=current_app.modeldicts['feats_%s' %int(userid)]
         labels=featdict.keys()
-        labels=[labeldict[l] for l in labels]
         corrs=[float(featdict[l]) for l in labels]
         print corrs
         corrs=[(c-2.5)/2 for c in corrs]
         sems=[0 for c in corrs]
-    djsons.append(pushdata(corrs, sems, labels, "Route Preferences for %s" %udict['name'], '', 'preference score', "plotcontainer0"))
+    title="Route Preferences for %s" %udict['name']
+    title="Preference Scores"
+    djsons.append(pushdata(corrs, sems, labels, title, '', '', "plotcontainer"))
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
@@ -175,21 +176,27 @@ def loadtrainedmodel(udict):
         return clf, 'reduced'
 
 
-def makejsontemplate():
+def makejsontemplate(plotstyle='horizontal'):
     '''make dummy template for highcharts'''
+    if plotstyle=="horizontal":
+        bartype='bar'
+        rotation=0
+    else:
+        bartype='column'
+        rotation=-75
     errdata={"name":"Standard Error", "type": "errorbar","data": [[48, 51], [68, 73], [92, 110], [128, 136]]}
-    coldata={"name":"Preference Score","type":"column","data": [49.9, 71.5, 106.4, 129.2]}
+    coldata={"name":"Preference Score","type":bartype,"data": [49.9, 71.5, 106.4, 129.2]}
     series=[coldata, errdata]
     jsondict={}
     jsondict["chart"]={"type":"errorbar", "renderTo":"plotcontainer", "backgroundColor":'#FFFFFF'}
-    for item in {'margin': [1, 20, 110, 65]}.items():
+    for item in {'margin': [60, 10, 10, 130]}.items():
         jsondict["chart"][item[0]]=item[1]
     jsondict["series"]=series
     jsondict["legend"]={'enabled':False}
     jsondict["exporting"]= {"enabled": False }
     jsondict["credits"]={'enabled':False}
     jsondict["title"]={"text": "default title"}
-    jsondict["xAxis"]=[{"categories": ["a", "b", "c", "d"],'labels':{'rotation':-75}, "title": {"text": "xlabel","style": {"color": 'black'}}}]
+    jsondict["xAxis"]=[{"tickWidth":0,"categories": ["a", "b", "c", "d"],'labels':{'rotation':rotation}, "title": {"text": "xlabel","style": {"color": 'black'}}}]
     jsondict["yAxis"]=[{"gridLineColor": '#FFFFFF',"labels": {"style": {"fontSize":"8px","fontFamily": 'Verdana, sans-serif',"color": 'white'}},"title": {"text": "","style": {"color": 'black'}}}]
     return jsondict
 

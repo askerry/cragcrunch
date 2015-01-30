@@ -13,21 +13,21 @@
 	    <h4>Users</h4>
 	    <ul class=entries>
 	    {% for e in result['users'] %}
-	        <li><a href="user/{{e['climberid']}}">{{e['name']}} </a>, {{e['mainarea_name']}}, {{e['region']}} <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
+	        <li><a class="emplink" href="user/{{e['climberid']}}">{{e['name']}} </a>, <a href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a>, {{e['region']}} <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
 	    {% endfor %}
 	    </ul>
 
 	    <h4>Climbs</h4>
 	    <ul class=entries>
 	    {% for e in result['climbs'] %}
-	        <li><a href="view/climb{{e['climbid']}}">{{e['name']}}</a>, {{e['mainarea_name']}}, {{e['region']}}, {{e['grade']}}, {{e['style']}}, <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
+	        <li><a class="emplink" href="view/climb{{e['climbid']}}">{{e['name']}}</a>, <a href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a>, {{e['region']}}, {{e['grade']}}, {{e['style']}}, <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
 	    {% endfor %}
 	    </ul>
 
 	    <h4>Areas</h4>
 	    <ul class=entries>
 	    {% for e in result['areas'] %}
-	        <li><a href="view/area{{e['areaid']}}">{{e['name']}}</a>, {{e['mainarea_name']}}, {{e['region']}} <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
+	        <li><a class="emplink" href="view/area{{e['areaid']}}">{{e['name']}}</a>, <a href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a>, {{e['region']}} <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
 	    {% endfor %}
 	    </ul>
 {% else %}

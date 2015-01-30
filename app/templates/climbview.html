@@ -30,7 +30,7 @@
 		{% for rec in recs %}
 			<div class="contenthead">
 				<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                                  
-				<div class="tagline">{{rec['style']}}, {{rec['grade']}}, <a href="../view/area{{climb['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
+				<div class="tagline">{{rec['style']}}, {{rec['grade']}}, <a href="../view/area{{area['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
 			</div>
 		{% endfor %}
 	</div>
