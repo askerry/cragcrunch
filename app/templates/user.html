@@ -9,6 +9,7 @@
 </div>
 
 <hr class="headline">
+<div class="row">
 
 <div class="col-md-7" id="userrecs">
 	<div id="reccontainer">
@@ -33,23 +34,23 @@
 		      {% endfor %}
 		</div>
 		</div>
-			<div id="formbox">
-		<div id="checkgroup">
-			<input type="checkbox" id="sportcheck" value='Sport' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="tradcheck" value='Trad' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="bouldercheck" value='Boulder' checked onchange="refreshrecs();">
-		</div>
+	</div>
 
-		<div class="sliderdiv">
-	        <div class="sliderlabel">Easier</div>
-	  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="show" onchange="refreshrecs();">
-	  		<div class="sliderlabel">Harder</div>
-		</div>
-	 </div>
-</div>
-
-<div class="row">
 	<div class="col-md-5" id="profile">
+		<div id="formbox">
+			<div id="checkgroup">
+				<input type="checkbox" id="sportcheck" value='Sport' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+				<input type="checkbox" id="tradcheck" value='Trad' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+				<input type="checkbox" id="bouldercheck" value='Boulder' checked onchange="refreshrecs();">
+			</div>
+
+			<div class="sliderdiv">
+		        <div class="sliderlabel">Easier</div>
+		  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="show" onchange="refreshrecs();">
+		  		<div class="sliderlabel">Harder</div>
+			</div>
+		 </div>
+
 		<div id="plotbox">
 				<div id="plotcontainer">
 					<script>
@@ -58,7 +59,6 @@
 						var chart = new Highcharts.Chart(jsondata);
 					</script>
 				</div>
-			<div id="xaxis"></div>
 		</div>
 	<span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
 	</div>

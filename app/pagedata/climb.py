@@ -71,6 +71,7 @@ def getclimbdict(c, db, getnest=False):
     return cdict
     
 def getsimilarclimbs(db, climbid, ClimbTable):
+    '''get climbs similar to target'''
     df=pd.read_sql('select * from simclimbs', db.engine, index_col='climbid')
     simclimbids=df.loc[climbid,:].values[1:6].astype(int)
     simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=c).first() for c in simclimbids]

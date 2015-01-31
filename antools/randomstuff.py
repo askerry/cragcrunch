@@ -26,7 +26,7 @@ for i in range(0,16):
     for l in ['-','','+']:
         bouldergrades.append('V'+str(i)+l)
         
-blockterms=['easy', 'hard', 'clipping', 'gear', 'easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']        
+blockterms=['crux', 'crux_description', 'crux_commentsmerged','ledge', 'ledge_description', 'ledge_commentsmerged', 'easy', 'hard', 'clipping', 'gear', 'easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']        
 labeldict={'ledge':'solid belay ledges','undercling':'underclings','steep':'steep climbs','pump':'pumpy climbs','clipping':'exciting clipping','arete':'aretes','crack':'cracks','gear':'good gear placements','slab':'slabs','crimp':'crimps','traverse':'traverses','technical':'technical climbs','crux':'tough cruxes','vertical':'vertical climbs','boulder':'bouldery moves','corner':'corners'}
 
 

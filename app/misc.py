@@ -33,3 +33,5 @@ def convertsdictlist2df(dictlist):
         for col in cols:
             data[col].append(d[col])
     return pd.DataFrame(data=data)
+
+

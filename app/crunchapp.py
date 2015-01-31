@@ -64,14 +64,19 @@ def teardown_request(exception):
 
 #views
 
-@app.route('/home')
+global userid
+userid=2424
+
 @app.route('/')
+def land():
+    return render_template('landing.html')
+
+@app.route('/home', methods=['GET'])
 def home():
     climbs,users=pinf.initial_home(g)
     return render_template('home.html', returntype='noresult', climbs=climbs, users=users)
 
 @app.route('/home', methods=['POST'])
-@app.route('/', methods=['POST'])
 def search():
     result=pinf.result_home(request, g)
     return render_template('home.html', returntype='result', result=result)

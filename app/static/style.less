@@ -19,14 +19,15 @@
 @dark:rgb(33,37,39);
 @basefontcolor:black;
 @backgroundcolor:@dark;
-@linkcolor:#2233AA;
+@linkcolor:#0077CC;
 @basegray:#ddd;
 @contentcolor:white;
 @subtlecolor:#aab;
 @neutralcolor:#ccb;
 @barcolor:#eee;
+@buttoncolor:#E3E7EF;
 
-@clickedcolor:#554499;
+@clickedcolor:#2233AA;
 @accentcolor:#0077CC;
 
 
@@ -139,6 +140,10 @@ html, body {
 a {
 	font-size:1.1em;
 	color:@linkcolor;
+}
+
+a:visited { 
+    color: @clickedcolor;
 }
 
 a.subtlelink {
@@ -271,19 +276,14 @@ a.emplink{
 }
 
 #formbox{
-	background-color:@dark;
-	height:10%;
-	width:70%;
-	margin:auto;
+	background-color:@basegray;
+	height:7%;
+	width:98%;
+	margin-top:5em;
+	margin-bottom:3em;
 	padding:.5em;
 	padding-top:1em;
-}
-
-#xaxis{
-	background-color:red;
-	width:60%;
-	margin-left:35%;
-	height:3em;
+	border-radius: 1em;
 }
 
 #recbox{
@@ -298,6 +298,7 @@ a.emplink{
 	width:100%;
 	text-align:center;
 	margin-bottom:1em;
+	margin-top:.75em;
 }
 
 #userdropdown {
@@ -312,6 +313,7 @@ a.emplink{
 .sliderdiv{
 	width:90%;
 	margin:auto;
+	margin-top:1em;
 	height:3em;
 	padding-top:.4em;
 	text-align:center
@@ -329,7 +331,6 @@ a.emplink{
 	margin-left:5%;
 	margin-right:5%;
 	font-size:1.1em;
-	color:white;
 }
 
 .sliderlabel2{
@@ -458,4 +459,51 @@ a.emplink{
 .col-md-8{
 }
 .col-md-4{
+}
+
+/* *********************** */
+/*      Landing Page       */
+/* *********************** */
+
+.login{
+	width:7.8em;
+	display:inline;
+}
+
+.landingdiv{
+	background-color:blue;
+	position:absolute;
+	width:100%;
+	text-align:center;
+	height:100%;
+	padding:15%;
+	background-image: url("../static/img/landing.png");
+	background-repeat: no-repeat;
+	background-size:cover;
+}
+
+.prefgroup{
+	margin:auto;
+}
+
+#prefimg {
+	height:9em;
+	display:inline;
+}
+
+.featurelabel{
+	padding-top:.5em;
+	font-size:1.2em;
+	margin:auto;
+}
+
+#squeeze{
+	padding:.54em;
+	padding-top:.3em;
+	padding-bottom:.3em;
+	background-color:@buttoncolor;
+}
+
+.prefbox{
+	text-align:center;
 }

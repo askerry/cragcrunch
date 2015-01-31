@@ -2,24 +2,35 @@
 
 {% block content %}
 
-{{udict}}
-
-<h4>Tell us your preferences</h4>
-<form action="../newuser/createprofile" onsubmit="getswitchvals" method="POST">
+<form action="../newuser/createprofile" method="POST">
+<h3>Hi {{udict['name']}}, thanks for joining CragCrunch!</h3>
+<span class="miniboost">To start finding the best climbs for you, we need to know a little bit about what you like. Please tell us how you feel about each of the climb features below:</span>&nbsp&nbsp&nbsp&nbsp
+<input type="submit" value="Save Preferences" class="btn btn-primary">
+<br>
+<br>
+<div class="row">
 {% for feature in redfeats.keys() %}	
-<div class="sliderdiv">
-	<span class="miniboost">{{redfeats[feature]}}:</span>
-        <div class="sliderlabel2">Hate 'em</div>
-  		<input class='prefslider' name="pref_{{feature}}" type="text" class="span2" data-slider-min="1" data-slider-max="4" data-slider-step="1" value=2 data-slider-value="2" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="hide">
-  		<div class="sliderlabel2">Love 'em</div>
-</div>
+	<div class="col-md-2 prefbox">
+		<div class="featurelabel">{{redfeats[feature]}}</div>
+		<img id='prefimg'class='fitimg' src="../static/img/{{redfeats[feature]}}.png" alt="logo">
+
+		<div class="btn-group btn-group-sm prefgroup" data-toggle="buttons">
+			    <label class="btn btn-default btn-sm" id="squeeze">
+			    	<input type="radio" name="{{feature}}_love" id="{{feature}}_love" value=1> Like 
+			    </label>
+			    <label class="btn btn-default btn-sm active" id="squeeze">
+			    	<input type="radio" name="{{feature}}_meh" id="{{feature}}_meh" value=0 checked> Meh 
+			    </label>
+			    <label class="btn btn-default btn-sm" id="squeeze">
+			    	<input type="radio" name="{{feature}}_dislike" id="{{feature}}_dislike" value=-1> Dislike 
+			    </label>
+		</div>
+
+	</div>
 {% endfor %}
-<input type="submit" value="Save Preferences">
+</div>
 <input type="hidden" name="userid" value={{udict['climberid']}}>
 </form>
 
-<script>
-	
-</script>
 
 {% endblock %}

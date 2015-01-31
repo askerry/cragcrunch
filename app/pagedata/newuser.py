@@ -13,6 +13,7 @@ import climb as cf
 import os
 from sqlalchemy import and_
 from sqlalchemy.sql import func
+import user as uf
 import sys
 from collections import OrderedDict
 import pickle
@@ -74,11 +75,26 @@ def addtodb(db, request):
     del ndict['_sa_instance_state']
     return ndict
 
+def modelnewuser2(db, userdict, userid):
+    '''take a dataframe of user expressed preferences and build a model of them'''
+    with open(config.redfeatfile, 'r') as inputfile:
+        newuserfeats=pickle.load(inputfile)['reducedtextfeats']
+    candidateids=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['styles'])
+    samplesdf=pd.read_sql('select * climb_prepped here climbid in (%s)' %','.join(candidateids), db.engine, index_col='index')
+    featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
+    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, newuserfeats))
+    X=samplesdf.values
+    clf.fit(X,Y)
+    finalclf=savefinalmodel(X,Y,clf,userid,newuserfeats,os.path.join(fulldir, 'data'))
+    return finalclf
+
 def modelnewuser(db, userdict, userid):
     '''take a dataframe of user expressed preferences and build a model of them'''
     with open(config.redfeatfile, 'r') as inputfile:
         newuserfeats=pickle.load(inputfile)['reducedtextfeats']
     samplesdf=pd.read_sql('select * from fakesamples', db.engine, index_col='index')
+    samplesdf=samplesdf[newuserfeats]
+    samplesdf=(samplesdf - samplesdf.mean()) / (samplesdf.std())
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
     Y=np.array(rateallclimbs(userdict, samplesdf, featdf, newuserfeats))
     X=samplesdf.values
@@ -107,7 +123,7 @@ def getscore(featdf,f,val):
     rowvals=list(featdf[featdf['feature']==f][[1,2,3,4]].values[0])
     return rowvals.index(val)+1
 
-def rateclimb(userdict, sampledf, featdf, reducedfeats, samplesdf):
+def rateclimb_old(userdict, sampledf, featdf, reducedfeats, samplesdf):
     '''compute users rating of the climb given their expressed preferences and the climb's features'''
     ratings=[]
     for f in reducedfeats:
@@ -121,7 +137,37 @@ def rateclimb(userdict, sampledf, featdf, reducedfeats, samplesdf):
     return round(np.mean(ratings))
 
 
+def rateclimb(featweights, row):
+    '''compute users rating of the climb given their expressed preferences and the climb's features'''
+    print featweights
+    print row
+    ratings=np.multiply(featweights, row)
+    print ratings
+    return np.mean(ratings)
+
+def getstar(value, quantile=0):
+    if value<quantile:
+        return 1
+    elif value<quantile*2:
+        return 2
+    elif value<quantile*3:
+        return 3
+    elif value<=quantile*4:
+        return 4
+
 def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     '''get climber's ratings on all climbs in sample set'''
-    ratings=samplesdf.apply(lambda x:rateclimb(userdict, x[:], featdf, reducedfeats, samplesdf), axis=1)
-    return ratings
+    featdict={}
+    for f in reducedfeats:
+        if '_' in f:
+            featdict[f]=f[:f.index('_')]
+        else:
+            featdict[f]=f
+    featdf.index=featdf.feature.values
+    featweights=[float(userdict[featdict[feat]]) if feat in userdict.keys() else 0 for feat in reducedfeats]
+    samplesdf['score']=samplesdf.apply(lambda x:rateclimb(featweights, x[:].values), axis=1)
+    quarter=samplesdf['score'].quantile(.25)
+    orderedsamples=samplesdf['score'].apply(getstar, quantile=quarter)
+    return orderedsamples
+
+#datadict={'starid'=[], u'starsscore', u'climb', u'climblink', u'climber', u'url', u'name', u'urlname', u'relative_star', u'other_avg', u'other_std'], dtype='object')

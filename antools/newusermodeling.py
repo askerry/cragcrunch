@@ -26,13 +26,12 @@ def makefeatdf(cdf, reducedfeats):
     means=cdf[reducedfeats].describe().loc['mean',:]
     medians=cdf[reducedfeats].describe().loc['mean',:]
     stds=cdf[reducedfeats].describe().loc['std',:]
-    high=medians+1*stds
-    medhigh=medians+.5*stds
-    medlow=means
-    low=means-.25*stds
-    dfdict={'feature':reducedfeats,'high':high.values, 'medhigh':medhigh.values,'medlow':medlow.values, 'low':low.values}
+    high=medians+.5*stds
+    med=means
+    low=means-.5*stds
+    dfdict={'feature':reducedfeats,'high':high.values, 'med':med.values, 'low':low.values}
     return pd.DataFrame(data=dfdict)
-    
+'''    
 def makesampleclimbs(reducedfeats, featdf):
     mat=[]
     possl=['low','medlow','medhigh','high']
@@ -41,7 +40,7 @@ def makesampleclimbs(reducedfeats, featdf):
         rowvals=[featdf.loc[featdf['feature']==r, rowtypes[rn]].values[0] for rn,r in enumerate(reducedfeats)]
         mat.append(rowvals)
     return pd.DataFrame(data=np.array(mat), columns=reducedfeats)
-
+'''
 def getscore(featdf,f,val):
     '''get score that this value is associated with for this feature f'''
     rowvals=list(featdf[featdf['feature']==f][[1,2,3,4]].values[0])

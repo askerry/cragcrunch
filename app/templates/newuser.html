@@ -44,9 +44,9 @@
 		<h4>What styles do you climb?</h4>
 		<div id="stylediv">
 		<div id="checkgroup">
-			<input type="checkbox" id="sportcheck" name="sportcheck" value='Sport' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="tradcheck" name="tradcheck" value='Trad' checked >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="bouldercheck" name="bouldercheck" value='Boulder' checked>
+			<input type="checkbox" id="sportcheck" name="sportcheck" value='Sport' checked data-label-on="YES" data-label-off="NO">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<input type="checkbox" id="tradcheck" name="tradcheck" value='Trad' checked data-label-on="YES" data-label-off="NO">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<input type="checkbox" id="bouldercheck" name="bouldercheck" value='Boulder' checked data-label-on="YES" data-label-off="NO">
 		</div>
 		</div>
 		<div class="row">
@@ -92,16 +92,9 @@
 </form>
 
 <script>
-	function DoSubmit(){
-	alert('hi')
-
-	  $("#sportcheckhidden").value = $("#sportcheck").prop('checked');
-	  $("#tradcheckhidden").value = $("#tradcheck").prop('checked');
-	  $("#bouldercheckhidden").value = $("#bouldercheck").prop('checked');
-	  
+	function updatechecks(){
+	console.log($("#sportcheck").prop('checked'))
 	  alert('hi')
-
-	  return false;
 	};
 </script>
 

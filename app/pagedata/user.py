@@ -84,18 +84,27 @@ def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
         del d['_sa_instance_state']
     return recclimbs
 
-def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
-    graderanges={}
-    for style in ('Sport', 'Trad', 'Boulder'):
-        graderanges[style]=getgraderange(udict,db, gradeshift, style)
+def get_stylelist(sport, trad, boulder):
     styles=[]
     if sport: styles.append('Sport');
     if trad: styles.append('Trad');
     if boulder: styles.append('Boulder')
-    candidates=[]
+    return styles
+
+def getcandidates(udict, db, area, gradeshift, styles):
+    graderanges={}
+    for style in ('Sport', 'Trad', 'Boulder'):
+        graderanges[style]=getgraderange(udict,db, gradeshift, style)
+    candidateids=[]
     for style in styles:
         thesecandidates=db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea==area), ClimbTable.numerizedgrade.between(graderanges[style][0],graderanges[style][1]), (ClimbTable.style == style))).all()
-        candidates.extend([cf.getclimbdict(c, db) for c in thesecandidates])
+        candidateids.extend(thesecandidates)
+    return candidateids
+
+def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
+    styles=get_stylelist(sport, trad, boulder)
+    candidateids=getcandidates(udict, db, area, gradeshift, styles)
+    candidates=[cf.getclimbdict(c, db) for c in candidateids]
     trainedclfdict, modeltype=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
     classdict={pred:classorder.index(pred) for pred in [1,2,3,4] if pred in classorder}
@@ -205,6 +214,7 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict=makejsontemplate()
     jsondict['chart']['renderTo']=plotid
     jsondict['series'][0]['data']=list(means)
+    jsondict['series'][0]['tooltip']={ 'pointFormat': '<span>{series.name}</span>: {point.y:.1f}'}
     jsondict['series'][1]['data']=[0 for el in means]
     #jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
     jsondict['xAxis'][0]['categories']=[rd.labeldict[l] for l in labels]
@@ -237,6 +247,7 @@ def standarderrorcorr(r,n):
     return (1-r**2)/np.sqrt(n-1)
 
 def getuserpredictors(usdf):
+    '''compute correlations between individual features and climber ratings'''
     predictions=usdf.corr().loc['starsscore'][1:].dropna()
     corrs=predictions.values
     labels=predictions.index.values
