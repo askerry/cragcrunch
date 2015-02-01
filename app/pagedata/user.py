@@ -8,7 +8,6 @@ from flask import current_app
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
 import pandas as pd
-import viz
 import misc
 import pickle
 import json

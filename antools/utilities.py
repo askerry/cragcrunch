@@ -119,20 +119,9 @@ def normalizewordcounts(climbdf, features,key):
     climbdf.loc[climbs,features]=X
     return climbdf
     
-def gettextfeats(cdf):
-    allterms=rd.holdterms+rd.descriptors+rd.easeterms+rd.safetyterms+rd.rockterms
-    alltermsdict={'holdterms':rd.holdterms,'descriptors':rd.descriptors,'easeterms':rd.easeterms,'safety':rd.safetyterms,'rockterms':rd.rockterms}
-    alltermsdict['allterms']=allterms
+def gettextfeats(cdf, allterms):
     descripfeats=['%s_description' %(h) for h in allterms]
-    commentfeats=['%s_commentsmerged' %(h) for h in allterms]
     #normalize all text by length of text
-    ndf_d=normalizewordcounts(cdf, descripfeats, 'description')[[col for col in cdf.columns if 'commentsmerged' not in col]]
-    ndf_c=normalizewordcounts(cdf, commentfeats, 'commentsmerged')[[col for col in cdf.columns if 'description' not in col]]
-    ndf=pd.merge(ndf_d, ndf_c, on='climbid', how="inner", suffixes=('', '_y'))
-    ndf=ndf[[col for col in ndf.columns if '_y' not in col]]
-    ndf_c_mat=ndf.loc[:,commentfeats].values
-    ndf_c_mat[np.isnan(ndf_c_mat)]=0
-    ndf.loc[:,commentfeats]=ndf_c_mat
-    ndf.index=ndf.climbid.values
-    return allterms, alltermsdict, descripfeats, commentfeats, ndf
+    cdf.index=cdf.climbid.values
+    return descripfeats, cdf
     

@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, jsonify
+     abort, render_template, flash, jsonify, current_app
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from ormcfg import ClimberTable
@@ -64,22 +64,28 @@ def teardown_request(exception):
 
 #views
 
-global userid
-userid=2424
-
 @app.route('/')
 def land():
     return render_template('landing.html')
 
-@app.route('/home', methods=['GET'])
-def home():
-    climbs,users=pinf.initial_home(g)
-    return render_template('home.html', returntype='noresult', climbs=climbs, users=users)
-
 @app.route('/home', methods=['POST'])
+def home():
+    username=request.form['username']
+    print username
+    matches=g.db.session.query(ClimberTable).filter_by(name=username).all()
+    print matches
+    try:
+        print matches[0]
+        current_app.userid=matches[0]['climberid']
+    except:
+        current_app.userid=2424
+    climbs,users=pinf.initial_home(g)
+    return render_template('home.html', returntype='noresult', climbs=climbs, users=users, loggedinid=current_app.userid)
+
+@app.route('/result', methods=['POST'])
 def search():
     result=pinf.result_home(request, g)
-    return render_template('home.html', returntype='result', result=result)
+    return render_template('home.html', returntype='result', result=result, loggedinid=current_app.userid)
 
 
 @app.route('/view')
@@ -88,11 +94,11 @@ def view(searchid=0):
     if 'climb' in searchid:
         climbid=searchid[5:]
         cdict, crecs=pinf.getclimbpage(g, {'climbid':climbid})
-        return render_template('climbview.html', climb=cdict, recs=crecs)
+        return render_template('climbview.html', climb=cdict, recs=crecs, loggedinid=current_app.userid)
     if 'area' in searchid:
         areaid=searchid[4:]
         adict, aplotdata=pinf.getareapage(g, {'areaid':areaid})
-        return render_template('areaview.html', area=adict, plotdata=aplotdata)
+        return render_template('areaview.html', area=adict, plotdata=aplotdata, loggedinid=current_app.userid)
     else:
         return render_template('pagenotfound')
 
@@ -100,12 +106,12 @@ def view(searchid=0):
 @app.route('/user/<userid>')
 def user(userid=123):
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
-    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea))
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea), loggedinid=current_app.userid)
 
 @app.route('/about')
 def about():
     text='test text test text'
-    return render_template('about.html', text=text)
+    return render_template('about.html', text=text, loggedinid=current_app.userid)
 
 @app.route("/refreshrecs", methods=['GET', 'POST'])
 def updaterecs():
@@ -124,7 +130,7 @@ def updaterecs():
 @app.route("/newuser/<username>", methods=['GET', 'POST'])
 def newuser(username):
     states, areas, bouldergrades, routegrades=pinf.getnewuseroptions(g)
-    return render_template('newuser.html', username=username, states=states, areas=areas, bouldergrades=bouldergrades, routegrades=routegrades)
+    return render_template('newuser.html', username=username, states=states, areas=areas, bouldergrades=bouldergrades, routegrades=routegrades, loggedinid=current_app.userid)
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
@@ -134,7 +140,7 @@ def newuserpred():
         features=pickle.load(inputfile)['reducedtextfeats']
     features=list(set([f[:f.index('_')] for f in features if '_' in f]))
     features={f:rd.labeldict[f] for f in features if f not in rd.blockterms}
-    return render_template('newuserprefs.html', udict=udict, redfeats=features)
+    return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=current_app.userid)
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
 def createuserprofile():
@@ -144,7 +150,7 @@ def createuserprofile():
     clf=nuf.modelnewuser(g.db, featdict, userid)
     app.modeldicts[filename]=clf
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
-    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea))
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea),loggedinid=current_app.userid)
 
 
 @app.route("/checkavailability", methods=["GET"])

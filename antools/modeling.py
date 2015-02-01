@@ -393,9 +393,8 @@ def foldresult(X,Y,train_i, test_i, clf, summary, results, climbs, u, features, 
     if len(set(Y_train))>1:
         clf.fit(X_train, Y_train)
         ypred=clf.predict(X_test)
-        classorder=list(clf.classes_)
         yprobs=clf.predict_proba(X_test)[0]
-        yprob=yprobs[classorder.index(ypred[0])]
+        yprob=yprobs[-1]
         score=clf.score(X_test, Y_test)
         summary=addsummary(summary, score, Y_test, u)
         for inum,i in enumerate(test_i):

@@ -3,7 +3,12 @@ __author__ = 'amyskerry'
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy import Column, Integer, Float, String, Boolean, Date, ForeignKey, Text
-from misc import terms
+from config import dirname
+import os
+import pickle
+
+with open(os.path.join(dirname,'data', 'climbingterms.pkl'), 'r') as inputfile:
+        terms=pickle.load(inputfile)
 
 Base = declarative_base()
 
@@ -49,10 +54,10 @@ class ClimbTable(Base):
     numerizedgrade = Column(Float)
     mainarea_name = Column(String(70))
     area_name = Column(String(70))
+    mergedtext=Column(Text)
 
 for c in terms:
     setattr(ClimbTable,c+'_description', Column(Integer))
-    setattr(ClimbTable,c+'_commentsmerged', Column(Integer))
 
 class ClimberTable(Base):
     __tablename__ = 'climber_prepped'
