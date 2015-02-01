@@ -38,6 +38,9 @@
 
 	<div class="col-md-5" id="profile">
 		<div id="formbox">
+			<span class="miniboost"> Toggle climb suggestions</span>
+			<div class="tooltip"></div>
+
 			<div id="checkgroup">
 				<input type="checkbox" id="sportcheck" value='Sport' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 				<input type="checkbox" id="tradcheck" value='Trad' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
@@ -49,7 +52,7 @@
 		  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="show" onchange="refreshrecs();">
 		  		<div class="sliderlabel">Harder</div>
 			</div>
-		 </div>
+		</div>
 
 		<div id="plotbox">
 				<div id="plotcontainer">
@@ -60,6 +63,7 @@
 					</script>
 				</div>
 		</div>
+	<br>
 	<span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
 	</div>
 </div>

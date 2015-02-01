@@ -41,7 +41,10 @@ def getuserdict(u,db):
         udict['gender']={'F':'Male', 'M':'Male'}[udict['gender']]
     except:
         udict['gender']=''
-    udict['mainarea_name']=db.session.query(AreaTable).filter_by(areaid=udict['mainarea']).first().name
+    try:
+        udict['mainarea_name']=db.session.query(AreaTable).filter_by(areaid=udict['mainarea']).first().name
+    except:
+        udict['Unknown Area']
     udict['region']=db.session.query(AreaTable).filter_by(areaid=udict['mainarea']).first().region
     udict['country']=db.session.query(AreaTable).filter_by(areaid=udict['mainarea']).first().country
     return udict
@@ -213,10 +216,10 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict=makejsontemplate()
     jsondict['chart']['renderTo']=plotid
     jsondict['series'][0]['data']=list(means)
-    jsondict['series'][0]['tooltip']={ 'pointFormat': '<span>{series.name}</span>: {point.y:.1f}'}
+    jsondict['series'][0]['tooltip']={ 'pointFormat': '<span>{series.name}</span>: {point.y:.2f}'}
     jsondict['series'][1]['data']=[0 for el in means]
     #jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
-    jsondict['xAxis'][0]['categories']=[rd.labeldict[l] for l in labels]
+    jsondict['xAxis'][0]['categories']=[rd.labeldict[l] if l in rd.labeldict.keys() else l for l in labels]
     jsondict['title']['text']=title
     jsondict['yAxis'][0]['title']['text']=ylabel
     jsondict['xAxis'][0]['title']['text']=xlabel
@@ -230,14 +233,8 @@ def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
     sdf=sdf[sdf['climber']==climberid]
     sdf=pd.merge(sdf, cdf, left_on='climb', right_on=['climbid'], how='left')
     dcols=[c for c in terms if '_description' in c]
-    dlen=np.array([len(x) if isinstance(x,str) else 0 for x in sdf.description.values])
-    ccols=[c for c in terms if '_commentsmerged' in c]
-    clen=np.array([len(x) if isinstance(x,str) else 0 for x in sdf.commentsmerged.values])
-    dvals=(sdf[dcols].values.T/dlen).T
-    cvals=(sdf[ccols].values.T/clen).T
-    mvals=np.nanmean([cvals,dvals], axis=0)
     terms=list(set([t[:t.index('_')] for t in terms if '_' in t]))
-    ndf=pd.DataFrame(index=sdf['climb'], data=mvals, columns=terms)
+    ndf=pd.DataFrame(index=sdf['climb'], data=sdf[dcols].values, columns=terms)
     ndf['starsscore']=sdf['starsscore'].values
     return ndf[['starsscore']+terms]
 

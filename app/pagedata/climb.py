@@ -57,7 +57,10 @@ def getclimbdict(c, db, getnest=False):
         cdict['pitch']="%s pitches" %int(cdict['pitch'])
     else:
         cdict['length']=""
-    cdict['pageviews']=int(cdict['pageviews'])
+    try:
+        cdict['pageviews']=int(cdict['pageviews'])
+    except:
+        cdict['pageviews']=0
     if cdict['avgstars']==1:
         cdict['avgstars']="%.1f star" %(cdict['avgstars'])
     elif cdict['avgstars']>1:

@@ -125,3 +125,16 @@ def gettextfeats(cdf, allterms):
     cdf.index=cdf.climbid.values
     return descripfeats, cdf
     
+
+def makecols(sorteddf):
+    feats=[col[:col.index('_')+1] if '_' in col and '_avg' not in col else col for col in sorteddf.index.values]
+    feats=list(set(feats))
+    feats=[feat for feat in feats if feat !='other_avg']
+    feats.append('crimp_') #it's my favorite feature
+    finalfeats=[]
+    for f in feats:
+        if f=='other_avg' or '_' not in f:
+            finalfeats.append(f)
+        else:
+            finalfeats.append(f+'description')
+    return finalfeats

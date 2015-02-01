@@ -6,6 +6,7 @@ import pagedata.user as uf
 import pagedata.newuser as nuf
 import pagedata.climb as cf
 import pagedata.area as af
+from random import shuffle
 import config
 import os
 import pickle
@@ -76,11 +77,15 @@ def getuserinput(request, features):
     with open(config.redfeatfile, 'r') as inputfile:
         features=pickle.load(inputfile)['reducedtextfeats']
     features=[f for f in features if f not in rd.blockterms]
+    features=shuffle(features)
     features=list(set([f[:f.index('_')] for f in features if '_' in f]))
     userid=float(request.form['userid'])
     featdict={}
     for feat in features:
         featdict[feat]=request.form['pref_%s' %feat]
+    #goof hack
+    featdict['cracks']=featdict['crack']
+    featdict['flake']=featdict['flakes']
     current_app.modeldicts['feats_%s' %int(userid)]=featdict
     return userid, featdict
 

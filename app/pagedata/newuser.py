@@ -75,7 +75,7 @@ def addtodb(db, request):
     del ndict['_sa_instance_state']
     return ndict
 
-def modelnewuser2(db, userdict, userid):
+def modelnewuser(db, userdict, userid):
     '''take a dataframe of user expressed preferences and build a model of them'''
     with open(config.redfeatfile, 'r') as inputfile:
         newuserfeats=pickle.load(inputfile)['reducedtextfeats']
@@ -88,7 +88,7 @@ def modelnewuser2(db, userdict, userid):
     finalclf=savefinalmodel(X,Y,clf,userid,newuserfeats,os.path.join(fulldir, 'data'))
     return finalclf
 
-def modelnewuser(db, userdict, userid):
+def modelnewuser_old(db, userdict, userid):
     '''take a dataframe of user expressed preferences and build a model of them'''
     with open(config.redfeatfile, 'r') as inputfile:
         newuserfeats=pickle.load(inputfile)['reducedtextfeats']
@@ -170,4 +170,3 @@ def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     orderedsamples=samplesdf['score'].apply(getstar, quantile=quarter)
     return orderedsamples
 
-#datadict={'starid'=[], u'starsscore', u'climb', u'climblink', u'climber', u'url', u'name', u'urlname', u'relative_star', u'other_avg', u'other_std'], dtype='object')

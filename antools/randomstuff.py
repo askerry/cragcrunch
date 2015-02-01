@@ -26,8 +26,13 @@ for i in range(0,16):
     for l in ['-','','+']:
         bouldergrades.append('V'+str(i)+l)
         
-blockterms=['crux', 'crux_description', 'crux_commentsmerged','ledge', 'ledge_description', 'ledge_commentsmerged', 'easy', 'hard', 'clipping', 'gear', 'easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']        
-labeldict={'ledge':'solid belay ledges','undercling':'underclings','steep':'steep climbs','pump':'pumpy climbs','clipping':'exciting clipping','arete':'aretes','crack':'cracks','gear':'good gear placements','slab':'slabs','crimp':'crimps','traverse':'traverses','technical':'technical climbs','crux':'tough cruxes','vertical':'vertical climbs','boulder':'bouldery moves','corner':'corners'}
+#blockterms=['crux', 'crux_description', 'crux_commentsmerged','ledge', 'ledge_description', 'ledge_commentsmerged', 'easy', 'hard', 'clipping', 'gear', 'easy_description','hard_description','clipping_description','gear_description','easy_commentsmerged','hard_commentsmerged','clipping_commentsmerged','gear_commentsmerged']        
+#labeldict={'ledge':'solid belay ledges','undercling':'underclings','steep':'steep climbs','pump':'pumpy climbs','clipping':'exciting clipping','arete':'aretes','crack':'cracks','gear':'good gear placements','slab':'slabs','crimp':'crimps','traverse':'traverses','technical':'technical climbs','crux':'tough cruxes','vertical':'vertical climbs','boulder':'bouldery moves','corner':'corners'}
+
+blockterms=['flake', 'flake_description', 'cracks', 'cracks_description', 'bolted','bolted_description']
+askterms=['flakes', 'hand','tricky','undercling','slab','clipping','technical','boulder','bulge','bolted','steep', 'jug','chimney', 'crack','crux','roof','flake','cracks','traverse','pitch']
+labeldict={'hand':'hand cracks','tricky':'tricky moves','undercling':'underclings','slab':'slabs','clipping':'delicate clips','technical':'technical moves','boulder':'bouldery moves','bulge':'bulges','bolted':'well-bolted lines','steep':'steep climbs', 'jug':'juggy holds','chimney':'chimney climbs', 'crack':'crack climbs','crux':'tough cruxes','roof':'roofs','flake':"flakes",'traverse':'traverses','pitch':'multipitch climbs', 'crimp':'crimps'}
+
 
 
 ndictgrades={c:clean.numerizegrades(c, gradelists=[grades]) for c in grades}
