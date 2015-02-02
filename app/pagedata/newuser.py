@@ -75,34 +75,32 @@ def addtodb(db, request):
     del ndict['_sa_instance_state']
     return ndict
 
-def modelnewuser(db, userdict, userid):
+def modelnewuser(db, featdict, userid):
     '''take a dataframe of user expressed preferences and build a model of them'''
-    candidateids=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['styles'])
-    samplesdf=pd.read_sql('select * climb_prepped here climbid in (%s)' %','.join(candidateids), db.engine, index_col='index')
+    Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index') #load full sampleDF
+    allfeatures=[x for x in Xdf.columns if x not in ('index','climbid', userid)] #all features for full model
+    userdict=current_app.stash[userid]
+    candidates=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['climbstyles']) #get initial set of candidates from users area
+    candidateids=[float(cand.climbid) for cand in candidates]
+    candidateids=[cand for cand in candidateids if cand in Xdf.climbid.values]
+    candidateidstrs=[str(int(val)) for val in candidateids]
+    features=['avgstars']+current_app.askfeatures
+    samplesdf=pd.read_sql('select * from climb_prepped where climbid in (%s)' %','.join(candidateidstrs), db.engine, index_col='index')
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
-    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, current_app.askfeatures))
-    X=samplesdf.values
-    clf.fit(X,Y)
-    finalclf=savefinalmodel(X,Y,clf,userid,current_app.askfeatures,os.path.join(fulldir, 'data'))
-    return finalclf
-
-def modelnewuser_old(db, userdict, userid):
-    '''take a dataframe of user expressed preferences and build a model of them'''
-    samplesdf=pd.read_sql('select * from fakesamples', db.engine, index_col='index')
-    samplesdf=samplesdf[current_app.askfeatures]
-    samplesdf=(samplesdf - samplesdf.mean()) / (samplesdf.std())
-    featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
-    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, current_app.askfeatures))
-    X=samplesdf.values
-    clf.fit(X,Y)
-    finalclf=savefinalmodel(X,Y,clf,userid,current_app.askfeatures,os.path.join(fulldir, 'data'))
+    Y=np.array(rateallclimbs(featdict, samplesdf, featdf, features)) #use user input to predict ratings for each of these candidates (based on reduced space)
+    print len(allfeatures)
+    print allfeatures
+    X=Xdf.loc[Xdf['climbid'].isin(candidateids),allfeatures].values
+    clf.fit(X,Y) #use predicted ratings as "labels" to train a full model
+    finalclf=savefinalmodel(X,Y,clf,userid,allfeatures,os.path.join(fulldir, 'data'))
+    #del current_app.stash[userid]
     return finalclf
 
 def savefinalmodel(X,Y,clf,u,features,datadir):
     '''save that user's model'''
     clf.fit(X, Y)
     finalclf={'user':u, 'clf':clf, 'finalfeats':features}
-    fname='models/newuser_%s_model.pkl'%(u)
+    fname='models/user_%s_model.pkl'%(u)
     filename=os.path.join(datadir,fname)
     with open(filename, 'wb') as output:
         pickler = pickle.Pickler(output, pickle.HIGHEST_PROTOCOL)
@@ -110,8 +108,8 @@ def savefinalmodel(X,Y,clf,u,features,datadir):
             pickler.dump(finalclf)
         except:
             print "pickle fail"
-    current_app.modeldicts['newuser_%s_model.pkl'%int(u)]=finalclf
-    print "added newuser_%s_model.pkl" %int(u)
+    current_app.modeldicts['user_%s_model.pkl'%int(u)]=finalclf
+    print "added user_%s_model.pkl" %int(u)
     return finalclf
 
 def getscore(featdf,f,val):
@@ -136,9 +134,7 @@ def rateclimb_old(userdict, sampledf, featdf, reducedfeats, samplesdf):
 def rateclimb(featweights, row):
     '''compute users rating of the climb given their expressed preferences and the climb's features'''
     print featweights
-    print row
     ratings=np.multiply(featweights, row)
-    print ratings
     return np.mean(ratings)
 
 def getstar(value, quantile=0):
@@ -154,8 +150,8 @@ def getstar(value, quantile=0):
 def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     '''get climber's ratings on all climbs in sample set'''
     featdf.index=featdf.feature.values
-    featweights=[float(userdict[app.askfeatures_dict[feat]]) if feat in userdict.keys() else 0 for feat in reducedfeats]
-    samplesdf['score']=samplesdf.apply(lambda x:rateclimb(featweights, x[:].values), axis=1)
+    featweights=[float(userdict[current_app.askfeatures_dict[feat]]) if feat in userdict.keys() else 0 for feat in reducedfeats]
+    samplesdf['score']=samplesdf.apply(lambda x:rateclimb(featweights, x[reducedfeats].values), axis=1)
     quarter=samplesdf['score'].quantile(.25)
     orderedsamples=samplesdf['score'].apply(getstar, quantile=quarter)
     return orderedsamples

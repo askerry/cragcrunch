@@ -149,8 +149,6 @@ def newuserpred():
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
 def createuserprofile():
-    print "xxxx"
-    print request.form
     userid,featdict=pinf.getuserinput(request, current_app.askfeatures)
     clf=nuf.modelnewuser(g.db, featdict, userid)
     app.modeldicts[filename]=clf
@@ -192,4 +190,5 @@ if __name__ == '__main__':
             else:
                 featdict[f]=f
         app.askfeatures_dict=featdict
+    app.stash={}
     app.run(debug=True, host='0.0.0.0')

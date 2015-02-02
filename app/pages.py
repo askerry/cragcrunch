@@ -73,8 +73,7 @@ def getclimbpage(g, inputdict):
 ##############     NEW USER PAGE    ##################
 
 def getuserinput(request, features):
-    features=[f for f in current_app.askfeatures if f not in rd.blockterms]
-    features=list(set([f[:f.index('_')] for f in features if '_' in f]))
+    features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
     userid=float(request.form['userid'])
     featdict={}
     for feat in features:
@@ -94,4 +93,5 @@ def getnewuseroptions(g):
 
 def adduser(g, request):
     udict=nuf.addtodb(g.db, request)
+    current_app.stash[udict['climberid']]=udict
     return udict

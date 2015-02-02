@@ -16,6 +16,7 @@ import home as hf
 import climb as cf
 import os
 from sqlalchemy import and_
+from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import between
 import sys
 import timeit
@@ -55,23 +56,25 @@ def getuserplots(udict,db):
     userclimbs=sdf.climb.unique()
     userclimbstring=','.join([str(el) for el in userclimbs])
     try:
-        cdf=pd.read_sql("SELECT * from climb_prepped where climbid in(%s)" %userclimbstring, db.engine, index_col='index')
+        try:
+            cdf=pd.read_sql("SELECT * from climb_prepped where climbid in(%s)" %userclimbstring, db.engine, index_col='index')
+        except:
+            pass
+        djsons=[]
+        try:
+            usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
+            corrs, labels, sems=getuserpredictors(usdf)
+        except:
+            featdict=current_app.modeldicts['feats_%s' %int(userid)]
+            labels=featdict.keys()
+            corrs=[float(featdict[l]) for l in labels]
+            corrs=[(c-2.5)/2 for c in corrs]
+            sems=[0 for c in corrs]
+        title="Route Preferences for %s" %udict['name']
+        title="Preference Scores"
+        djsons.append(pushdata(corrs, sems, labels, title, '', '', "plotcontainer"))
     except:
-        pass
-    djsons=[]
-    try:
-        usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
-        corrs, labels, sems=getuserpredictors(usdf)
-    except:
-        featdict=current_app.modeldicts['feats_%s' %int(userid)]
-        labels=featdict.keys()
-        corrs=[float(featdict[l]) for l in labels]
-        print corrs
-        corrs=[(c-2.5)/2 for c in corrs]
-        sems=[0 for c in corrs]
-    title="Route Preferences for %s" %udict['name']
-    title="Preference Scores"
-    djsons.append(pushdata(corrs, sems, labels, title, '', '', "plotcontainer"))
+        djsons={}
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
@@ -90,27 +93,41 @@ def get_stylelist(sport, trad, boulder):
     if boulder: styles.append('Boulder')
     return styles
 
+def processstars(db, preddf, candidates, udict):
+	for c in candidates:
+		rating=preddf.loc[preddf['climbid']==float(c.climbid),'pred']
+		addstar(db, udict['userid'], udict['name'], c.climbid, c.name, rating)
+
+def addstar(db, userid, username, climbid, climbname, rating):
+    nstar=StarsTable(climber=str(userid), starsscore=4, climb=climbid, name="%s_%s" %(username, climbname))
+    maxstarid=float(db.session.query(func.max(StarsTable.starid)).first()[0])
+    nstar.starid= maxstarid +1
+    db.session.add(nstar)
+    db.session.flush()
+    db.session.commit()
+
 def getcandidates(udict, db, area, gradeshift, styles):
+    try:
+        styles=styles.split(', ')
+    except:
+        pass
     graderanges={}
     for style in ('Sport', 'Trad', 'Boulder'):
         graderanges[style]=getgraderange(udict,db, gradeshift, style)
-    candidateids=[]
+    candidates=[]
     for style in styles:
-        thesecandidates=db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea==area), ClimbTable.numerizedgrade.between(graderanges[style][0],graderanges[style][1]), (ClimbTable.style == style))).all()
-        candidateids.extend(thesecandidates)
-    return candidateids
+        thesecandidates=[c for c in db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea==area), ClimbTable.numerizedgrade.between(graderanges[style][0],graderanges[style][1]), (ClimbTable.style == style))).all()]
+        candidates.extend(thesecandidates)
+    return candidates
 
 def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     styles=get_stylelist(sport, trad, boulder)
     candidateids=getcandidates(udict, db, area, gradeshift, styles)
     candidates=[cf.getclimbdict(c, db) for c in candidateids]
-    trainedclfdict, modeltype=loadtrainedmodel(udict)
+    trainedclfdict=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
     classdict={pred:classorder.index(pred) for pred in [1,2,3,4] if pred in classorder}
-    if modeltype=='full':
-        Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
-    else:
-        Xdf = pd.read_sql("SELECT * from final_X_matrix_red", db.engine, index_col='index')
+    Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
     datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}
     for climb in candidates:
         datadict=scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classdict)
@@ -159,8 +176,8 @@ def getmainareaoptions(db):
 
 def getgraderange(udict,db, gradeshift, style):
     '''get range of rasonable grades'''
-    g_min = udict['g_min_%s' %style]
-    g_max = udict['g_max_%s' %style]
+    #g_min = udict['g_min_%s' %style]
+    #g_max = udict['g_max_%s' %style]
     g_median = udict['g_median_%s' %style]
     if style=='Boulder':
         range=[g_median-3, g_median+3]
@@ -174,14 +191,9 @@ def getgraderange(udict,db, gradeshift, style):
 
 def loadtrainedmodel(udict):
     '''load up pretrained model to run against candidates'''
-    try:
-        fname='user_%s_model.pkl'%(udict['climberid'])
-        clf=current_app.modeldicts[fname]
-        return clf, 'full'
-    except:
-        fname='newuser_%s_model.pkl'%(udict['climberid'])
-        clf=current_app.modeldicts[fname]
-        return clf, 'reduced'
+    fname='user_%s_model.pkl'%(udict['climberid'])
+    clf=current_app.modeldicts[fname]
+    return clf
 
 
 def makejsontemplate(plotstyle='horizontal'):
@@ -226,7 +238,7 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
 
 def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
     '''get df relating user star ratings and word frequencies'''
-    terms=[t for t in app.askfeatures_terms if t not in blockterms]
+    terms=[t for t in current_app.askfeatures_terms if t not in blockterms]
     sdf=sdf[sdf['climber']==climberid]
     sdf=pd.merge(sdf, cdf, left_on='climb', right_on=['climbid'], how='left')
     dcols=[c for c in terms if '_description' in c]
