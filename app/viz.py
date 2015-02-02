@@ -6,7 +6,7 @@ Created on Thu Jan 15 16:56:56 2015
 """
 
 import matplotlib.pyplot as plt
-import plotly.plotly as plotly
+#import plotly.plotly as plotly
 import numpy as np
 
 def save2plotly(f, fname, plotlyprivate=False):

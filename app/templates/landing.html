@@ -40,6 +40,11 @@
     
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+    		function setguest(){
+				$("#guest").val('guest');
+			};
+    </script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -51,10 +56,12 @@
 	<body>
 	<form action="../home" method="POST">
 		<div class="landingdiv">
+			<div id="helper">{{helper}}</div>
 		    <input type="text" class="form-control login" id="username" name="username" placeholder="user name">
 		    <input type="password" class="form-control login" id="password" name="password" placeholder="password">
 			<input type="submit" value="&#8594" class="btn btn-primary">
-			<h4><input type="submit" value="Continue as Guest Explorer" class="btn-lg btn-primary"></h4>
+			<h4><input type="submit" value="Continue as Guest Explorer" class="btn-lg btn-primary" onclick="setguest();"></h4>
+			<input type="hidden" id="guest" name="guest" value="empty">
 		</div>
 	</form>
 	</body>

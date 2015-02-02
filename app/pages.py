@@ -6,7 +6,6 @@ import pagedata.user as uf
 import pagedata.newuser as nuf
 import pagedata.climb as cf
 import pagedata.area as af
-from random import shuffle
 import config
 import os
 import pickle
@@ -74,10 +73,7 @@ def getclimbpage(g, inputdict):
 ##############     NEW USER PAGE    ##################
 
 def getuserinput(request, features):
-    with open(config.redfeatfile, 'r') as inputfile:
-        features=pickle.load(inputfile)['reducedtextfeats']
-    features=[f for f in features if f not in rd.blockterms]
-    features=shuffle(features)
+    features=[f for f in current_app.askfeatures if f not in rd.blockterms]
     features=list(set([f[:f.index('_')] for f in features if '_' in f]))
     userid=float(request.form['userid'])
     featdict={}

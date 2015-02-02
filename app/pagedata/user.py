@@ -59,11 +59,8 @@ def getuserplots(udict,db):
     except:
         pass
     djsons=[]
-    redfeatfile=os.path.join(fulldir,'data','learnedfeatures.pkl')
-    with open(redfeatfile, 'r') as inputfile:
-        feats=pickle.load(inputfile)['reducedtextfeats']
     try:
-        usdf=getuserstarsbywords(sdf, cdf, userid, feats, blockterms=rd.blockterms)
+        usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
         corrs, labels, sems=getuserpredictors(usdf)
     except:
         featdict=current_app.modeldicts['feats_%s' %int(userid)]
@@ -229,11 +226,10 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
 
 def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
     '''get df relating user star ratings and word frequencies'''
-    terms=[t for t in terms if t not in blockterms]
+    terms=[t for t in app.askfeatures_terms if t not in blockterms]
     sdf=sdf[sdf['climber']==climberid]
     sdf=pd.merge(sdf, cdf, left_on='climb', right_on=['climbid'], how='left')
     dcols=[c for c in terms if '_description' in c]
-    terms=list(set([t[:t.index('_')] for t in terms if '_' in t]))
     ndf=pd.DataFrame(index=sdf['climb'], data=sdf[dcols].values, columns=terms)
     ndf['starsscore']=sdf['starsscore'].values
     return ndf[['starsscore']+terms]

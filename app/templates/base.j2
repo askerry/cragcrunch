@@ -77,7 +77,8 @@
         				<input id="searchbox" type="text" name="text" placeholder="Search for climb, area, or user">
     				</form>
     			</li>
-    			<li>{{loggedinname}}</li>
+    			<li><a href="/user/{{loggedinid}}"><span class="mini">signed in as</span> {{loggedinname}}</a></li>
+    			<li><a href="/"><span id="logout" class="mini btn btn-default">sign out</span></a></li>
              </ul>
            </div><!--/.nav-collapse -->
          </div>

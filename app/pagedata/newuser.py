@@ -77,29 +77,25 @@ def addtodb(db, request):
 
 def modelnewuser(db, userdict, userid):
     '''take a dataframe of user expressed preferences and build a model of them'''
-    with open(config.redfeatfile, 'r') as inputfile:
-        newuserfeats=pickle.load(inputfile)['reducedtextfeats']
     candidateids=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['styles'])
     samplesdf=pd.read_sql('select * climb_prepped here climbid in (%s)' %','.join(candidateids), db.engine, index_col='index')
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
-    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, newuserfeats))
+    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, current_app.askfeatures))
     X=samplesdf.values
     clf.fit(X,Y)
-    finalclf=savefinalmodel(X,Y,clf,userid,newuserfeats,os.path.join(fulldir, 'data'))
+    finalclf=savefinalmodel(X,Y,clf,userid,current_app.askfeatures,os.path.join(fulldir, 'data'))
     return finalclf
 
 def modelnewuser_old(db, userdict, userid):
     '''take a dataframe of user expressed preferences and build a model of them'''
-    with open(config.redfeatfile, 'r') as inputfile:
-        newuserfeats=pickle.load(inputfile)['reducedtextfeats']
     samplesdf=pd.read_sql('select * from fakesamples', db.engine, index_col='index')
-    samplesdf=samplesdf[newuserfeats]
+    samplesdf=samplesdf[current_app.askfeatures]
     samplesdf=(samplesdf - samplesdf.mean()) / (samplesdf.std())
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
-    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, newuserfeats))
+    Y=np.array(rateallclimbs(userdict, samplesdf, featdf, current_app.askfeatures))
     X=samplesdf.values
     clf.fit(X,Y)
-    finalclf=savefinalmodel(X,Y,clf,userid,newuserfeats,os.path.join(fulldir, 'data'))
+    finalclf=savefinalmodel(X,Y,clf,userid,current_app.askfeatures,os.path.join(fulldir, 'data'))
     return finalclf
 
 def savefinalmodel(X,Y,clf,u,features,datadir):
@@ -157,14 +153,8 @@ def getstar(value, quantile=0):
 
 def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     '''get climber's ratings on all climbs in sample set'''
-    featdict={}
-    for f in reducedfeats:
-        if '_' in f:
-            featdict[f]=f[:f.index('_')]
-        else:
-            featdict[f]=f
     featdf.index=featdf.feature.values
-    featweights=[float(userdict[featdict[feat]]) if feat in userdict.keys() else 0 for feat in reducedfeats]
+    featweights=[float(userdict[app.askfeatures_dict[feat]]) if feat in userdict.keys() else 0 for feat in reducedfeats]
     samplesdf['score']=samplesdf.apply(lambda x:rateclimb(featweights, x[:].values), axis=1)
     quarter=samplesdf['score'].quantile(.25)
     orderedsamples=samplesdf['score'].apply(getstar, quantile=quarter)

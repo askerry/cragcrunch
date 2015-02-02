@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, jsonify, current_app
+     abort, render_template, flash, jsonify, current_app, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from ormcfg import ClimberTable
@@ -16,6 +16,7 @@ import config
 from config import fulldir
 sys.path.append(fulldir)
 import antools.randomstuff as rd
+from collections import OrderedDict
 import pandas as pd
 
 # create application
@@ -65,19 +66,27 @@ def teardown_request(exception):
 #views
 
 @app.route('/')
-def land():
-    return render_template('landing.html')
+@app.route('/<status>')
+def land(status=""):
+    if status=='invalid':
+        helper="Oops. Your username & password were invalid. Please sign in again or continue as Guest."
+    else:
+        helper=''
+    return render_template('landing.html', helper=helper)
 
 @app.route('/home', methods=['POST'])
 def home():
     username=request.form['username']
     matches=g.db.session.query(ClimberTable).filter(ClimberTable.name.ilike(username)).all()
-    try:
-        current_app.userid=matches[0].climberid
-        username=matches[0].name
-    except:
+    if request.form['guest']=='guest':
         current_app.userid=2424
         current_app.username=g.db.session.query(ClimberTable).filter_by(climberid=current_app.userid).all()[0].name
+    else:
+        if len(matches)==0:
+            return redirect('/invalid')
+        else:
+            current_app.userid=matches[0].climberid
+            current_app.username=matches[0].name
     climbs,users=pinf.initial_home(g)
     return render_template('home.html', returntype='noresult', climbs=climbs, users=users, loggedinid=current_app.userid, loggedinname=current_app.username)
 
@@ -133,21 +142,16 @@ def newuser(username):
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
-    print request.form
     udict=pinf.adduser(g, request)
-    with open(config.redfeatfile, 'r') as inputfile:
-        features=pickle.load(inputfile)['reducedtextfeats']
-    features=list(set([f[:f.index('_')] for f in features if '_' in f]))
-    print features
-    features=[f for f in features if f not in rd.blockterms]
-    features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features }
+    features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
+    features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
     return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=current_app.userid, loggedinname=current_app.username)
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
 def createuserprofile():
-    with open(config.redfeatfile, 'r') as inputfile:
-        features=pickle.load(inputfile)['reducedtextfeats']
-    userid,featdict=pinf.getuserinput(request, features)
+    print "xxxx"
+    print request.form
+    userid,featdict=pinf.getuserinput(request, current_app.askfeatures)
     clf=nuf.modelnewuser(g.db, featdict, userid)
     app.modeldicts[filename]=clf
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
@@ -177,4 +181,15 @@ if __name__ == '__main__':
         app.modeldicts[filename]=model
     app.userid=2424
     app.username='GhaMby'
+    with open(config.redfeatfile, 'r') as inputfile:
+        d=pickle.load(inputfile)
+        app.askfeatures=d['reducedtextfeats']
+        app.askfeatures_terms=list(set([t[:t.index('_')] for t in app.askfeatures if '_' in t]))
+        featdict={}
+        for f in app.askfeatures:
+            if '_' in f:
+                featdict[f]=f[:f.index('_')]
+            else:
+                featdict[f]=f
+        app.askfeatures_dict=featdict
     app.run(debug=True, host='0.0.0.0')

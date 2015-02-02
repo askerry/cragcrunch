@@ -131,9 +131,10 @@ html, body {
 #searchbox{
 	font-size:1.3em;
 	width:16em;
-	height:2em;
+	height:2.3em;
 	margin-top:.35em;
 	margin-left:.75em;
+	margin-right:4em;
 	padding-left:.5em;
 }
 
@@ -148,6 +149,10 @@ a:visited {
 
 a.subtlelink {
 	font-size:.9em;
+	color:@subtlecolor;
+}
+span.mini {
+	font-size:.7em;
 	color:@subtlecolor;
 }
 a.neutrallink{
@@ -471,7 +476,6 @@ a.emplink{
 }
 
 .landingdiv{
-	background-color:blue;
 	position:absolute;
 	width:100%;
 	text-align:center;
@@ -497,11 +501,25 @@ a.emplink{
 	margin:auto;
 }
 
+#helper{
+	margin:auto;
+	color:white;
+	width:22em;
+	margin-bottom:1em;
+}
+
 #squeeze{
 	padding:.54em;
 	padding-top:.3em;
 	padding-bottom:.3em;
-	background-color:@buttoncolor;
+}
+
+#logout{
+	padding-top:.1em;
+	padding-bottom:.1em;
+	background-color:#aab;
+	border-color:#aab;
+	color:black;
 }
 
 .prefbox{
