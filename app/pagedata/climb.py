@@ -45,7 +45,6 @@ def getclimbdict(c, db, getnest=False):
     #t=timeit.default_timer()
     #cdict=deepcopy(c.__dict__)
     cdict=c.__dict__
-    #print "copy: %.6f" %(timeit.default_timer()-t)
     cdict['climbid']=int(cdict['climbid'])
     if cdict['length']>0:
         cdict['length']="%s ft" %int(cdict['length'])

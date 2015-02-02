@@ -88,15 +88,13 @@ def modelnewuser(db, featdict, userid):
     samplesdf=pd.read_sql('select * from climb_prepped where climbid in (%s)' %','.join(candidateidstrs), db.engine, index_col='index')
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
     Y=np.array(rateallclimbs(featdict, samplesdf, featdf, features)) #use user input to predict ratings for each of these candidates (based on reduced space)
-    print len(allfeatures)
-    print allfeatures
     X=Xdf.loc[Xdf['climbid'].isin(candidateids),allfeatures].values
     clf.fit(X,Y) #use predicted ratings as "labels" to train a full model
-    finalclf=savefinalmodel(X,Y,clf,userid,allfeatures,os.path.join(fulldir, 'data'))
+    finalclf=savefinalmodel(X,Y,clf,userid,allfeatures,featdict, os.path.join(fulldir, 'data'))
     #del current_app.stash[userid]
     return finalclf
 
-def savefinalmodel(X,Y,clf,u,features,datadir):
+def savefinalmodel(X,Y,clf,u,features,featdict, datadir):
     '''save that user's model'''
     clf.fit(X, Y)
     finalclf={'user':u, 'clf':clf, 'finalfeats':features}
@@ -109,6 +107,7 @@ def savefinalmodel(X,Y,clf,u,features,datadir):
         except:
             print "pickle fail"
     current_app.modeldicts['user_%s_model.pkl'%int(u)]=finalclf
+    current_app.featdicts['feats_%s'%int(u)]=featdict
     print "added user_%s_model.pkl" %int(u)
     return finalclf
 
@@ -133,7 +132,6 @@ def rateclimb_old(userdict, sampledf, featdf, reducedfeats, samplesdf):
 
 def rateclimb(featweights, row):
     '''compute users rating of the climb given their expressed preferences and the climb's features'''
-    print featweights
     ratings=np.multiply(featweights, row)
     return np.mean(ratings)
 

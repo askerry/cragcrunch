@@ -65,7 +65,7 @@ def getuserplots(udict,db):
             usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
             corrs, labels, sems=getuserpredictors(usdf)
         except:
-            featdict=current_app.modeldicts['feats_%s' %int(userid)]
+            featdict=current_app.featdicts['feats_%s' %int(userid)]
             labels=featdict.keys()
             corrs=[float(featdict[l]) for l in labels]
             corrs=[(c-2.5)/2 for c in corrs]
@@ -144,12 +144,15 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
 def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classdict):
     '''take individual candidate and score with model'''
     cid=climb['climbid']
-    ufeatures = trainedclfdict['finalfeats']
-    if 'avgstars' not in ufeatures:
+    ufeatures = [f for f in trainedclfdict['finalfeats'] if f!='avgstars']
+    if 'other_avg' not in ufeatures:
         ufeatures=['other_avg']+ufeatures
     if cid in Xdf.index.values:
-        row=Xdf.loc[cid,['climbid']+ufeatures]
-        del row['climbid']
+        row=Xdf.loc[cid,ufeatures]
+        try:
+            del row['climbid']
+        except:
+            pass
         featurevector=row.values
         pred=trainedclfdict['clf'].predict(featurevector)[0]
         datadict['pred'].append(pred)
@@ -238,7 +241,7 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
 
 def getuserstarsbywords(sdf, cdf, climberid, terms, blockterms=[]):
     '''get df relating user star ratings and word frequencies'''
-    terms=[t for t in current_app.askfeatures_terms if t not in blockterms]
+    terms=[t+'_description' for t in current_app.askfeatures_terms if t not in blockterms]
     sdf=sdf[sdf['climber']==climberid]
     sdf=pd.merge(sdf, cdf, left_on='climb', right_on=['climbid'], how='left')
     dcols=[c for c in terms if '_description' in c]
@@ -255,5 +258,6 @@ def getuserpredictors(usdf):
     predictions=usdf.corr().loc['starsscore'][1:].dropna()
     corrs=predictions.values
     labels=predictions.index.values
+    labels=[f[:f.index('_')] if '_' in f else f for f in labels]
     sems=[standarderrorcorr(r, len(usdf)) for r in corrs]
     return corrs, labels, sems
