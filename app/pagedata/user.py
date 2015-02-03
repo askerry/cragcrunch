@@ -4,7 +4,7 @@ Created on Fri Jan 16 09:12:37 2015
 
 @author: amyskerry
 """
-from flask import current_app
+from flask import current_app, render_template
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
 import pandas as pd
@@ -118,6 +118,7 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     styles=get_stylelist(sport, trad, boulder)
     candidateids=getcandidates(udict, db, area, gradeshift, styles)
     candidates=[cf.getclimbdict(c, db) for c in candidateids]
+    render_template('debug.html', printout=candidates)
     trainedclfdict=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
     classdict={pred:classorder.index(pred) for pred in [1,2,3,4] if pred in classorder}
