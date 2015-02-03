@@ -196,7 +196,6 @@ def checkavailability():
 
 @app.route("/logstar", methods=["GET"])
 def logstar():
-    print "xxxx"
     rating=request.args.get('starsscore')
     climbid=request.args.get('climb')
     climbname=request.args.get('climbname')

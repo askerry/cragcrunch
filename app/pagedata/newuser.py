@@ -7,7 +7,7 @@ import pandas as pd
 import viz
 import misc
 import json
-from flask import jsonify
+from flask import jsonify, session
 import home as hf
 import climb as cf
 import os
@@ -85,7 +85,7 @@ def modelnewuser(db, featdict, userid, username):
     '''take a dataframe of user expressed preferences and build a model of them'''
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index') #load full sampleDF
     allfeatures=[x for x in Xdf.columns if x not in ('index','climbid', userid)] #all features for full model
-    userdict=current_app.stash[userid]
+    userdict=session['stash'][str(userid)]
     candidates=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['climbstyles']) #get initial set of candidates from users area
     candidateids=[float(cand.climbid) for cand in candidates]
     candidateids=[cand for cand in candidateids if cand in Xdf.climbid.values]
@@ -97,7 +97,6 @@ def modelnewuser(db, featdict, userid, username):
     X=Xdf.loc[Xdf['climbid'].isin(candidateids),allfeatures].values
     clf.fit(X,Y) #use predicted ratings as "labels" to train a full model
     finalclf=savefinalmodel(X,Y,clf,userid,allfeatures,featdict, os.path.join(fulldir, 'data'))
-    #del current_app.stash[userid]
     addnewuserstars(db, userid, username, candidateids, Y)
     return finalclf
 
