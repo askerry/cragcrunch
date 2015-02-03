@@ -26,7 +26,7 @@ def getusers(db):
     '''get list of all possible users in the databse'''
     climbers=db.session.query(ClimberTable).all()
     names=[climber.name for climber in climbers]
-    ids=[climber.name for climber in climbers]
+    ids=[climber.climberid for climber in climbers]
     sortedindices=np.argsort(names)
     return OrderedDict((ids[i],names[i]) for i in sortedindices)
 
