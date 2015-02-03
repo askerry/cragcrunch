@@ -26,6 +26,30 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.secret_key = 'A0Zasva23r98j/1323yX R1~XHH!jfmN]LWX/,?RT' #loggin info isn't for user security (all public data) so I'm not hiding this
 
 
+#slow model loading stuff
+modeldir=os.path.join(fulldir, 'data/models')
+modelfiles=os.listdir(modeldir)
+app.modeldicts={}
+app.featdicts={}
+for filename in modelfiles:
+    try:
+        with open(os.path.join(modeldir, filename), 'rb') as inputfile:
+            model=pickle.load(inputfile)
+    except:
+        model=[]
+    app.modeldicts[filename]=model
+with open(config.redfeatfile, 'rb') as inputfile:
+    d=pickle.load(inputfile)
+    app.askfeatures=d['reducedtextfeats']
+    app.askfeatures_terms=list(set([t[:t.index('_')] for t in app.askfeatures if '_' in t]))
+    featdict={}
+    for f in app.askfeatures:
+        if '_' in f:
+            featdict[f]=f[:f.index('_')]
+        else:
+            featdict[f]=f
+    app.askfeatures_dict=featdict
+
 
 class DBConnection():
     def __init__(self, engine):
@@ -208,5 +232,4 @@ if __name__ == '__main__':
             else:
                 featdict[f]=f
         app.askfeatures_dict=featdict
-    app.stash={}
     app.run(debug=True, host='0.0.0.0')

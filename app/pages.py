@@ -1,6 +1,6 @@
 # generates page of climb info
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
-from flask import current_app
+from flask import current_app, session
 from sqlalchemy import func
 import pagedata.user as uf
 import pagedata.newuser as nuf
@@ -98,5 +98,8 @@ def getnewuseroptions(g):
 
 def adduser(g, request):
     udict=nuf.addtodb(g.db, request)
-    current_app.stash[udict['climberid']]=udict
+    try:
+        session['stash'][udict['climberid']]=udict
+    except:
+        session['stash']={udict['climberid']:udict}
     return udict
