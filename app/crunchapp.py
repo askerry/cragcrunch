@@ -92,12 +92,24 @@ def home():
     except:
         pass
     climbs,users=pinf.initial_home(g)
-    return render_template('home.html', returntype='noresult', climbs=climbs, users=users, loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('home.html', returntype='noresult', climbs=climbs, users=users, loggedinid=loggedinid, loggedinname=loggedinname)
 
 @app.route('/result', methods=['POST'])
 def search():
     result=pinf.result_home(request, g)
-    return render_template('home.html', returntype='result', result=result, loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('home.html', returntype='result', result=result, loggedinid=loggedinid, loggedinname=loggedinname)
 
 
 @app.route('/view')
@@ -106,11 +118,23 @@ def view(searchid=0):
     if 'climb' in searchid:
         climbid=searchid[5:]
         cdict, crecs=pinf.getclimbpage(g, {'climbid':climbid}, current_app.userid)
-        return render_template('climbview.html', climb=cdict, recs=crecs, loggedinid=current_app.userid, loggedinname=current_app.username)
+        try:
+            loggedinid=current_app.userid
+            loggedinname=current_app.username
+        except:
+            loggedinid=2424
+            loggedinname='GhaMby'
+        return render_template('climbview.html', climb=cdict, recs=crecs, loggedinid=loggedinid, loggedinname=loggedinname)
     if 'area' in searchid:
         areaid=searchid[4:]
         adict, aplotdata=pinf.getareapage(g, {'areaid':areaid})
-        return render_template('areaview.html', area=adict, plotdata=aplotdata, loggedinid=current_app.userid, loggedinname=current_app.username)
+        try:
+            loggedinid=current_app.userid
+            loggedinname=current_app.username
+        except:
+            loggedinid=2424
+            loggedinname='GhaMby'
+        return render_template('areaview.html', area=adict, plotdata=aplotdata, loggedinid=loggedinid, loggedinname=loggedinname)
     else:
         return render_template('pagenotfound')
 
@@ -118,11 +142,23 @@ def view(searchid=0):
 @app.route('/user/<userid>')
 def user(userid=123):
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
-    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea), loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea), loggedinid=loggedinid, loggedinname=loggedinname)
 
 @app.route('/about')
 def about():
-    return render_template('about.html', loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('about.html', loggedinid=loggedinid, loggedinname=loggedinname)
 
 @app.route("/refreshrecs", methods=['GET', 'POST'])
 def updaterecs():
@@ -140,14 +176,26 @@ def updaterecs():
 @app.route("/newuser/<username>", methods=['GET', 'POST'])
 def newuser(username):
     states, areas, bouldergrades, routegrades=pinf.getnewuseroptions(g)
-    return render_template('newuser.html', username=username, states=states, areas=areas, bouldergrades=bouldergrades, routegrades=routegrades, loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('newuser.html', username=username, states=states, areas=areas, bouldergrades=bouldergrades, routegrades=routegrades, loggedinid=loggedinid, loggedinname=loggedinname)
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
     udict=pinf.adduser(g, request)
     features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
     features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
-    return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=loggedinid, loggedinname=loggedinname)
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
 def createuserprofile():
@@ -156,7 +204,13 @@ def createuserprofile():
     clf=nuf.modelnewuser(g.db, featdict, userid, username)
     app.modeldicts[filename]=clf
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
-    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea),loggedinid=current_app.userid, loggedinname=current_app.username)
+    try:
+        loggedinid=current_app.userid
+        loggedinname=current_app.username
+    except:
+        loggedinid=2424
+        loggedinname='GhaMby'
+    return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea),loggedinid=loggedinid, loggedinname=loggedinname)
 
 
 @app.route("/checkavailability", methods=["GET"])
