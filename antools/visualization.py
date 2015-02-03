@@ -12,7 +12,10 @@ from matplotlib.patches import Rectangle
 from sklearn.metrics import confusion_matrix
 from collections import OrderedDict as OD
 import scipy
-from mpl_toolkits.basemap import Basemap
+try:
+    from mpl_toolkits.basemap import Basemap
+except:
+    pass
 
 
 def plotresults(df, truecol, predcol):

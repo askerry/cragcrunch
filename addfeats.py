@@ -6,6 +6,7 @@ Created on Mon Feb  2 22:11:02 2015
 """
 
 import os
+import sys
 sys.path.append('mpscraper')
 from mpscraper.cfgdb import cfg
 sys.path.append('antools')
@@ -15,6 +16,11 @@ import antools.utilities as util
 import antools.visualization as viz
 import antools.modeling as mo
 import antools.newusermodeling as nmo
+
+rootdir=os.getcwd()
+while 'Projects' in rootdir:
+    rootdir=os.path.dirname(rootdir)
+projdir=os.path.join(rootdir, 'Projects','cragcrunch','data')
 
 featsdict=util.loadpickledobjects(os.path.join(projdir,'learnedfeatures.pkl'))[0]
 allfeats=featsdict['alltextfeats']
