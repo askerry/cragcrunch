@@ -7,6 +7,8 @@ Created on Mon Feb  2 22:11:02 2015
 
 import os
 import sys
+from sqlalchemy import create_engine
+import pandas as pd
 sys.path.append('mpscraper')
 from mpscraper.cfgdb import cfg
 sys.path.append('antools')
@@ -21,6 +23,9 @@ rootdir=os.getcwd()
 while 'Projects' in rootdir:
     rootdir=os.path.dirname(rootdir)
 projdir=os.path.join(rootdir, 'Projects','cragcrunch','data')
+
+engine = create_engine('mysql://%s@%s/%s?charset=%s&use_unicode=%s&passwd=%s' %(cfg.user, cfg.host, cfg.dbname, cfg.charset, cfg.use_unicode, cfg.passwd), pool_recycle=3600)
+
 
 featsdict=util.loadpickledobjects(os.path.join(projdir,'learnedfeatures.pkl'))[0]
 allfeats=featsdict['alltextfeats']
