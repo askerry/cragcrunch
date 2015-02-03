@@ -153,7 +153,8 @@ def newuserpred():
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
 def createuserprofile():
     userid,featdict=pinf.getuserinput(request, current_app.askfeatures)
-    clf=nuf.modelnewuser(g.db, featdict, userid)
+    username=g.db.session.query(ClimberTable).filter_by(climberid=userid).first().name
+    clf=nuf.modelnewuser(g.db, featdict, userid, username)
     app.modeldicts[filename]=clf
     userdict, userrecs, userplotdata, areas, defaultarea=pinf.getuserpage(g, {'userid':userid})
     return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas, defaultarea=float(defaultarea),loggedinid=current_app.userid, loggedinname=current_app.username)

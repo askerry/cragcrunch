@@ -75,7 +75,13 @@ def addtodb(db, request):
     del ndict['_sa_instance_state']
     return ndict
 
-def modelnewuser(db, featdict, userid):
+def addnewuserstars(db, userid, username, candidateids, Y):
+    for cn,c in enumerate(candidateids):
+        rating=Y[cn]
+        cname=db.session.query(ClimbTable).filter_by(climbid=c).first().name
+        uf.addstar(db, userid, username, c, cname, rating)
+
+def modelnewuser(db, featdict, userid, username):
     '''take a dataframe of user expressed preferences and build a model of them'''
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index') #load full sampleDF
     allfeatures=[x for x in Xdf.columns if x not in ('index','climbid', userid)] #all features for full model
@@ -88,10 +94,13 @@ def modelnewuser(db, featdict, userid):
     samplesdf=pd.read_sql('select * from climb_prepped where climbid in (%s)' %','.join(candidateidstrs), db.engine, index_col='index')
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
     Y=np.array(rateallclimbs(featdict, samplesdf, featdf, features)) #use user input to predict ratings for each of these candidates (based on reduced space)
+    print "predictions"
+    print Y
     X=Xdf.loc[Xdf['climbid'].isin(candidateids),allfeatures].values
     clf.fit(X,Y) #use predicted ratings as "labels" to train a full model
     finalclf=savefinalmodel(X,Y,clf,userid,allfeatures,featdict, os.path.join(fulldir, 'data'))
     #del current_app.stash[userid]
+    addnewuserstars(db, userid, username, candidateids, Y)
     return finalclf
 
 def savefinalmodel(X,Y,clf,u,features,featdict, datadir):
@@ -116,41 +125,30 @@ def getscore(featdf,f,val):
     rowvals=list(featdf[featdf['feature']==f][[1,2,3,4]].values[0])
     return rowvals.index(val)+1
 
-def rateclimb_old(userdict, sampledf, featdf, reducedfeats, samplesdf):
-    '''compute users rating of the climb given their expressed preferences and the climb's features'''
-    ratings=[]
-    for f in reducedfeats:
-        value=sampledf[f]
-        fscore=getscore(featdf,f,value)
-        try:
-            userscore=userdict[f]
-        except:
-            userscore=2.5
-        ratings.append(4-np.abs(fscore-userscore))
-    return round(np.mean(ratings))
-
-
 def rateclimb(featweights, row):
     '''compute users rating of the climb given their expressed preferences and the climb's features'''
     ratings=np.multiply(featweights, row)
     return np.mean(ratings)
 
-def getstar(value, quantile=0):
-    if value<quantile:
+def getstar(value, one=0, two=0, three=0):
+    if value<one:
         return 1
-    elif value<quantile*2:
+    elif value<two:
         return 2
-    elif value<quantile*3:
+    elif value<three:
         return 3
-    elif value<=quantile*4:
+    else:
         return 4
 
 def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     '''get climber's ratings on all climbs in sample set'''
-    featdf.index=featdf.feature.values
-    featweights=[float(userdict[current_app.askfeatures_dict[feat]]) if feat in userdict.keys() else 0 for feat in reducedfeats]
+    featweights=[float(userdict[current_app.askfeatures_dict[feat]])-2 if feat[:feat.index('_')] in userdict.keys() else 0 for feat in current_app.askfeatures]
+    featweights.insert(reducedfeats.index('avgstars'),.1)
     samplesdf['score']=samplesdf.apply(lambda x:rateclimb(featweights, x[reducedfeats].values), axis=1)
-    quarter=samplesdf['score'].quantile(.25)
-    orderedsamples=samplesdf['score'].apply(getstar, quantile=quarter)
+    arr=samplesdf['score'].values
+    quarter=np.percentile(arr, 25)
+    half=np.percentile(arr, 50)
+    threequarters=np.percentile(arr, 75)
+    orderedsamples=samplesdf['score'].apply(getstar, one=quarter, two=half, three=threequarters)
     return orderedsamples
 

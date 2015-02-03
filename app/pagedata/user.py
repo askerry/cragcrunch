@@ -62,19 +62,19 @@ def getuserplots(udict,db):
             pass
         djsons=[]
         try:
+            import pdb
+            pdb.set_trace()
             usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
             corrs, labels, sems=getuserpredictors(usdf)
         except:
-            featdict=current_app.featdicts['feats_%s' %int(userid)]
-            labels=featdict.keys()
-            corrs=[float(featdict[l]) for l in labels]
-            corrs=[(c-2.5)/2 for c in corrs]
-            sems=[0 for c in corrs]
+            pass
         title="Route Preferences for %s" %udict['name']
         title="Preference Scores"
+        print corrs
         djsons.append(pushdata(corrs, sems, labels, title, '', '', "plotcontainer"))
+        print djsons
     except:
-        djsons={}
+        djsons=[]
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
@@ -92,11 +92,6 @@ def get_stylelist(sport, trad, boulder):
     if trad: styles.append('Trad');
     if boulder: styles.append('Boulder')
     return styles
-
-def processstars(db, preddf, candidates, udict):
-	for c in candidates:
-		rating=preddf.loc[preddf['climbid']==float(c.climbid),'pred']
-		addstar(db, udict['userid'], udict['name'], c.climbid, c.name, rating)
 
 def addstar(db, userid, username, climbid, climbname, rating):
     nstar=StarsTable(climber=str(userid), starsscore=4, climb=climbid, name="%s_%s" %(username, climbname))
@@ -255,6 +250,8 @@ def standarderrorcorr(r,n):
 
 def getuserpredictors(usdf):
     '''compute correlations between individual features and climber ratings'''
+    import pdb
+    pdb.set_trace()
     predictions=usdf.corr().loc['starsscore'][1:].dropna()
     corrs=predictions.values
     labels=predictions.index.values

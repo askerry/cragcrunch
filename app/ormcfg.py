@@ -114,7 +114,7 @@ class CommentsTable(Base):
     commentsid = Column(Integer, primary_key=True, autoincrement=True)
     climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
     climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('climb_prepped.climberid'))
+    climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
     comment = Column(Text)#String(10000)
     date = Column(Date)
@@ -126,7 +126,7 @@ class StarsTable(Base):
     starsscore = Column(String(20))
     climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
     climblink = Column(String(200))
-    climber = Column(Integer, ForeignKey('climb_prepped.climberid'))
+    climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
     name = Column(String(200))
 
