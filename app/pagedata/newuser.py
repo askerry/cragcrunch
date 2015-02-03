@@ -94,8 +94,6 @@ def modelnewuser(db, featdict, userid, username):
     samplesdf=pd.read_sql('select * from climb_prepped where climbid in (%s)' %','.join(candidateidstrs), db.engine, index_col='index')
     featdf=pd.read_sql('select * from featranges', db.engine, index_col='index')
     Y=np.array(rateallclimbs(featdict, samplesdf, featdf, features)) #use user input to predict ratings for each of these candidates (based on reduced space)
-    print "predictions"
-    print Y
     X=Xdf.loc[Xdf['climbid'].isin(candidateids),allfeatures].values
     clf.fit(X,Y) #use predicted ratings as "labels" to train a full model
     finalclf=savefinalmodel(X,Y,clf,userid,allfeatures,featdict, os.path.join(fulldir, 'data'))
