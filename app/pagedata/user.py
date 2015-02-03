@@ -62,15 +62,13 @@ def getuserplots(udict,db):
             pass
         djsons=[]
         try:
-            import pdb
-            pdb.set_trace()
             usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
+            usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1]]
             corrs, labels, sems=getuserpredictors(usdf)
         except:
             pass
         title="Route Preferences for %s" %udict['name']
         title="Preference Scores"
-        print corrs
         djsons.append(pushdata(corrs, sems, labels, title, '', '', "plotcontainer"))
         print djsons
     except:
@@ -250,9 +248,9 @@ def standarderrorcorr(r,n):
 
 def getuserpredictors(usdf):
     '''compute correlations between individual features and climber ratings'''
-    import pdb
-    pdb.set_trace()
-    predictions=usdf.corr().loc['starsscore'][1:].dropna()
+    corr=usdf.corr()
+    corr=corr.fillna(0)
+    predictions=corr.loc['starsscore'][1:].dropna()
     corrs=predictions.values
     labels=predictions.index.values
     labels=[f[:f.index('_')] if '_' in f else f for f in labels]

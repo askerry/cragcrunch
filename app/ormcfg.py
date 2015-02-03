@@ -7,7 +7,7 @@ from config import dirname
 import os
 import pickle
 
-with open(os.path.join(dirname,'data', 'climbingterms.pkl'), 'r') as inputfile:
+with open(os.path.join(dirname,'data', 'climbingterms.pkl'), 'rb') as inputfile:
         terms=pickle.load(inputfile)
 
 Base = declarative_base()

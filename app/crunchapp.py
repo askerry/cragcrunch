@@ -184,7 +184,7 @@ if __name__ == '__main__':
         app.modeldicts[filename]=model
     app.userid=2424
     app.username='GhaMby'
-    with open(config.redfeatfile, 'r') as inputfile:
+    with open(config.redfeatfile, 'rb') as inputfile:
         d=pickle.load(inputfile)
         app.askfeatures=d['reducedtextfeats']
         app.askfeatures_terms=list(set([t[:t.index('_')] for t in app.askfeatures if '_' in t]))
