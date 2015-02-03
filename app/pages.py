@@ -42,7 +42,10 @@ def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, 
     udict=uf.getuserdict(a, g.db)
     if areaid is None:
         areaid=udict['mainarea']
-    urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder) #time suck
+    try:
+        urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder) #time suck
+    except:
+        urecs={}
     uplotdata=uf.getuserplots(udict, g.db)
     areas=uf.getmainareaoptions(g.db)
     return udict, urecs, uplotdata, areas, udict['mainarea']
