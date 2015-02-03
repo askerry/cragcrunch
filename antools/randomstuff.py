@@ -31,7 +31,7 @@ for i in range(0,16):
 
 blockterms=['flake', 'flake_description', 'cracks', 'cracks_description', 'bolted','bolted_description']
 askterms=['flakes', 'hand','tricky','undercling','slab','clipping','technical','boulder','bulge','bolted','steep', 'jug','chimney', 'crack','crux','roof','flake','cracks','traverse','pitch']
-labeldict={'hand':'hand cracks','tricky':'tricky moves','undercling':'underclings','slab':'slabs','clipping':'delicate clips','technical':'technical moves','boulder':'bouldery moves','bulge':'bulges','bolted':'well-bolted lines','steep':'steep climbs', 'jug':'juggy holds','chimney':'chimney climbs', 'crack':'crack climbs','crux':'tough cruxes','roof':'roofs','flake':"flakes",'traverse':'traverses','pitch':'multipitch climbs', 'crimp':'crimps'}
+labeldict={'hand':'hand cracks','tricky':'tricky moves','undercling':'underclings','slab':'slabs','clipping':'delicate clips','technical':'technical moves','boulder':'bouldery moves','bulge':'bulges','steep':'steep climbs', 'jug':'juggy holds','chimney':'chimney climbs', 'crack':'crack climbs','crux':'tough cruxes','roof':'roofs','flake':"flakes",'traverse':'traverses','pitch':'multipitch climbs', 'crimp':'crimps'}
 
 
 
