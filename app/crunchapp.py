@@ -122,8 +122,7 @@ def user(userid=123):
 
 @app.route('/about')
 def about():
-    text='test text test text'
-    return render_template('about.html', text=text, loggedinid=current_app.userid, loggedinname=current_app.username)
+    return render_template('about.html', loggedinid=current_app.userid, loggedinname=current_app.username)
 
 @app.route("/refreshrecs", methods=['GET', 'POST'])
 def updaterecs():
