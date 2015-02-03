@@ -62,12 +62,14 @@ def getareapage(g, inputdict):
 ################     CLIMB PAGE    ####################
 
 
-def getclimbpage(g, inputdict):
+def getclimbpage(g, inputdict, userid):
     climbid=int(float(inputdict['climbid']))
+    stars=cf.checkstars(g.db, climbid, userid)
     c=g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
     cdict=cf.getclimbdict(c, g.db, getnest=True)
     crecs=cf.getsimilarclimbs(g.db, climbid, ClimbTable)
     del cdict['_sa_instance_state']
+    cdict['existingrating']=str(stars)
     return cdict, crecs
 
 ##############     NEW USER PAGE    ##################

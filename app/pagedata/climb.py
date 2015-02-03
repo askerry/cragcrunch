@@ -10,6 +10,7 @@ import numpy as np
 import viz
 import pandas as pd
 import os
+from sqlalchemy import and_
 from copy import deepcopy
 import timeit
 from config import rootdir
@@ -88,3 +89,10 @@ def getsimilarclimbs(db, climbid, ClimbTable):
     simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=c).first() for c in simclimbids]
     simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
     return simclimbdicts
+
+def checkstars(db, climbid, userid):
+    try:
+        matches= db.session.query(StarsTable).filter(and_((StarsTable.climber==userid), StarsTable.climb==climbid)).first()
+        return int(matches.starsscore)
+    except:
+        return 0

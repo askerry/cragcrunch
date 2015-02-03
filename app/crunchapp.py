@@ -105,7 +105,7 @@ def search():
 def view(searchid=0):
     if 'climb' in searchid:
         climbid=searchid[5:]
-        cdict, crecs=pinf.getclimbpage(g, {'climbid':climbid})
+        cdict, crecs=pinf.getclimbpage(g, {'climbid':climbid}, current_app.userid)
         return render_template('climbview.html', climb=cdict, recs=crecs, loggedinid=current_app.userid, loggedinname=current_app.username)
     if 'area' in searchid:
         areaid=searchid[4:]
@@ -169,6 +169,20 @@ def checkavailability():
     else:
         return jsonify({'exists':True, 'name':desiredname})
 
+@app.route("/logstar", methods=["GET"])
+def logstar():
+    print "xxxx"
+    rating=request.args.get('starsscore')
+    climbid=request.args.get('climb')
+    climbname=request.args.get('climbname')
+    climbername=request.args.get('climbername')
+    climberid=request.args.get('climber')
+    uf.addstar(g.db, climberid, climbername, climbid, climbname, rating)
+    return jsonify({'returned':True})
+
+@app.route("/slides")
+def slides():
+    return render_template('slides.html')
 
 if __name__ == '__main__':
     modeldir=os.path.join(fulldir, 'data/models')

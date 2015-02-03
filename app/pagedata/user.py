@@ -93,7 +93,7 @@ def get_stylelist(sport, trad, boulder):
     return styles
 
 def addstar(db, userid, username, climbid, climbname, rating):
-    nstar=StarsTable(climber=str(userid), starsscore=4, climb=climbid, name="%s_%s" %(username, climbname))
+    nstar=StarsTable(climber=str(userid), starsscore=rating, climb=climbid, name="%s_%s" %(username, climbname))
     maxstarid=float(db.session.query(func.max(StarsTable.starid)).first()[0])
     nstar.starid= maxstarid +1
     db.session.add(nstar)

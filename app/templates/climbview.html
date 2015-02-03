@@ -7,7 +7,6 @@
 	<div id="contenttitle" class="col-md-6">{{climb['name']}}</div>                                  
 	<div id="details" class="col-md-6">{{climb['style']}}, {{climb['grade']}}, <a href="../view/area{{climb['area']}}">{{climb['area_name']}}</a>, <a href="../view/area{{climb['mainarea']}}">{{ climb['mainarea_name'] }}</a>, {{ climb['region'] }}</div>
 </div>
-<input id="starinput" class="rating" data-size="md" data-min="1" data-max="4" data-step="1" data-stars="4">
 <hr class="headline">
 <div class="row">
 	<div class="col-md-8">
@@ -17,7 +16,14 @@
 			{% endfor %}
 			</span></div>
 			<br>
-			<div>{{climb['avgstars']}}, <a href="http://{{climb['url']}}">{{climb['pageviews']}} views on MountainProject.com</a></div>
+			 <form><div>{{climb['avgstars']}}, <a href="http://{{climb['url']}}">{{climb['pageviews']}} views on MountainProject.com</a>
+				<div id="starinput"></div><button class="btn btn-xs btn-warning" onclick="submitstars();">Rate Climb</button>
+				<input type="hidden" id="starsscore" name="starsscore" value="{{climb['existingrating']}}">
+				<input type="hidden" id="climb" name="climb" value="{{climb['climbid']}}">
+				<input type="hidden" id="climbname" name="climbname" value="{{climb['name']}}">
+				<input type="hidden" id="climber" name="climber" value="{{loggedinid}}">
+				<input type="hidden" id="climbername" name="climbername" value="{{loggedinname}}">
+			</div></form>
 				<div>{{climb['pitch']}} {% if climb['length']!=''%}, {{climb['length']}} {% endif %}</div>
 				<div><h4>Gear:</h4> {{climb['protection']}}</div>
 				<div><h4>Description:</h4> 
@@ -36,5 +42,11 @@
 		{% endfor %}
 	</div>
 </div>
-
+<script>
+$(document).ready(function(){
+	$('#starinput').raty({
+		score: {{climb['existingrating']}},  cancel: true, target : '#starsscore', targetType : 'score', targetKeep: true
+		});	 
+	});
+</script>
 {% endblock %}
