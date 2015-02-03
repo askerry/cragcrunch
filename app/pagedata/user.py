@@ -63,7 +63,7 @@ def getuserplots(udict,db):
         djsons=[]
         try:
             usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
-            usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1]]
+            usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1 or col=='starsscore']]
             corrs, labels, sems=getuserpredictors(usdf)
         except:
             pass
@@ -119,6 +119,8 @@ def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     candidates=[cf.getclimbdict(c, db) for c in candidateids]
     trainedclfdict=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
+    import pdb
+    pdb.set_trace()
     classdict={pred:classorder.index(pred) for pred in [1,2,3,4] if pred in classorder}
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
     datadict={'pred':[], 'prob':[],'climbid':[],'style':[],'mainarea':[],'grade':[],'hit':[]}

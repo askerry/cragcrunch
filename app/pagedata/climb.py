@@ -45,19 +45,23 @@ def getclimbdict(c, db, getnest=False):
     #t=timeit.default_timer()
     #cdict=deepcopy(c.__dict__)
     cdict=c.__dict__
+    print cdict
     cdict['climbid']=int(cdict['climbid'])
     if cdict['length']>0:
-        cdict['length']="%s ft" %int(cdict['length'])
+        try:
+            cdict['length']="%s ft" %int(float(cdict['length']))
+        except:
+            cdict['length']=''
     else:
         cdict['length']=""
     if cdict['pitch']==1:
-        cdict['pitch']="%s pitch" %int(cdict['pitch'])
+        cdict['pitch']="%s pitch" %int(float(cdict['pitch']))
     elif cdict['pitch']>1:
-        cdict['pitch']="%s pitches" %int(cdict['pitch'])
+        cdict['pitch']="%s pitches" %int(float(cdict['pitch']))
     else:
-        cdict['length']=""
+        cdict['pitch']=""
     try:
-        cdict['pageviews']=int(cdict['pageviews'])
+        cdict['pageviews']=int(float(cdict['pageviews']))
     except:
         cdict['pageviews']=0
     if cdict['avgstars']==1:
