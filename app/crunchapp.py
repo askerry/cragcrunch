@@ -30,6 +30,7 @@ app.secret_key = 'A0Zasva23r98j/1323yX R1~XHH!jfmN]LWX/,?RT' #loggin info isn't 
 #slow model loading stuff
 modeldir=os.path.join(fulldir, 'data/models')
 modelfiles=os.listdir(modeldir)
+modelfiles.remove('.DS_Store')
 app.modeldicts={}
 app.featdicts={}
 for filename in modelfiles:
@@ -37,7 +38,7 @@ for filename in modelfiles:
         with open(os.path.join(modeldir, filename), 'rb') as inputfile:
             model=pickle.load(inputfile)
     except:
-        warnings.warn("failed to load model from pickle")
+        warnings.warn("failed to load %s model from pickle")
         model=[]
     app.modeldicts[filename]=model
 with open(config.redfeatfile, 'rb') as inputfile:
@@ -172,9 +173,13 @@ def newuser(username):
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
-    udict=pinf.adduser(g, request)
-    features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
-    features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
+    try:
+        udict=pinf.adduser(g, request)
+        features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
+        features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
+    except:
+        udict={}
+        features={}
     return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=session['userid'], loggedinname=session['username'])
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])

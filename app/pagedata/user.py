@@ -190,8 +190,11 @@ def getgraderange(udict,db, gradeshift, style):
 
 def loadtrainedmodel(udict):
     '''load up pretrained model to run against candidates'''
-    fname='user_%s_model.pkl'%(udict['climberid'])
-    clf=current_app.modeldicts[fname]
+    try:
+        fname='user_%s_model.pkl'%(udict['climberid'])
+        clf=current_app.modeldicts[fname]
+    except:
+        warnings.warn("%s not in modeldicts.keys()" %fname)
     return clf
 
 
