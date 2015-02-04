@@ -12,6 +12,7 @@ import pandas as pd
 import os
 from sqlalchemy import and_
 from copy import deepcopy
+import warnings
 import timeit
 from config import rootdir
 
@@ -80,7 +81,7 @@ def getclimbdict(c, db, getnest=False):
             nestedids,nestednames=getareanest(cdict['area'], db)
             cdict['nest']=zip(nestedids, nestednames)
     except:
-        pass
+        warnings.warn("dictifying failed")
     return cdict
     
 def getsimilarclimbs(db, climbid, ClimbTable):

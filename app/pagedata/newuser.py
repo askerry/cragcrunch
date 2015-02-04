@@ -13,6 +13,7 @@ import climb as cf
 import os
 from sqlalchemy import and_
 from sqlalchemy.sql import func
+import warnings
 import user as uf
 import sys
 from collections import OrderedDict
@@ -38,15 +39,7 @@ def getroutegrades():
 
 def addtodb(db, request):
     '''take basic user info and save user to be'''
-    styles=[]
-    if request.form['sportcheckhidden']=='true':
-        styles.append('Sport')
-    if request.form['tradcheckhidden']=='true':
-        styles.append('Trad')
-    if request.form['bouldercheckhidden']=='true':
-        styles.append('Boulder')
-
-    styles=', '.join(styles)
+    styles=['Sport, Trad, Boulder']
     name=request.form['name']
     if request.form['mainarea']=='Empty':
         mainarea=0
@@ -56,11 +49,11 @@ def addtodb(db, request):
     if request.form['sportgrade'] == 'Empty':
         nuser.g_median_Sport=39.0
     else:
-        nuser.g_median_Trad = float(request.form['tradgrade'])
+        nuser.g_median_Sport = float(request.form['sportgrade'])
     if request.form['tradgrade'] == 'Empty':
         nuser.g_median_Trad=28.0
     else:
-        nuser.g_median_Sport = float(request.form['sportgrade'])
+        nuser.g_median_Trad = float(request.form['tradgrade'])
     if request.form['bouldergrade'] == 'Empty':
         nuser.g_median_Boulder=14.0
     else:
@@ -86,7 +79,7 @@ def modelnewuser(db, featdict, userid, username):
     Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index') #load full sampleDF
     allfeatures=[x for x in Xdf.columns if x not in ('index','climbid', userid)] #all features for full model
     userdict=session['stash'][str(userid)]
-    candidates=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['climbstyles']) #get initial set of candidates from users area
+    candidates=uf.getcandidates(userdict, db, userdict['mainarea'], 0, userdict['climbstyles'][0]) #get initial set of candidates from users area
     candidateids=[float(cand.climbid) for cand in candidates]
     candidateids=[cand for cand in candidateids if cand in Xdf.climbid.values]
     candidateidstrs=[str(int(val)) for val in candidateids]
@@ -111,7 +104,7 @@ def savefinalmodel(X,Y,clf,u,features,featdict, datadir):
         try:
             pickler.dump(finalclf)
         except:
-            print "pickle fail"
+            warnings.warn("pickle fail")
     current_app.modeldicts['user_%s_model.pkl'%int(u)]=finalclf
     current_app.featdicts['feats_%s'%int(u)]=featdict
     print "added user_%s_model.pkl" %int(u)

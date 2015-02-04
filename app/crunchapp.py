@@ -8,6 +8,7 @@ from sqlalchemy.sql import text
 import pages as pinf
 import pagedata.user as uf
 import pagedata.newuser as nuf
+import warnings
 import sys
 import pickle
 import os
@@ -36,6 +37,7 @@ for filename in modelfiles:
         with open(os.path.join(modeldir, filename), 'rb') as inputfile:
             model=pickle.load(inputfile)
     except:
+        warnings.warn("failed to load model from pickle")
         model=[]
     app.modeldicts[filename]=model
 with open(config.redfeatfile, 'rb') as inputfile:
@@ -116,7 +118,7 @@ def home():
                 session['userid']=matches[0].climberid
                 session['username']=matches[0].name
     except:
-        pass
+        warnings.warn('session fail')
     climbs,users=pinf.initial_home(g)
     return render_template('home.html', returntype='noresult', climbs=climbs, users=users, loggedinid=session['userid'], loggedinname=session['username'])
 
@@ -209,26 +211,4 @@ def slides():
     return render_template('slides.html')
 
 if __name__ == '__main__':
-    modeldir=os.path.join(fulldir, 'data/models')
-    modelfiles=os.listdir(modeldir)
-    app.modeldicts={}
-    app.featdicts={}
-    for filename in modelfiles:
-        try:
-            with open(os.path.join(modeldir, filename), 'rb') as inputfile:
-                model=pickle.load(inputfile)
-        except:
-            model=[]
-        app.modeldicts[filename]=model
-    with open(config.redfeatfile, 'rb') as inputfile:
-        d=pickle.load(inputfile)
-        app.askfeatures=d['reducedtextfeats']
-        app.askfeatures_terms=list(set([t[:t.index('_')] for t in app.askfeatures if '_' in t]))
-        featdict={}
-        for f in app.askfeatures:
-            if '_' in f:
-                featdict[f]=f[:f.index('_')]
-            else:
-                featdict[f]=f
-        app.askfeatures_dict=featdict
     app.run(debug=True, host='0.0.0.0')

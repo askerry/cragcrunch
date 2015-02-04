@@ -7,6 +7,7 @@ Created on Fri Jan 16 09:20:26 2015
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 from sqlalchemy import between
 import numpy as np
+import warnings
 import viz
 from collections import OrderedDict
 from config import rootdir
@@ -58,6 +59,7 @@ def findmatch(text,g):
             try:
                 mainarea_name=g.db.session.query(AreaTable).filter_by(areaid=u.mainarea).first().name
             except:
+                warnings.warn("main area not found")
                 mainarea_name='Unknown Area'
             ud={'climberid':int(u.climberid), 'name':u.name, 'mainarea_name':mainarea_name, 'region':u.region, 'url':u.url}
             matchids['users'].append(ud)

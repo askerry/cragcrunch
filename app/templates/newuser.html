@@ -34,29 +34,20 @@
 						{% if area==453 %}
 							<option value="{{area}}" selected> Yosemite </option>
 						{% else %}
-							<option value={{area}}>{{areas[area]}}</option>
+							<option value="{{area}}">{{areas[area]}}</option>
 						{% endif %}
 						}
 					{% endfor %}
 				</select>
 			</div>
 		</div>
-		<h4>What styles do you climb?</h4>
-		<div id="stylediv">
-		<div id="checkgroup">
-			<input type="checkbox" id="sportcheck" name="sportcheck" value='Sport' checked data-label-on="YES" data-label-off="NO">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="tradcheck" name="tradcheck" value='Trad' checked data-label-on="YES" data-label-off="NO">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<input type="checkbox" id="bouldercheck" name="bouldercheck" value='Boulder' checked data-label-on="YES" data-label-off="NO">
-		</div>
-		</div>
 		<div class="row">
 			<div class="col-md-3">
-
 				<h4>What's your average sport grade?</h4>
 				<select name="sportgrade" class="defaultselect">
 					<option value='Empty'> Not Applicable </option>
 					{% for r in routegrades.keys()%}
-						<option value={{r}}>{{routegrades[r]}}</option>
+						<option value="{{r}}">{{routegrades[r]}}</option>
 					{% endfor %}
 				</select>
 			</div>
@@ -66,7 +57,7 @@
 				<select name="tradgrade" class="defaultselect">
 					<option value='Empty'> Not Applicable </option>
 					{% for r in routegrades.keys()%}
-						<option value={{r}}>{{routegrades[r]}}</option>
+						<option value="{{r}}">{{routegrades[r]}}</option>
 					{% endfor %}
 				</select>
 			</div>
@@ -76,7 +67,7 @@
 				<select name="bouldergrade" class="defaultselect">
 					<option value='Empty'> Not Applicable </option>
 					{% for b in bouldergrades.keys()%}
-						<option value={{b}}>{{bouldergrades[b]}}</option>
+						<option value="{{b}}">{{bouldergrades[b]}}</option>
 					{% endfor %}
 				</select>
 			</div>
@@ -84,18 +75,8 @@
 	</div>
 	<div class="col-md-2" id="submitbox">
 		<input type="submit" id="submit" value="Create Profile" class="btn btn-primary">
-		<input type="hidden" name="sportcheckhidden" id="sportcheckhidden" value=true>
-		<input type="hidden" name="tradcheckhidden" id="tradcheckhidden" value=true>
-		<input type="hidden" name="bouldercheckhidden" id="bouldercheckhidden" value=true>
 	</div>
 </div>
 </form>
-
-<script>
-	function updatechecks(){
-	console.log($("#sportcheck").prop('checked'))
-	  alert('hi')
-	};
-</script>
 
 {% endblock %}

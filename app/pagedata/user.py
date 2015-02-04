@@ -13,6 +13,7 @@ import pickle
 import json
 from flask import jsonify
 import home as hf
+import warnings
 import climb as cf
 import os
 from sqlalchemy import and_
@@ -59,7 +60,7 @@ def getuserplots(udict,db):
         try:
             cdf=pd.read_sql("SELECT * from climb_prepped where climbid in(%s)" %userclimbstring, db.engine, index_col='index')
         except:
-            pass
+            warnings.warn( "climb selection failed")
         djsons=[]
         try:
             usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
@@ -68,12 +69,13 @@ def getuserplots(udict,db):
                 usdf.iloc[0,:]['starsscore']=3
             corrs, labels, sems=getuserpredictors(usdf)
         except:
-            pass
+            warnings.warn("user star df/correlations failed")
         title="Route Preferences for %s" %udict['name']
         title="Preference Scores"
         djsons.append(pushdata(corrs, sems, labels, title, '', '', "plotcontainer"))
     except:
         djsons=[]
+        warnings.warn("plot failed")
     return djsons
     
 def getuserrecs(udict, db, area, gradeshift, sport, trad, boulder):
@@ -104,7 +106,7 @@ def getcandidates(udict, db, area, gradeshift, styles):
     try:
         styles=styles.split(', ')
     except:
-        pass
+        warnings.warn("styles already a list")
     graderanges={}
     for style in ('Sport', 'Trad', 'Boulder'):
         graderanges[style]=getgraderange(udict,db, gradeshift, style)
@@ -116,8 +118,8 @@ def getcandidates(udict, db, area, gradeshift, styles):
 
 def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     styles=get_stylelist(sport, trad, boulder)
-    candidateids=getcandidates(udict, db, area, gradeshift, styles)
-    candidates=[cf.getclimbdict(c, db) for c in candidateids]
+    candidates=getcandidates(udict, db, area, gradeshift, styles)
+    candidates=[cf.getclimbdict(c, db) for c in candidates]
     trainedclfdict=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
     classdict={pred:classorder.index(pred) for pred in [1,2,3,4] if pred in classorder}
@@ -146,7 +148,7 @@ def scoreclimb(climb,db, Xdf, udict, trainedclfdict, datadict, classdict):
         try:
             del row['climbid']
         except:
-            pass
+            warnings.warn("climbid not in row")
         featurevector=row.values
         pred=trainedclfdict['clf'].predict(featurevector)[0]
         datadict['pred'].append(pred)
@@ -173,8 +175,6 @@ def getmainareaoptions(db):
 
 def getgraderange(udict,db, gradeshift, style):
     '''get range of rasonable grades'''
-    #g_min = udict['g_min_%s' %style]
-    #g_max = udict['g_max_%s' %style]
     g_median = udict['g_median_%s' %style]
     if style=='Boulder':
         range=[g_median-3, g_median+3]

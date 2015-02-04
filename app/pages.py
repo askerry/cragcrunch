@@ -8,6 +8,7 @@ import pagedata.climb as cf
 import pagedata.area as af
 import config
 import os
+import warnings
 import pickle
 import pagedata.home as hf
 import pandas as pd
@@ -25,7 +26,6 @@ from config import fulldir
 def initial_home(g):
     climbs=hf.gettopclimbs(g.db)
     users=hf.getusers(g.db)
-    t=timeit.default_timer()
     return climbs,users
 
 def result_home(request, g):
@@ -45,6 +45,7 @@ def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, 
     try:
         urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder) #time suck
     except:
+        warnings.warn("failed to generate user recs")
         urecs={}
     uplotdata=uf.getuserplots(udict, g.db)
     areas=uf.getmainareaoptions(g.db)
@@ -97,7 +98,9 @@ def getnewuseroptions(g):
     return states, areas, bouldergrades, routegrades
 
 def adduser(g, request):
+    print "XXX"
     udict=nuf.addtodb(g.db, request)
+    print "YYY"
     try:
         session['stash'][udict['climberid']]=udict
     except:
