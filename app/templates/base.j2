@@ -67,11 +67,11 @@
            </div>
            <div class="collapse navbar-collapse">
              <ul class="nav navbar-nav">
-               <li><a href="/home">Home</a></li>
-               <li><a href="/user/{{loggedinid}}">Profile</a></li>
-               <li><a href="/about">About</a></li>
-               <li><a href="/slides">Slides</a></li>
-               <li><a href="#" onclick=getnewuser();>I'm New!</a></li>
+               <li id="home" class="active"><a href="/home">Home</a></li>
+               <li id="user"><a href="/user/{{loggedinid}}">Profile</a></li>
+               <li id="about"><a href="/about">About</a></li>
+               <li id="slides"><a href="/slides">Slides</a></li>
+               <li id="newuser"><a href="#" onclick=getnewuser();>I'm New!</a></li>
                <li>    
                		<form action="../result" method="POST">
         				<input id="searchbox" type="text" name="text" placeholder="Search for climb, area, or user">
@@ -93,14 +93,14 @@
 
     <script>
     			function checkusername(name){
-    					console.log(name)
+    					if (name!=null){
     					$.ajax({
 					      type: 'GET',
 					      url: '/checkavailability', // This is the url that will be requested
 					      data: {desiredname:name},
 					      success: acceptreject,
 					      dataType: 'JSON'
-					    });
+					    });};
     			};
     			function acceptreject(data){  
     				exists=data['exists'] 

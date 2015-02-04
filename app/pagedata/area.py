@@ -32,10 +32,10 @@ def getplotdata(climbids, db):
 def getareadict(a,db):
     adict=a.__dict__
     adict['areaid']=int(adict['areaid'])
-    popclimbs, allchildren=getpopclimbs(db, adict['areaid'])
-    adict['popclimbs']={p['climbid']:p['name'] for p in popclimbs}
-    adict['similarareas']=getsimilarareas(db,adict['areaid'])
-    adict['allchildren']=allchildren
+    #popclimbs, allchildren=getpopclimbs(db, adict['areaid'])
+    #adict['popclimbs']={p['climbid']:p['name'] for p in popclimbs}
+    #adict['similarareas']=getsimilarareas(db,adict['areaid'])
+    #adict['allchildren']=allchildren
     adict['pageviews']=int(adict['pageviews'])
     try:
         adict['climbcount']="%s climbs, " %int(adict['climbcount'])

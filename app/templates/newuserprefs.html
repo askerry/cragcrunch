@@ -32,5 +32,13 @@
 <input type="hidden" name="userid" value={{udict['climberid']}}>
 </form>
 
+<script>
+	$(document).ready(function(){
 
+	    $('#home').removeClass('active');
+	    $('#user').removeClass('active');
+	    $('#about').removeClass('active');
+	    $('#newuser').addClass('active');
+	});
+</script>
 {% endblock %}

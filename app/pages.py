@@ -59,7 +59,8 @@ def getareapage(g, inputdict):
     a=g.db.session.query(AreaTable).filter_by(areaid=areaid).first()
     adict=af.getareadict(a, g.db)
     del adict['_sa_instance_state']
-    aplotdata=af.getplotdata(adict['allchildren'], g.db)
+    #aplotdata=af.getplotdata(adict['allchildren'], g.db)
+    aplotdata={}
     return adict, aplotdata
     
 

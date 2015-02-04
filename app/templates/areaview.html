@@ -8,7 +8,7 @@
 </div>
 <hr class="headline">
 <div class="maincontent">
-	<div><h4>Directions:</h4> {{area['directions']}}</div>
+	<div><h4>Directions:</h4> {{area['directions'] | safe}}</div>
 	<div><h4>Description:</h4> 
 		{{area['description'] | safe}}
 	</div>

@@ -119,6 +119,8 @@ def getcandidates(udict, db, area, gradeshift, styles):
 def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
     styles=get_stylelist(sport, trad, boulder)
     candidates=getcandidates(udict, db, area, gradeshift, styles)
+    if len(candidates)==0:
+        candidates=getcandidates(udict, db, area, gradeshift, ['Sport', 'Trad', 'Boulder']) #if no matches, generalize to all styles
     candidates=[cf.getclimbdict(c, db) for c in candidates]
     trainedclfdict=loadtrainedmodel(udict)
     classorder=list(trainedclfdict['clf'].classes_)
