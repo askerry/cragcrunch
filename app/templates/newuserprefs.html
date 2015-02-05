@@ -2,13 +2,19 @@
 
 {% block content %}
 
-<form action="../newuser/createprofile" method="POST">
+<form action="../newuser/createprofile" method="POST" onSubmit="showwaiting();">
 <h3>Hi {{udict['name']}}, thanks for joining CragCrunch!</h3>
 <span class="miniboost">To start finding the best climbs for you, we need to know a little bit about what you like. Please tell us how you feel about each of the climb features below:</span>&nbsp&nbsp&nbsp&nbsp
 <input type="submit" value="Save Preferences" class="btn btn-primary">
-<br>
-<br>
-<div class="row">
+<div class="bubblingG" id="bub1">
+	<span id="bubblingG_1">
+	</span>
+	<span id="bubblingG_2">
+	</span>
+	<span id="bubblingG_3">
+	</span>
+</div>
+<div class="row" id="prefgrid">
 {% for feature in redfeats.keys() %}	
 	<div class="col-md-2 prefbox">
 		<div class="featurelabel">{{redfeats[feature]}}</div>
@@ -33,7 +39,15 @@
 <input type="hidden" name="name" value={{udict['name']}}>
 </form>
 
+
 <script>
+
+	function showwaiting(){
+		console.log('WAITING');
+		$('#prefgrid').hide();
+		$('#bub1').css("visibility", "visible").css("height","600px").css("margin-top","5em")
+	}
+
 	$(document).ready(function(){
 
 	    $('#home').removeClass('active');

@@ -50,7 +50,7 @@
 
 			<div class="sliderdiv">
 		        <div class="sliderlabel">Easier</div>
-		  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="show" onchange="refreshrecs();">
+		  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="hide">
 		  		<div class="sliderlabel">Harder</div>
 			</div>
 		</div>
@@ -103,6 +103,7 @@
     		//adjust recs based on user selection
     		function refreshrecs(){
     		   $('#recbox').empty();
+    		   console.log('hiiiii')
 			   $.ajax({
 			      type: 'GET',
 			      url: '/refreshrecs', // This is the url that will be requested
@@ -113,7 +114,8 @@
 				};
 
 			$(document).ready(function(){
-				$('#gradeslider').on('slide', refreshrecs);
+				$('#gradeslider').on('slideStop', refreshrecs);
+
 
 			    $('#home').removeClass('active');
 			    $('#about').removeClass('active');
