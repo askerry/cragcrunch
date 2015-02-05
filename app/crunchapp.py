@@ -173,16 +173,18 @@ def newuser(username):
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
+    udict=pinf.adduser(g, request)
+    features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
+    features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
+    '''
     try:
-        print "A"
         udict=pinf.adduser(g, request)
-        print "B"
         features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
-        print "XXXX"
         features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
     except:
         udict={}
         features={}
+    '''
     return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=session['userid'], loggedinname=session['username'])
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])

@@ -105,7 +105,6 @@ def getnewuseroptions(g):
 
 def adduser(g, request):
     udict=nuf.addtodb(g.db, request)
-    print 4
     udict['newuser']=True
     try:
         session['stash'][udict['climberid']]=udict
