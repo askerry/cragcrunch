@@ -43,7 +43,6 @@ for filename in modelfiles:
     app.modeldicts[filename]=model
 with open(config.redfeatfile, 'rb') as inputfile:
     d=pickle.load(inputfile)
-print d
 app.askfeatures=d['reducedtextfeats']
 app.askfeatures_terms=list(set([t[:t.index('_')] for t in app.askfeatures if '_' in t]))
 featdict={}
@@ -180,13 +179,10 @@ def newuserpred():
         print "B"
         features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
         print "XXXX"
-        print features
-        print rd.labeldict
         features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
     except:
         udict={}
         features={}
-    print features
     return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=session['userid'], loggedinname=session['username'])
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
