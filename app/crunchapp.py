@@ -177,6 +177,9 @@ def newuserpred():
     try:
         udict=pinf.adduser(g, request)
         features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
+        print "XXXX"
+        print features
+        print rd.labeldict
         features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
     except:
         udict={}
