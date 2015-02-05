@@ -42,8 +42,8 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-3">
-				<h4>What's your average sport grade?</h4>
+			<div class="col-md-4">
+				<h4>How hard do you sport climb?</h4>
 				<select name="sportgrade" class="defaultselect">
 					<option value='Empty'> Not Applicable </option>
 					{% for r in routegrades.keys()%}
@@ -51,9 +51,9 @@
 					{% endfor %}
 				</select>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-4">
 
-				<h4>What's your average trad grade?</h4>
+				<h4>How hard do you trad climb?</h4>
 				<select name="tradgrade" class="defaultselect">
 					<option value='Empty'> Not Applicable </option>
 					{% for r in routegrades.keys()%}
@@ -61,9 +61,8 @@
 					{% endfor %}
 				</select>
 			</div>
-			<div class="col-md-6">
-
-				<h4>What's your average boulder grade?</h4>
+			<div class="col-md-4">
+				<h4>How hard do you boulder?</h4>
 				<select name="bouldergrade" class="defaultselect">
 					<option value='Empty'> Not Applicable </option>
 					{% for b in bouldergrades.keys()%}
