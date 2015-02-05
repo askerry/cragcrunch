@@ -61,6 +61,7 @@ def addtodb(db, request):
     ndict={item[0]:item[1] for item in nuser.__dict__.items()}
     maxclimberid=float(db.session.query(func.max(ClimberTable.climberid)).first()[0])
     nuser.climberid=maxclimberid+1
+    print nuser.__dict__
     db.session.add(nuser)
     db.session.flush()
     '''
