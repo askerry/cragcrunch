@@ -63,11 +63,21 @@ def getuserplots(udict,db):
             warnings.warn( "climb selection failed")
         djsons=[]
         try:
-            usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
-            usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1 or col=='starsscore']]
-            if len(usdf['starsscore'].unique()==1):
-                usdf.iloc[0,:]['starsscore']=3
-            corrs, labels, sems=getuserpredictors(usdf)
+            print udict.keys()
+            if 'newuser' in udict.keys() and udict['newuser']==True:
+                featdict=current_app.modeldicts['feats_%s' %int(userid)]
+                labels=featdict.keys()
+                corrs=[float(featdict[l]) for l in labels]
+                print corrs
+                corrs=[(c-2)/2 for c in corrs]
+                print corrs
+                sems=[0 for c in corrs]
+            else:
+                usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
+                usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1 or col=='starsscore']]
+                if len(usdf['starsscore'].unique()==1):
+                    usdf.iloc[0,:]['starsscore']=3
+                corrs, labels, sems=getuserpredictors(usdf)
         except:
             warnings.warn("user star df/correlations failed")
         title="Route Preferences for %s" %udict['name']

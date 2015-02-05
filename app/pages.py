@@ -40,13 +40,18 @@ def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, 
     climberid=inputdict['userid']
     a=g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict=uf.getuserdict(a, g.db)
+    ###omg hack
+    if climberid>8729:
+        udict['newuser']=True
+    else:
+        udict['newuser']=False
     if areaid is None:
         areaid=udict['mainarea']
     try:
         urecs=uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder) #time suck
     except:
         warnings.warn("failed to generate user recs")
-        urecs={}
+        urecs=[]
     uplotdata=uf.getuserplots(udict, g.db)
     areas=uf.getmainareaoptions(g.db)
     return udict, urecs, uplotdata, areas, udict['mainarea']
@@ -99,9 +104,8 @@ def getnewuseroptions(g):
     return states, areas, bouldergrades, routegrades
 
 def adduser(g, request):
-    print "XXX"
     udict=nuf.addtodb(g.db, request)
-    print "YYY"
+    udict['newuser']=True
     try:
         session['stash'][udict['climberid']]=udict
     except:

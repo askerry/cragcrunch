@@ -27,11 +27,12 @@
 				</div>
 			</div>
 		<hr>
+
 		<div id="recbox">
-		      {% for rec in recs %}
-					<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
-					<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... <a href="../view/area{{ rec['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
-		      {% endfor %}
+	      {% for rec in recs %}
+				<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
+				<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... <a href="../view/area{{ rec['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
+	      {% endfor %}
 		</div>
 		</div>
 	</div>
@@ -72,26 +73,32 @@
 			function updaterec(data) {
 	      		newrecs=data['recs']
 	      	    console.log(newrecs)
-				for(r in newrecs){
-					var rec=newrecs[r]
-					var climbname=rec['name'];
-					var climbid=rec['climbid'];
-					var climbgrade=rec['grade'];
-					var climbarea=rec['mainarea'];
-					var climbarea_name=rec['mainarea_name'];
-					var climbstyle=rec['style'];
-					var climbregion=rec['region'];
-					str='<div class="recroute"><a href="../view/climb'+climbid.toString()+'">'+climbname+'</a></div>'
-					$('#recbox').append(str);
-					//str='<a href="../view/climb'+climbid.toString()+'">'+climbname+'</a>'
-					//$('.recroute').append(str);
-					var climbarealink='<a href="view/area'+climbarea+'">'+climbarea_name+'</a>'
-					str='<div class="tagline">'+climbstyle+', ' +climbgrade+' .......... '+climbarealink+', '+climbregion+'</div>'
-					$('#recbox').append(str);
+	      	    if (newrecs==[]){
+	      	    	str="<span>Sorry, we don't have recommendations for you right now. This could be because the area isn't a good fit for you, or because we simply need to learn more about you. For now, please search for a climb you enjoy and check out its similar climbs!</span>";
+	      	    	$('#recbox').append(str);
+	      	    	$('#recbox').show();
+	      	    }
+	      	    else{
+					for(r in newrecs){
+						var rec=newrecs[r]
+						var climbname=rec['name'];
+						var climbid=rec['climbid'];
+						var climbgrade=rec['grade'];
+						var climbarea=rec['mainarea'];
+						var climbarea_name=rec['mainarea_name'];
+						var climbstyle=rec['style'];
+						var climbregion=rec['region'];
+						str='<div class="recroute"><a href="../view/climb'+climbid.toString()+'">'+climbname+'</a></div>'
+						$('#recbox').append(str);
+						//str='<a href="../view/climb'+climbid.toString()+'">'+climbname+'</a>'
+						//$('.recroute').append(str);
+						var climbarealink='<a href="view/area'+climbarea+'">'+climbarea_name+'</a>'
+						str='<div class="tagline">'+climbstyle+', ' +climbgrade+' .......... '+climbarealink+', '+climbregion+'</div>'
+						$('#recbox').append(str);
+					}
+					$('#recbox').show();
 				}
-				$('#recbox').show();
 	    		};
-
 
     		//adjust recs based on user selection
     		function refreshrecs(){
