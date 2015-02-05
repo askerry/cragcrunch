@@ -62,10 +62,13 @@ def addtodb(db, request):
     maxclimberid=float(db.session.query(func.max(ClimberTable.climberid)).first()[0])
     nuser.climberid=maxclimberid+1
     db.session.add(nuser)
+    db.session.flush()
+    '''
     try:
         db.session.flush()
     except:
         warnings.warn("DB flush fail for new user")
+    '''
     ndict['climberid']=float(nuser.climberid)
     try:
         db.session.commit()
