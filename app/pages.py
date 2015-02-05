@@ -95,6 +95,7 @@ def getuserinput(request, features):
     featdict['cracks']=featdict['crack']
     featdict['flake']=featdict['flakes']
     current_app.modeldicts['feats_%s' %int(userid)]=featdict
+    print username
     return userid, username, featdict
 
 def getnewuseroptions(g):
