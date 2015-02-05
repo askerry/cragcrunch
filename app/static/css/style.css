@@ -65,7 +65,7 @@ html, body {
     font-size: 1.3em;
     width: 16em;
     height: 2.3em;
-    margin-top: .35em;
+    margin-top: .45em;
     margin-left: .75em;
     margin-right: 4em;
     padding-left: .5em;
@@ -125,7 +125,7 @@ a.emplink {
     padding: .7em;
     background-color: #ddd;
     color: black;
-    font-size: 1.1em;
+    font-size: 1.3em;
 }
 #block {
     width: 100%;
