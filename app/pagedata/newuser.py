@@ -61,21 +61,16 @@ def addtodb(db, request):
     ndict={item[0]:item[1] for item in nuser.__dict__.items()}
     maxclimberid=float(db.session.query(func.max(ClimberTable.climberid)).first()[0])
     nuser.climberid=maxclimberid+1
-    print nuser.__dict__
     db.session.add(nuser)
-    db.session.flush()
-    '''
     try:
         db.session.flush()
-    except:
-        warnings.warn("DB flush fail for new user")
-    '''
-    ndict['climberid']=float(nuser.climberid)
-    try:
         db.session.commit()
     except:
-        warnings.warn("DB commit fail for new user")
-    del ndict['_sa_instance_state']
+        warnings.warn("DB flush fail for new user")
+        querystr="INSERT INTO climber_prepped (climberid, mainarea, name, url, gender, personal, age, favclimbs_parsed, favclimbs, interests, climbstyles, selfreportgrades, moreinfo, trad_l, trad_f, sport_l, sport_f, ice_l, ice_f, boulders, aid_l, aid_f, mixed_l, mixed_f, region, numhits, g_min_Sport, g_max_Sport, g_median_Sport, g_min_Trad, g_max_Trad, g_median_Trad, g_min_Boulder, g_max_Boulder, g_median_Boulder) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' %(nuser.climberid, nuser.mainarea, nuser.name, None, nuser.gender, None, None, None, None, None, nuser.climbstyles, None, None, None, None, None, None, None, None, None, None, None, None, None, nuser.g_median_Sport, None, None, None, nuser.g_median_Trad, None, None, 28.0, None, None, nuser.g_median_Boulder)"
+        db.engine.execute(querystr)
+        warnings.warn('executed with raw sql instead')
+    ndict['climberid']=float(nuser.climberid)
     return ndict
 
 def addnewuserstars(db, userid, username, candidateids, Y):
