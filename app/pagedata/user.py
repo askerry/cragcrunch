@@ -64,11 +64,18 @@ def getuserplots(udict,db):
         djsons=[]
         try:
             if 'newuser' in udict.keys() and udict['newuser']==True:
-                featdict=current_app.modeldicts['feats_%s' %int(userid)]
-                labels=featdict.keys()
-                corrs=[float(featdict[l]) for l in labels]
-                corrs=[(c-2)/2 for c in corrs]
-                sems=[0 for c in corrs]
+                try:
+                    featdict=current_app.modeldicts['feats_%s' %int(userid)]
+                    labels=featdict.keys()
+                    corrs=[float(featdict[l]) for l in labels]
+                    corrs=[(c-2)/2 for c in corrs]
+                    sems=[0 for c in corrs]
+                except:
+                    usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
+                    usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1 or col=='starsscore']]
+                    if len(usdf['starsscore'].unique()==1):
+                        usdf.iloc[0,:]['starsscore']=3
+                    corrs, labels, sems=getuserpredictors(usdf)
             else:
                 usdf=getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                 usdf=usdf[[col for col in usdf.columns if len(usdf[col].unique())!=1 or col=='starsscore']]

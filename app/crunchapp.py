@@ -190,7 +190,6 @@ def newuserpred():
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])
 def createuserprofile():
     userid,username,featdict=pinf.getuserinput(request, current_app.askfeatures)
-    print username
     #username=g.db.session.query(ClimberTable).filter_by(climberid=userid).first().name
     clf=nuf.modelnewuser(g.db, featdict, userid, username)
     app.modeldicts[filename]=clf
