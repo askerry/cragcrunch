@@ -45,6 +45,7 @@ def addtodb(db, request):
         mainarea=0
     else:
         mainarea=float(request.form['mainarea'])
+    print 2
     nuser=ClimberTable(name=str(request.form['name']), gender=str(request.form['gender']), climbstyles=styles, region=float(request.form['state']), mainarea=mainarea)
     if request.form['sportgrade'] == 'Empty':
         nuser.g_median_Sport=39.0
@@ -59,6 +60,7 @@ def addtodb(db, request):
     else:
         nuser.g_median_Boulder = float(request.form['bouldergrade'])
     ndict={item[0]:item[1] for item in nuser.__dict__.items()}
+    print 3
     maxclimberid=float(db.session.query(func.max(ClimberTable.climberid)).first()[0])
     nuser.climberid=maxclimberid+1
     db.session.add(nuser)

@@ -104,7 +104,9 @@ def getnewuseroptions(g):
     return states, areas, bouldergrades, routegrades
 
 def adduser(g, request):
+    print 1
     udict=nuf.addtodb(g.db, request)
+    print 4
     udict['newuser']=True
     try:
         session['stash'][udict['climberid']]=udict
