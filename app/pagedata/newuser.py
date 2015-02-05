@@ -59,14 +59,18 @@ def addtodb(db, request):
     else:
         nuser.g_median_Boulder = float(request.form['bouldergrade'])
     ndict={item[0]:item[1] for item in nuser.__dict__.items()}
-    import pdb
-    pdb.set_trace()
     maxclimberid=float(db.session.query(func.max(ClimberTable.climberid)).first()[0])
     nuser.climberid=maxclimberid+1
     db.session.add(nuser)
-    db.session.flush()
+    try:
+        db.session.flush()
+    except:
+        warnings.warn("DB flush fail for new user")
     ndict['climberid']=float(nuser.climberid)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        warnings.warn("DB commit fail for new user")
     del ndict['_sa_instance_state']
     return ndict
 
