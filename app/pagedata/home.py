@@ -4,6 +4,7 @@ Created on Fri Jan 16 09:20:26 2015
 
 @author: amyskerry
 """
+from flask import current_app
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 from sqlalchemy import between
 import numpy as np
@@ -25,7 +26,9 @@ def gettopclimbs(db):
 
 def getusers(db):
     '''get list of all possible users in the databse'''
-    climbers=db.session.query(ClimberTable).all()
+    climberids=[c[5:] for c in current_app.modeldicts.keys()]
+    climberids=[float(c[:c.index('_')]) for c in climberids]
+    climbers=db.session.query(ClimberTable).filter(ClimberTable.climberid.in_(climberids)).all()
     names=[climber.name for climber in climbers]
     ids=[climber.climberid for climber in climbers]
     sortedindices=np.argsort(names)

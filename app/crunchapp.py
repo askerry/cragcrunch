@@ -169,22 +169,16 @@ def updaterecs():
 @app.route("/newuser/<username>", methods=['GET', 'POST'])
 def newuser(username):
     states, areas, bouldergrades, routegrades=pinf.getnewuseroptions(g)
+    session['userid']=0
+    session['username']=username
     return render_template('newuser.html', username=username, states=states, areas=areas, bouldergrades=bouldergrades, routegrades=routegrades, loggedinid=session['userid'], loggedinname=session['username'])
 
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
     udict=pinf.adduser(g, request)
+    session['userid']=udict['climberid']
     features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
     features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
-    '''
-    try:
-        udict=pinf.adduser(g, request)
-        features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
-        features={f:rd.labeldict[f] if f in rd.labeldict.keys() else f for f in features}
-    except:
-        udict={}
-        features={}
-    '''
     return render_template('newuserprefs.html', udict=udict, redfeats=features, loggedinid=session['userid'], loggedinname=session['username'])
 
 @app.route("/newuser/createprofile", methods=['GET', 'POST'])

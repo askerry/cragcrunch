@@ -7,7 +7,7 @@
 </div>
 <hr class="headline">
 <div class="row">
-	<div class="col-md-9">
+	<div class="col-md-8">
 {% if (returntype=='result') %}
 	    <h4>Users</h4>
 	    <ul class=entries>
@@ -15,7 +15,7 @@
 	    	<span class="subtle">No users match your query.</span>
 	    {% else %}
 		    {% for e in result['users'] %}
-		        <li><a class="emplink" href="user/{{e['climberid']}}">{{e['name']}} </a>, <a href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a><a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
+		        <li><a class="emplink" href="user/{{e['climberid']}}">{{e['name']}}</a>, <a href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a><a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
 		    {% endfor %}
 	    {% endif %}
 	    </ul>
@@ -57,7 +57,7 @@
 	      </ul>
 {% endif %}
 	</div>
-	<div class="col-md-3" id='blurb'>
+	<div class="col-md-4" id='blurb'>
 		<p><img id='logoimg'class='fitimg' src="../static/img/logo.jpg" alt="logo">Every rock climb is different, demanding its own blend of mental and physical skills, and every climber comes to the crag with her own unique strengths, preferences, and goals. A climbing area or park often contains hundres or thousands of individual climbing routes, and a climber can only tackle a handful of the routes on a trip. CragCrunch provides a framework for discovering new climbing routes that are right for YOU.</p>
 	</div>
 </div>
