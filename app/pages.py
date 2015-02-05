@@ -87,6 +87,7 @@ def getclimbpage(g, inputdict, userid):
 def getuserinput(request, features):
     features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
     userid=float(request.form['userid'])
+    username=request.form['name']
     featdict={}
     for feat in features:
         featdict[feat]=request.form['pref_%s' %feat]
@@ -94,7 +95,7 @@ def getuserinput(request, features):
     featdict['cracks']=featdict['crack']
     featdict['flake']=featdict['flakes']
     current_app.modeldicts['feats_%s' %int(userid)]=featdict
-    return userid, featdict
+    return userid, username, featdict
 
 def getnewuseroptions(g):
     states=nuf.getstates(g.db)
