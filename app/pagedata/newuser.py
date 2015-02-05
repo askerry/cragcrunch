@@ -58,6 +58,7 @@ def addtodb(db, request):
         nuser.g_median_Boulder=14.0
     else:
         nuser.g_median_Boulder = float(request.form['bouldergrade'])
+    nuser.climbstyles='Sport, Trad, Boulder'
     ndict={item[0]:item[1] for item in nuser.__dict__.items()}
     maxclimberid=float(db.session.query(func.max(ClimberTable.climberid)).first()[0])
     nuser.climberid=maxclimberid+1
