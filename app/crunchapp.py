@@ -175,7 +175,9 @@ def newuser(username):
 @app.route("/newuser/preferences", methods=['GET', 'POST'])
 def newuserpred():
     try:
+        print "A"
         udict=pinf.adduser(g, request)
+        print "B"
         features=[f for f in current_app.askfeatures_terms if f not in rd.blockterms]
         print "XXXX"
         print features
