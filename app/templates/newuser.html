@@ -7,75 +7,76 @@
 <span class="miniboost">To find climbs that are right for you, we'll need to know a bit more about you.</span>
 <br>
 <form action="preferences" method="POST">
-<input type="hidden" name="name" value="{{username}}">
-<div class="row">
-	<div class="col-md-10">
-		<div id="infobox" class="row">
-			<div class="col-md-3">
-				<h4>Gender:</h4>
-				<select name='gender' class="defaultselect">
-					<option value='female'>Female</option>
-					<option value='male'>Male</option>
-					<option value='other'>Other</option>
-				</select>
-			</div>
-			<div class="col-md-3">
-				<h4>State:</h4>
-				<select name="state" class="defaultselect">
-					{% for state in states.keys()%}
-						<option value={{state}}>{{states[state]}}</option>
-					{% endfor %}
-				</select>
-			</div>
-			<div class="col-md-6">
-				<h4>Where do you usually climb?</h4>
-				<select name="mainarea" class="defaultselect" style="width:14em">
-					{% for area in areas.keys()%}
-						{% if area==453 %}
-							<option value="{{area}}" selected> Yosemite </option>
-						{% else %}
-							<option value="{{area}}">{{areas[area]}}</option>
-						{% endif %}
-						}
-					{% endfor %}
-				</select>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<h4>How hard do you sport climb?</h4>
-				<select name="sportgrade" class="defaultselect">
-					<option value='Empty'> Not Applicable </option>
-					{% for r in routegrades.keys()%}
-						<option value="{{r}}">{{routegrades[r]}}</option>
-					{% endfor %}
-				</select>
-			</div>
-			<div class="col-md-4">
+    <input type="hidden" name="name" value="{{username}}">
 
-				<h4>How hard do you trad climb?</h4>
-				<select name="tradgrade" class="defaultselect">
-					<option value='Empty'> Not Applicable </option>
-					{% for r in routegrades.keys()%}
-						<option value="{{r}}">{{routegrades[r]}}</option>
-					{% endfor %}
-				</select>
-			</div>
-			<div class="col-md-4">
-				<h4>How hard do you boulder?</h4>
-				<select name="bouldergrade" class="defaultselect">
-					<option value='Empty'> Not Applicable </option>
-					{% for b in bouldergrades.keys()%}
-						<option value="{{b}}">{{bouldergrades[b]}}</option>
-					{% endfor %}
-				</select>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-2" id="submitbox">
-		<input type="submit" id="submit" value="Create Profile" class="btn btn-primary">
-	</div>
-</div>
+    <div class="row">
+        <div class="col-md-10">
+            <div id="infobox" class="row">
+                <div class="col-md-3">
+                    <h4>Gender:</h4>
+                    <select name='gender' class="defaultselect">
+                        <option value='female'>Female</option>
+                        <option value='male'>Male</option>
+                        <option value='other'>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <h4>State:</h4>
+                    <select name="state" class="defaultselect">
+                        {% for state in states.keys()%}
+                        <option value={{state}}>{{states[state]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <h4>Where do you usually climb?</h4>
+                    <select name="mainarea" class="defaultselect" style="width:14em">
+                        {% for area in areas.keys()%}
+                        {% if area==453 %}
+                        <option value="{{area}}" selected> Yosemite</option>
+                        {% else %}
+                        <option value="{{area}}">{{areas[area]}}</option>
+                        {% endif %}
+                        }
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>How hard do you sport climb?</h4>
+                    <select name="sportgrade" class="defaultselect">
+                        <option value='Empty'> Not Applicable</option>
+                        {% for r in routegrades.keys()%}
+                        <option value="{{r}}">{{routegrades[r]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+
+                    <h4>How hard do you trad climb?</h4>
+                    <select name="tradgrade" class="defaultselect">
+                        <option value='Empty'> Not Applicable</option>
+                        {% for r in routegrades.keys()%}
+                        <option value="{{r}}">{{routegrades[r]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <h4>How hard do you boulder?</h4>
+                    <select name="bouldergrade" class="defaultselect">
+                        <option value='Empty'> Not Applicable</option>
+                        {% for b in bouldergrades.keys()%}
+                        <option value="{{b}}">{{bouldergrades[b]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2" id="submitbox">
+            <input type="submit" id="submit" value="Create Profile" class="btn btn-primary">
+        </div>
+    </div>
 </form>
 <script>
 	$(document).ready(function(){
@@ -85,5 +86,6 @@
 	    $('#about').removeClass('active');
 	    $('#newuser').addClass('active');
 	});
+
 </script>
 {% endblock %}

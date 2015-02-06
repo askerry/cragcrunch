@@ -4,72 +4,82 @@
 
 
 <div class="row">
-	<div id="contenttitle" class="col-md-4">{{user['name']}} </div>                                  
-	<div id="details" class="col-md-8">{%if user['gender']!=''%}{{user['gender']}},{%endif%} {%if user['gender']!=''%}{{ user['age'] }},{%endif%} {{user['mainarea_name']}}, {{user['country']}}</div>
+    <div id="contenttitle" class="col-md-4">{{user['name']}}</div>
+    <div id="details" class="col-md-8">{%if user['gender']!=''%}{{user['gender']}},{%endif%} {%if user['gender']!=''%}{{
+        user['age'] }},{%endif%} {{user['mainarea_name']}}, {{user['country']}}
+    </div>
 </div>
 
 <hr class="headline">
 <div class="row">
 
-<div class="col-md-7" id="userrecs">
-	<div id="reccontainer">
-			<div class="row">
-				<div id="rectitle" class="col-md-7">Top climbs for {{user['name']}} in:</div>                                  
-				<div id="selectdiv" class="col-md-5"><select id="areadropdown" class="defaultselect" onchange="refreshrecs()">
-					{%  for key in areas.keys() %}
-						{% if key == defaultarea %}
-							<option value="{{ key }}" selected> {{areas[key]}} </option>
-						{% else %}
-							<option value="{{ key }}"> {{areas[key]}} </option>
-						{% endif %}
-					{% endfor %}
-					</select>
-				</div>
-			</div>
-		<hr>
+    <div class="col-md-7" id="userrecs">
+        <div id="reccontainer">
+            <div class="row">
+                <div id="rectitle" class="col-md-7">Top climbs for {{user['name']}} in:</div>
+                <div id="selectdiv" class="col-md-5"><select id="areadropdown" class="defaultselect"
+                                                             onchange="refreshrecs()">
+                    {% for key in areas.keys() %}
+                    {% if key == defaultarea %}
+                    <option value="{{ key }}" selected> {{areas[key]}}</option>
+                    {% else %}
+                    <option value="{{ key }}"> {{areas[key]}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                </div>
+            </div>
+            <hr>
 
-		<div id="recbox">
-		{%if recs==[]%}
-			<span class="mention">Sorry, we don't have recommendations for you right now. This could be because the area isn't a good fit for you, or because we simply need to learn more about you. For now, please search for a climb you enjoy and check out its similar climbs!</span>
-		{%endif%}
-	      {% for rec in recs %}
-				<div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>                               
-				<div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... <a href="../view/area{{ rec['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}</div>
-	      {% endfor %}
-		</div>
-		</div>
-	</div>
+            <div id="recbox">
+                {%if recs==[]%}
+                <span class="mention">Sorry, we don't have recommendations for you right now. This could be because the area isn't a good fit for you, or because we simply need to learn more about you. For now, please search for a climb you enjoy and check out its similar climbs!</span>
+                {%endif%}
+                {% for rec in recs %}
+                <div class="recroute"><a href="../view/climb{{ rec['climbid']}}">{{rec['name']}}</a></div>
+                <div class="tagline">{{rec['style']}}, {{rec['grade']}} .......... <a
+                        href="../view/area{{ rec['mainarea']}}">{{ rec['mainarea_name'] }}</a>, {{ rec['region'] }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-	<div class="col-md-5" id="profile">
-		<div id="formbox">
-			<span class="miniboost"> Toggle climb suggestions</span>
-			<div class="tooltip"></div>
+    <div class="col-md-5" id="profile">
+        <div id="formbox">
+            <span class="miniboost"> Toggle climb suggestions</span>
 
-			<div id="checkgroup">
-				<input type="checkbox" id="sportcheck" value='Sport' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<input type="checkbox" id="tradcheck" value='Trad' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<input type="checkbox" id="bouldercheck" value='Boulder' checked onchange="refreshrecs();">
-			</div>
+            <div class="tooltip"></div>
 
-			<div class="sliderdiv">
-		        <div class="sliderlabel">Easier</div>
-		  		<input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24" data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal" data-slider-handle="square" data-slider-tooltip="hide">
-		  		<div class="sliderlabel">Harder</div>
-			</div>
-		</div>
+            <div id="checkgroup">
+                <input type="checkbox" id="sportcheck" value='Sport' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                <input type="checkbox" id="tradcheck" value='Trad' checked onchange="refreshrecs();">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                <input type="checkbox" id="bouldercheck" value='Boulder' checked onchange="refreshrecs();">
+            </div>
 
-		<div id="plotbox">
-				<div id="plotcontainer">
-					<script>
+            <div class="sliderdiv">
+                <div class="sliderlabel">Easier</div>
+                <input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24"
+                       data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                       data-slider-handle="square" data-slider-tooltip="hide">
+
+                <div class="sliderlabel">Harder</div>
+            </div>
+        </div>
+
+        <div id="plotbox">
+            <div id="plotcontainer">
+                <script>
 						var plotdata='{{plotdata[0] | safe}}';
 						var jsondata=JSON.parse(plotdata);
 						var chart = new Highcharts.Chart(jsondata);
-					</script>
-				</div>
-		</div>
-	<br>
-	<span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
-	</div>
+
+                </script>
+            </div>
+        </div>
+        <br>
+        <span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
+    </div>
 </div>
 <script>
 			
@@ -126,6 +136,7 @@
 			    $('#user').addClass('active');
 
 			});
+
 
 </script>
 

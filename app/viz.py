@@ -6,13 +6,15 @@ Created on Thu Jan 15 16:56:56 2015
 """
 
 import matplotlib.pyplot as plt
-#import plotly.plotly as plotly
+# import plotly.plotly as plotly
 import numpy as np
+
 
 def save2plotly(f, fname, plotlyprivate=False):
     plotly.sign_in('askerry', 'tn0zp19ph1')
     plotly.plot_mpl(f, filename=fname, auto_open=False, world_readable=plotlyprivate)
-    
+
+
 def visualizearea(df):
     #print df.columns
     #f,ax=plt.subplots(1,2, figsize=[8,3])

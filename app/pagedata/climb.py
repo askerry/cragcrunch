@@ -17,27 +17,27 @@ import timeit
 from config import rootdir
 
 
-##################################################
+# #################################################
 #                Climb Page Functions             #
 ##################################################
 
-def getareanest(areaid, db,areanest=None, nestednames=None):
+def getareanest(areaid, db, areanest=None, nestednames=None):
     if areanest is None:
-        areanest=[]
+        areanest = []
     if nestednames is None:
-        nestednames=[]
-    local=db.session.query(AreaTable).filter_by(country = 'USA').all()
-    regions=list(set([l.region for l in local]))
-    name=db.session.query(AreaTable).filter_by(areaid=areaid).first().name
-    if name not in regions and len(areanest)<8:
-        parent=db.session.query(AreaTable).filter_by(areaid=areaid).first().area
-        parentname=db.session.query(AreaTable).filter_by(areaid=parent).first().name
+        nestednames = []
+    local = db.session.query(AreaTable).filter_by(country='USA').all()
+    regions = list(set([l.region for l in local]))
+    name = db.session.query(AreaTable).filter_by(areaid=areaid).first().name
+    if name not in regions and len(areanest) < 8:
+        parent = db.session.query(AreaTable).filter_by(areaid=areaid).first().area
+        parentname = db.session.query(AreaTable).filter_by(areaid=parent).first().name
         areanest.append(parent)
         nestednames.append(parentname)
         getareanest(parent, db, areanest, nestednames)
     elif name not in regions:
-        regionname=db.session.query(AreaTable).filter_by(areaid=areaid).first().region
-        regionid=db.session.query(AreaTable).filter_by(name=regionname, region='World').first().areaid
+        regionname = db.session.query(AreaTable).filter_by(areaid=areaid).first().region
+        regionid = db.session.query(AreaTable).filter_by(name=regionname, region='World').first().areaid
         areanest.append(regionid)
         nestednames.append(regionname)
     return areanest, nestednames
@@ -46,55 +46,59 @@ def getareanest(areaid, db,areanest=None, nestednames=None):
 def getclimbdict(c, db, getnest=False):
     #t=timeit.default_timer()
     #cdict=deepcopy(c.__dict__)
-    cdict=c.__dict__
+    cdict = c.__dict__
     try:
-        cdict['climbid']=int(cdict['climbid'])
-        if cdict['length']>0:
+        cdict['climbid'] = int(cdict['climbid'])
+        if cdict['length'] > 0:
             try:
-                cdict['length']="%s ft" %int(cdict['length'])
+                cdict['length'] = "%s ft" % int(cdict['length'])
             except:
-                cdict['length']=''
+                cdict['length'] = ''
         else:
-            cdict['length']=""
-        if cdict['pitch']==1:
-            cdict['pitch']="%s pitch" %int(cdict['pitch'])
-        elif cdict['pitch']>1:
+            cdict['length'] = ""
+        if cdict['pitch'] == 1:
+            cdict['pitch'] = "%s pitch" % int(cdict['pitch'])
+        elif cdict['pitch'] > 1:
             try:
-                cdict['pitch']="%s pitches" %int(cdict['pitch'])
-            except: cdict['pitch']=""
+                cdict['pitch'] = "%s pitches" % int(cdict['pitch'])
+            except:
+                cdict['pitch'] = ""
 
         else:
-            cdict['pitch']=""
+            cdict['pitch'] = ""
         try:
-            cdict['pageviews']=int(float(cdict['pageviews']))
+            cdict['pageviews'] = int(float(cdict['pageviews']))
         except:
-            cdict['pageviews']=0
-        if cdict['avgstars']==1:
-            cdict['avgstars']="%.1f star" %cdict['avgstars']
-        elif cdict['avgstars']>1:
-            cdict['avgstars']="%.1f stars" %cdict['avgstars']
+            cdict['pageviews'] = 0
+        if cdict['avgstars'] == 1:
+            cdict['avgstars'] = "%.1f star" % cdict['avgstars']
+        elif cdict['avgstars'] > 1:
+            cdict['avgstars'] = "%.1f stars" % cdict['avgstars']
         else:
-            cdict['avgstars']="no stars"
-        lengear=len(cdict['protection'])
-        cdict['description']=cdict['description'].replace('. \n','<br><br>')[:-(lengear)]
+            cdict['avgstars'] = "no stars"
+        lengear = len(cdict['protection'])
+        cdict['description'] = cdict['description'].replace('. \n', '<br><br>')[:-(lengear)]
         if getnest:
-            nestedids,nestednames=getareanest(cdict['area'], db)
-            cdict['nest']=zip(nestedids, nestednames)
+            nestedids, nestednames = getareanest(cdict['area'], db)
+            cdict['nest'] = zip(nestedids, nestednames)
     except:
         warnings.warn("dictifying failed")
     return cdict
-    
+
+
 def getsimilarclimbs(db, climbid, ClimbTable):
     '''get climbs similar to target'''
-    df=pd.read_sql('select * from simclimbs', db.engine, index_col='climbid')
-    simclimbids=df.loc[climbid,:].values[1:6].astype(int)
-    simclimbobjs=[db.session.query(ClimbTable).filter_by(climbid=c).first() for c in simclimbids]
-    simclimbdicts=[getclimbdict(o,db) for o in simclimbobjs]
+    df = pd.read_sql('select * from simclimbs', db.engine, index_col='climbid')
+    simclimbids = df.loc[climbid, :].values[1:6].astype(int)
+    simclimbobjs = [db.session.query(ClimbTable).filter_by(climbid=c).first() for c in simclimbids]
+    simclimbdicts = [getclimbdict(o, db) for o in simclimbobjs]
     return simclimbdicts
+
 
 def checkstars(db, climbid, userid):
     try:
-        matches= db.session.query(StarsTable).filter(and_((StarsTable.climber==userid), StarsTable.climb==climbid)).first()
+        matches = db.session.query(StarsTable).filter(
+            and_((StarsTable.climber == userid), StarsTable.climb == climbid)).first()
         return int(matches.starsscore)
     except:
         return 0

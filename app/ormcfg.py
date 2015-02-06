@@ -7,10 +7,11 @@ from config import dirname
 import os
 import pickle
 
-with open(os.path.join(dirname,'data', 'climbingterms.pkl'), 'rb') as inputfile:
-        terms=pickle.load(inputfile)
+with open(os.path.join(dirname, 'data', 'climbingterms.pkl'), 'rb') as inputfile:
+    terms = pickle.load(inputfile)
 
 Base = declarative_base()
+
 
 class AreaTable(Base):
     __tablename__ = 'area_prepped'
@@ -19,9 +20,9 @@ class AreaTable(Base):
     name = Column(String(70))
     url = Column(String(200))
     mainarea = Column(String(30))
-    description = Column(Text) #String(15000)
+    description = Column(Text)  # String(15000)
     elevation = Column(Float)
-    directions = Column(Text) #String(3000)
+    directions = Column(Text)  # String(3000)
     latitude = Column(Float)
     longitude = Column(Float)
     mapref = Column(String(70))
@@ -37,11 +38,11 @@ class ClimbTable(Base):
     region = Column(String(20))
     name = Column(String(70))
     mainarea = Column(Integer)
-    description = Column(Text)#String(10000)
+    description = Column(Text)  # String(10000)
     grade = Column(String(30))
     fa = Column(String(200))
     protection = Column(Text)
-    locationdescrip = Column(Text)#String(2000)
+    locationdescrip = Column(Text)  # String(2000)
     pitch = Column(String(30))
     style = Column(String(30))
     name = Column(String(70))
@@ -54,10 +55,12 @@ class ClimbTable(Base):
     numerizedgrade = Column(Float)
     mainarea_name = Column(String(70))
     area_name = Column(String(70))
-    mergedtext=Column(Text)
+    mergedtext = Column(Text)
+
 
 for c in terms:
-    setattr(ClimbTable,c+'_description', Column(Integer))
+    setattr(ClimbTable, c + '_description', Column(Integer))
+
 
 class ClimberTable(Base):
     __tablename__ = 'climber_prepped'
@@ -73,7 +76,7 @@ class ClimberTable(Base):
     interests = Column(String(200))
     climbstyles = Column(String(200))
     selfreportgrades = Column(String(70))
-    moreinfo = Column(Text)#String(1000)
+    moreinfo = Column(Text)  # String(1000)
     trad_l = Column(String(30))
     trad_f = Column(String(30))
     sport_l = Column(String(30))
@@ -105,9 +108,10 @@ class TicksTable(Base):
     climblink = Column(String(200))
     climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
-    note = Column(Text)#String(5000)
+    note = Column(Text)  # String(5000)
     date = Column(Date)
     name = Column(String(200))
+
 
 class CommentsTable(Base):
     __tablename__ = 'comments_prepped'
@@ -116,9 +120,10 @@ class CommentsTable(Base):
     climblink = Column(String(200))
     climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
-    comment = Column(Text)#String(10000)
+    comment = Column(Text)  # String(10000)
     date = Column(Date)
     name = Column(String(200))
+
 
 class StarsTable(Base):
     __tablename__ = 'stars_prepped'
@@ -129,6 +134,7 @@ class StarsTable(Base):
     climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
     url = Column(String(200))
     name = Column(String(200))
+
 
 class GradesTable(Base):
     __tablename__ = 'grades_prepped'
