@@ -228,6 +228,13 @@ def loadtrainedmodel(udict):
         clf = current_app.modeldicts[fname]
     except:
         warnings.warn("%s not in modeldicts.keys()" % fname)
+        modeldir = os.path.join(fulldir, 'data/models')
+        try:
+            with open(os.path.join(modeldir, fname), 'rb') as inputfile:
+                clf = pickle.load(inputfile)
+            warnings.warn("successfully loaded from file")
+        except:
+            warnings.warn("loading %s failed" % fname)
     return clf
 
 
