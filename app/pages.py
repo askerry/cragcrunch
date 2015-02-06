@@ -40,7 +40,7 @@ def result_home(request, g):
 
 def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, boulder=True):
     climberid = inputdict['userid']
-    print "refreshing climber" climberid
+    print "refreshing climber" %climberid
     a = g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     print a
     udict = uf.getuserdict(a, g.db)
