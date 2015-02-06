@@ -178,6 +178,9 @@ a.emplink {
     height: 100%;
     padding: 2em;
 }
+#username{
+	width:15.5em;
+}
 #userrecs {
     right: 0em;
     padding: 1em;
@@ -337,7 +340,7 @@ a.emplink {
     text-align: center;
     height: 100%;
     padding: 15%;
-    background-image: url("../static/img/landing.png");
+    background-image: url("../img/landing.png");
     background-repeat: no-repeat;
     background-size: cover;
 }

@@ -80,14 +80,6 @@ def connect_db():
     cfg.user, cfg.host, cfg.dbname, cfg.charset, cfg.use_unicode, cfg.passwd), pool_recycle=3600)
     return DBConnection(engine)
 
-
-def check_db_connection():
-    dbconn = connect_db()
-    return dbconn
-
-
-#testconn=check_db_connection()
-
 @app.before_request
 def before_request():
     g.db = connect_db()
@@ -106,7 +98,7 @@ def teardown_request(exception):
 @app.route('/<status>')
 def land(status=""):
     if status == 'invalid':
-        helper = "Oops. Your username & password were invalid. Please sign in again or continue as Guest."
+        helper = "Oops. Your username is invalid. Please sign in again or continue as Guest."
     else:
         helper = ''
     return render_template('landing.html', helper=helper)
@@ -119,7 +111,7 @@ def home():
         username = request.form['username']
         matches = g.db.session.query(ClimberTable).filter(ClimberTable.name.ilike(username)).all()
         if request.form['guest'] == 'guest':
-            session['userid'] = 2424
+            session['userid'] = 36
             session['username'] = g.db.session.query(ClimberTable).filter_by(climberid=session['userid']).all()[0].name
         else:
             if len(matches) == 0:
@@ -246,7 +238,8 @@ def slides():
 
 @app.route('/notebooks/<notebookname>')
 def notebook(notebookname='Notebook1'):
-    return render_template(notebookname+'.html')
+    css='<link href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet"><link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet"><link  href="../static/css/style.css" rel="stylesheet">'
+    return render_template(notebookname+'.html', css=css)
 
 
 if __name__ == '__main__':

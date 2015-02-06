@@ -79,6 +79,7 @@ def addtodb(db, request):
         nuser.climberid, nuser.mainarea, nuser.name, nuser.gender, nuser.region, nuser.g_median_Sport,
         nuser.g_median_Trad, nuser.g_median_Boulder)
         db.engine.execute(querystr)
+        warnings.warn("raw SQL isert successful")
     ndict['climberid'] = float(nuser.climberid)
     del ndict['_sa_instance_state']
     return ndict

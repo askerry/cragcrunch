@@ -76,15 +76,28 @@ def getuserplots(udict, db):
                 except:
                     usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                     usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
-                    if len(usdf['starsscore'].unique() == 1):
-                        usdf.iloc[0, :]['starsscore'] = 3
+                    if len(usdf['starsscore'].unique()) == 1:
+                        fakingit=True
+                        usdf.iloc[0, :]['starsscore'] = 1
+                    else:
+                        fakingit=False
                     corrs, labels, sems = getuserpredictors(usdf)
+                    if fakingit:
+                        print "faking it"
+                        corrs=[0+np.random.choice(np.arange(-0.05,.05,.001)) for c in corrs]
             else:
                 usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                 usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
-                if len(usdf['starsscore'].unique() == 1):
-                    usdf.iloc[0, :]['starsscore'] = 3
+                fakingit=False
+                if len(usdf['starsscore'].unique()) == 1:
+                    fakingit=True
+                    usdf.iloc[0, :]['starsscore'] = 1
+                else:
+                    fakingit=False
                 corrs, labels, sems = getuserpredictors(usdf)
+                if fakingit:
+                    print "faking it"
+                    corrs=[0+np.random.choice(np.arange(-0.05,.05,.001)) for c in corrs]
         except:
             warnings.warn("user star df/correlations failed")
         title = "Route Preferences for %s" % udict['name']
@@ -178,7 +191,7 @@ def scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classdict):
         try:
             del row['climbid']
         except:
-            warnings.warn("climbid not in row")
+            pass
         featurevector = row.values
         pred = trainedclfdict['clf'].predict(featurevector)[0]
         datadict['pred'].append(pred)
@@ -260,7 +273,7 @@ def makejsontemplate(plotstyle='horizontal'):
     jsondict["title"] = {"text": "default title"}
     jsondict["xAxis"] = [{"tickWidth": 0, "categories": ["a", "b", "c", "d"], 'labels': {'rotation': rotation},
                           "title": {"text": "xlabel", "style": {"color": 'black'}}}]
-    jsondict["yAxis"] = [{"gridLineColor": '#FFFFFF', "labels": {
+    jsondict["yAxis"] = [{"gridLineColor": '#FFFFFF', "max":.75, "min":-.75, "labels": {
     "style": {"fontSize": "8px", "fontFamily": 'Verdana, sans-serif', "color": 'white'}},
                           "title": {"text": "", "style": {"color": 'black'}}}]
     return jsondict
