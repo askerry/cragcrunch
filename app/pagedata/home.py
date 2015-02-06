@@ -9,7 +9,6 @@ from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTabl
 from sqlalchemy import between
 import numpy as np
 import warnings
-import viz
 from collections import OrderedDict
 from config import rootdir
 

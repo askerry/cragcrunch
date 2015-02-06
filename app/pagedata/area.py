@@ -8,7 +8,6 @@ Created on Fri Jan 16 09:18:49 2015
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
 import pandas as pd
-import viz
 
 from config import rootdir
 
@@ -17,6 +16,7 @@ from config import rootdir
 #                Area Page Functions             #
 ##################################################
 
+'''
 def getplotdata(climbids, db):
     output = db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
     cdict = output[0].__dict__
@@ -27,7 +27,7 @@ def getplotdata(climbids, db):
     plotdf = pd.DataFrame(data=datadict)
     plotdf.index = plotdf.climbid.values
     viz.visualizearea(plotdf)
-
+'''
 
 def getareadict(a, db):
     adict = a.__dict__

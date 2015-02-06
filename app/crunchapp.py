@@ -65,6 +65,7 @@ class DBConnection():
         self.session.close()
 
     def rawsql(self, string):
+        '''to fall back on raw sql queries when necessary'''
         sql = text(string)
         returned = self.engine.execute(sql)
         entries = []
@@ -91,7 +92,6 @@ def teardown_request(exception):
     if db is not None:
         db.close()
 
-
 #views
 
 @app.route('/')
@@ -111,6 +111,7 @@ def home():
         username = request.form['username']
         matches = g.db.session.query(ClimberTable).filter(ClimberTable.name.ilike(username)).all()
         if request.form['guest'] == 'guest':
+            # default to Ben's Profile for guest user
             session['userid'] = 36
             session['username'] = g.db.session.query(ClimberTable).filter_by(climberid=session['userid']).all()[0].name
         else:
@@ -137,13 +138,11 @@ def search():
 @app.route('/view/<searchid>')
 def view(searchid=0):
     if 'climb' in searchid:
-        climbid = searchid[5:]
-        cdict, crecs = pinf.getclimbpage(g, {'climbid': climbid}, session['userid'])
+        cdict, crecs = pinf.getclimbpage(g, {'climbid': searchid[5:]}, session['userid'])
         return render_template('climbview.html', climb=cdict, recs=crecs, loggedinid=session['userid'],
                                loggedinname=session['username'])
     if 'area' in searchid:
-        areaid = searchid[4:]
-        adict, aplotdata = pinf.getareapage(g, {'areaid': areaid})
+        adict, aplotdata = pinf.getareapage(g, {'areaid': searchid[4:]})
         return render_template('areaview.html', area=adict, plotdata=aplotdata, loggedinid=session['userid'],
                                loggedinname=session['username'])
     else:
@@ -152,7 +151,7 @@ def view(searchid=0):
 
 @app.route('/user')
 @app.route('/user/<userid>')
-def user(userid=123):
+def user(userid=36):
     userdict, userrecs, userplotdata, areas, defaultarea = pinf.getuserpage(g, {'userid': userid})
     return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas,
                            defaultarea=float(defaultarea), loggedinid=session['userid'],
@@ -169,7 +168,7 @@ def updaterecs():
     areaid = request.args.get('areaid')
     userid = request.args.get('userid')
     gs = request.args.get('gradeshift')
-    #this seems janky?
+    #this is janky...
     js2bool = {'true': True, 'false': False}
     sport = js2bool[request.args.get('sportcheck')]
     trad = js2bool[request.args.get('tradcheck')]

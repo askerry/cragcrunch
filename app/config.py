@@ -33,7 +33,7 @@ class Cfg():
 DBCFG = Cfg(projectroot, host, user, passwd, dbname='climbdb')
 
 
-# model parameters
+#configure model parameters
 
 from sklearn.ensemble import RandomForestClassifier
 
@@ -46,5 +46,5 @@ class RandomForestClassifierWithCoef(RandomForestClassifier):
         self.coef_ = self.feature_importances_
 
 
-clf = RandomForestClassifierWithCoef(n_estimators=40,
+clf = RandomForestClassifierWithCoef(n_estimators=80,
                                      oob_score=True)  #n_estimators selected from CV performance on exploratory (NH) data

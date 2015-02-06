@@ -7,7 +7,6 @@ Created on Fri Jan 16 09:17:48 2015
 
 from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
 import numpy as np
-import viz
 import pandas as pd
 import os
 from sqlalchemy import and_

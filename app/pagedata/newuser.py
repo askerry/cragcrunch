@@ -4,7 +4,6 @@ from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTabl
 from flask import current_app
 import numpy as np
 import pandas as pd
-import viz
 import misc
 import json
 from flask import jsonify, session
@@ -81,6 +80,7 @@ def addtodb(db, request):
         db.engine.execute(querystr)
         warnings.warn("raw SQL isert successful")
     ndict['climberid'] = float(nuser.climberid)
+    session['userid']=float(nuser.climberid)
     del ndict['_sa_instance_state']
     return ndict
 
