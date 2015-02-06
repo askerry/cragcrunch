@@ -23,10 +23,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="pages.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="pages.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.0530422" vertical-offset="0" max-vertical-offset="1875">
+            <state vertical-scroll-proportion="17.346153" vertical-offset="1126" max-vertical-offset="1875">
               <caret line="45" column="22" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="22" />
               <folding>
                 <element signature="e#31#137#0" expanded="true" />
@@ -89,10 +89,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="crunchapp.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="crunchapp.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/crunchapp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-47.884617" vertical-offset="0" max-vertical-offset="3765">
+            <state vertical-scroll-proportion="-1.2691083" vertical-offset="2042" max-vertical-offset="3765">
               <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
@@ -431,14 +431,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/viz.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="525">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
@@ -556,12 +548,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crunchapp.py">
+    <entry file="file://$PROJECT_DIR$/pages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-47.884617" vertical-offset="0" max-vertical-offset="3765">
-          <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
+        <state vertical-scroll-proportion="17.346153" vertical-offset="1126" max-vertical-offset="1875">
+          <caret line="45" column="22" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="22" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#31#137#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -576,30 +568,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/misc.py">
+    <entry file="file://$PROJECT_DIR$/crunchapp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5622189" vertical-offset="0" max-vertical-offset="750">
-          <caret line="25" column="75" selection-start-line="25" selection-start-column="75" selection-end-line="25" selection-end-column="75" />
+        <state vertical-scroll-proportion="-1.2691083" vertical-offset="2042" max-vertical-offset="3765">
+          <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
           <folding>
-            <element signature="e#26#44#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/viz.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7196402" vertical-offset="0" max-vertical-offset="667">
-          <caret line="32" column="7" selection-start-line="32" selection-start-column="7" selection-end-line="32" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pages.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.0530422" vertical-offset="0" max-vertical-offset="1875">
-          <caret line="45" column="22" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="22" />
-          <folding>
-            <element signature="e#31#137#0" expanded="true" />
+            <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
