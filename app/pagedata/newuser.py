@@ -79,8 +79,8 @@ def addtodb(db, request):
         nuser.g_median_Trad, nuser.g_median_Boulder)
         db.engine.execute(querystr)
         warnings.warn("raw SQL isert successful")
-    ndict['climberid'] = float(nuser.climberid)
-    session['userid']=float(nuser.climberid)
+    ndict['climberid'] = int(float(nuser.climberid))
+    session['userid']=int(float(nuser.climberid))
     del ndict['_sa_instance_state']
     return ndict
 
