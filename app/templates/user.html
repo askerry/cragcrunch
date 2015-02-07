@@ -19,11 +19,11 @@
                 <div id="selectdiv" class="col-md-5"><select id="areadropdown" class="defaultselect"
                                                              onchange="refreshrecs()">
                     {% for key in areas.keys() %}
-                    {% if key == defaultarea %}
-                    <option value="{{ key }}" selected> {{areas[key]}}</option>
-                    {% else %}
-                    <option value="{{ key }}"> {{areas[key]}}</option>
-                    {% endif %}
+	                    {% if key == defaultarea %}
+	                    	<option value="{{ key }}" selected> {{areas[key]}}</option>
+	                    {% else %}
+	                    	<option value="{{ key }}"> {{areas[key]}}</option>
+	                    {% endif %}
                     {% endfor %}
                 </select>
                 </div>

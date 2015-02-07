@@ -4,7 +4,6 @@ from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTabl
 from flask import current_app
 import numpy as np
 import pandas as pd
-import misc
 import json
 from flask import jsonify, session
 import home as hf

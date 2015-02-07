@@ -79,22 +79,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="newuser.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="newuser.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pagedata/newuser.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.4615383" vertical-offset="1021" max-vertical-offset="2670">
-              <caret line="81" column="52" selection-start-line="81" selection-start-column="52" selection-end-line="81" selection-end-column="52" />
-              <folding>
-                <element signature="e#26#132#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.1433121" vertical-offset="0" max-vertical-offset="2655">
+              <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="user.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="user.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pagedata/user.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.23400936" vertical-offset="0" max-vertical-offset="4920">
+            <state vertical-scroll-proportion="-5.769231" vertical-offset="0" max-vertical-offset="4920">
               <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding />
             </state>
@@ -135,8 +133,8 @@
         <option value="$PROJECT_DIR$/pagedata/climb.py" />
         <option value="$PROJECT_DIR$/pagedata/home.py" />
         <option value="$PROJECT_DIR$/pagedata/area.py" />
-        <option value="$PROJECT_DIR$/pagedata/newuser.py" />
         <option value="$PROJECT_DIR$/pagedata/user.py" />
+        <option value="$PROJECT_DIR$/pagedata/newuser.py" />
       </list>
     </option>
   </component>
@@ -560,20 +558,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pagedata/newuser.py">
+    <entry file="file://$PROJECT_DIR$/pagedata/user.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.4615383" vertical-offset="1021" max-vertical-offset="2670">
-          <caret line="81" column="52" selection-start-line="81" selection-start-column="52" selection-end-line="81" selection-end-column="52" />
-          <folding>
-            <element signature="e#26#132#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="-5.769231" vertical-offset="0" max-vertical-offset="4920">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pagedata/user.py">
+    <entry file="file://$PROJECT_DIR$/pagedata/newuser.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23400936" vertical-offset="0" max-vertical-offset="4920">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.1433121" vertical-offset="0" max-vertical-offset="2655">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding />
         </state>
       </provider>
