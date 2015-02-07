@@ -127,9 +127,14 @@ def get_stylelist(sport, trad, boulder):
 
 
 def addstar(db, userid, username, climbid, climbname, rating):
-    nstar = StarsTable(climber=str(userid), starsscore=rating, climb=climbid, name="%s_%s" % (username, climbname))
-    maxstarid = float(db.session.query(func.max(StarsTable.starid)).first()[0])
-    nstar.starid = maxstarid + 1
+    matchstar=db.session.query(StarsTable).filter(and_(StarsTable.climber==userid, StarsTable.climb==climbid)).first()
+    if matchstar is not None:
+        nstar=matchstar
+        nstar.starsscore=rating
+    else:
+        nstar = StarsTable(climber=str(userid), starsscore=rating, climb=climbid, name="%s_%s" % (username, climbname))
+        maxstarid = float(db.session.query(func.max(StarsTable.starid)).first()[0])
+        nstar.starid = maxstarid + 1
     db.session.add(nstar)
     db.session.flush()
     db.session.commit()

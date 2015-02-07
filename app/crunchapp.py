@@ -224,15 +224,16 @@ def checkavailability():
         return jsonify({'exists': True, 'name': desiredname})
 
 
-@app.route("/logstar", methods=["GET"])
+@app.route("/logstar", methods=["POST"])
 def logstar():
-    rating = request.args.get('starsscore')
-    climbid = request.args.get('climb')
-    climbname = request.args.get('climbname')
-    climbername = request.args.get('climbername')
-    climberid = request.args.get('climber')
+    rating = request.form['starsscore']
+    climbid = request.form['climb']
+    climbname = request.form['climbname']
+    climbername = request.form['climbername']
+    climberid = request.form['climber']
     uf.addstar(g.db, climberid, climbername, climbid, climbname, rating)
-    return jsonify({'returned': True})
+    print rating
+    return jsonify({'returned': True, 'star':rating})
 
 
 @app.route("/slides")

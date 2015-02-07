@@ -16,6 +16,13 @@
     <br>
 
     <div><h4>Directions:</h4> {{area['directions'] | safe}}</div>
+
+    <br>
+    <div><h4>Sub Areas:</h4> 
+    	{% for sub in area['subareas'].keys() %}
+    		<div class="col-md-2"><a href="../view/area{{ sub }}">{{ area['subareas'][sub] }}</a></div>
+    	{% endfor %}
+    </div>
 </div>
 <br>
 

@@ -20,7 +20,7 @@ from config import rootdir
 def gettopclimbs(db):
     '''get top climbs by pageviews for naive viewers'''
     topclimbs = db.session.query(ClimbTable).order_by(ClimbTable.pageviews.desc()).limit(10).all()
-    tlist = [{'name': c.name, 'url': c.url, 'mainarea': c.mainarea, 'climbid': c.climbid, 'pageviews': int(c.pageviews),
+    tlist = [{'name': c.name, 'url': c.url, 'mainarea': int(c.mainarea), 'climbid': c.climbid, 'pageviews': int(c.pageviews),
               'mainarea_name': db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name,
               'region': c.region} for c in topclimbs]
     return tlist
@@ -28,7 +28,8 @@ def gettopclimbs(db):
 
 def getusers(db):
     '''get list of all possible users in the databse'''
-    climberids = [c[5:] for c in current_app.modeldicts.keys()]
+    userkeys=[c for c in current_app.modeldicts.keys() if 'user' in c]
+    climberids = [c[5:] for c in userkeys]
     climberids = [float(c[:c.index('_')]) for c in climberids]
     climbers = db.session.query(ClimberTable).filter(ClimberTable.climberid.in_(climberids)).all()
     names = [climber.name for climber in climbers]
@@ -49,7 +50,7 @@ def getall(g):
 def findmatch(text, g):
     '''take search text and return info on areas, climbs, and users'''
     text = text.strip()
-    if text != '':
+    if len(text)>1:
         matchids = {'climbs': [], 'areas': [], 'users': []}
         matchstr = '%' + text + '%'
         climbmatches = g.db.session.query(ClimbTable).filter(ClimbTable.name.ilike(matchstr)).all()

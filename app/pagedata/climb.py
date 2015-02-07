@@ -31,23 +31,22 @@ def getareanest(areaid, db, areanest=None, nestednames=None):
     if name not in regions and len(areanest) < 8:
         parent = db.session.query(AreaTable).filter_by(areaid=areaid).first().area
         parentname = db.session.query(AreaTable).filter_by(areaid=parent).first().name
-        areanest.append(parent)
+        areanest.append(int(parent))
         nestednames.append(parentname)
         getareanest(parent, db, areanest, nestednames)
     elif name not in regions:
         regionname = db.session.query(AreaTable).filter_by(areaid=areaid).first().region
         regionid = db.session.query(AreaTable).filter_by(name=regionname, region='World').first().areaid
-        areanest.append(regionid)
+        areanest.append(int(regionid))
         nestednames.append(regionname)
     return areanest, nestednames
 
 
 def getclimbdict(c, db, getnest=False):
-    #t=timeit.default_timer()
-    #cdict=deepcopy(c.__dict__)
     cdict = c.__dict__
     try:
         cdict['climbid'] = int(cdict['climbid'])
+        cdict['area'] = int(cdict['area'])
         if cdict['length'] > 0:
             try:
                 cdict['length'] = "%s ft" % int(cdict['length'])

@@ -126,23 +126,29 @@
     			function gotosetuppage(name){
     				window.location.replace("/newuser/"+name);
     			};
+
     			function getnewuser(){
 					bootbox.prompt("Welcome to CragCrunch! Please enter a user name.", checkusername);
 				};
+
 				function go2user(){
 					var userid = $('#userdropdown').val()
     				window.location.replace("/user/"+userid.toString());
 				};
-				function donothing(data){
-					console.log('no change')
+
+				function showstars(data){
+					console.log('XXXXXX')
+					rating=data['rating']
+					console.log(rating)
+					$('#starinput').raty('score', rating);
 				};
 
 				function submitstars(){
 					$.ajax({
-					      type: 'GET',
+					      type: 'POST',
 					      url: '/logstar', // This is the url that will be requested
 					      data: {starsscore:$('#starsscore').val(), climber:$('#climber').val(), climbername:$('#climbername').val(), climb:$('#climb').val(), climbname:$('#climbname').val()},
-					      success: donothing,
+					      success: showstars,
 					      dataType: 'JSON'
 					    });
 				};

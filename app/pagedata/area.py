@@ -32,6 +32,9 @@ def getplotdata(climbids, db):
 def getareadict(a, db):
     adict = a.__dict__
     adict['areaid'] = int(adict['areaid'])
+    localchildren=db.session.query(AreaTable).filter_by(area=adict['areaid']).all()
+    print localchildren
+    adict['subareas']={int(child.areaid):str(child.name) for child in localchildren}
     #popclimbs, allchildren=getpopclimbs(db, adict['areaid'])
     #adict['popclimbs']={p['climbid']:p['name'] for p in popclimbs}
     #adict['similarareas']=getsimilarareas(db,adict['areaid'])

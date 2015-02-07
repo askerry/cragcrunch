@@ -85,6 +85,7 @@
 			function updaterec(data) {
 	      		newrecs=data['recs']
 	      	    console.log(newrecs)
+	      	    $('#recbox').empty();
 	      	    if (newrecs.length==0){
 	      	    	str="<span class='mention'>Sorry, we don't have recommendations for you right now. This could be because the area isn't a good fit for you, or because we simply need to learn more about you. For now, please search for a climb you enjoy and check out its similar climbs!</span>";
 	      	    	$('#recbox').append(str);
