@@ -103,6 +103,10 @@ def land(status=""):
         helper = ''
     return render_template('landing.html', helper=helper)
 
+@app.route('/user/0')
+def fallback():
+    return render_template('landing.html', helper='')
+
 
 @app.route('/home')
 @app.route('/home', methods=['POST'])
