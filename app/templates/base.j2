@@ -144,11 +144,13 @@
 				};
 
 				function submitstars(){
+					console.log('hiii')
+					console.log($('#starsscore').val())
+
 					$.ajax({
 					      type: 'POST',
 					      url: '/logstar', // This is the url that will be requested
 					      data: {starsscore:$('#starsscore').val(), climber:$('#climber').val(), climbername:$('#climbername').val(), climb:$('#climb').val(), climbname:$('#climbname').val()},
-					      success: showstars,
 					      dataType: 'JSON'
 					    });
 				};

@@ -4,8 +4,8 @@
 
 
 <div class="row">
-    <div id="contenttitle" class="col-md-6">{{climb['name']}}</div>
-    <div id="details" class="col-md-6">{{climb['style']}}, {{climb['grade']}}, <a href="../view/area{{climb['area']}}">{{climb['area_name']}}</a>,
+    <div id="contenttitle" class="col-md-5">{{climb['name']}}</div>
+    <div id="details" class="col-md-7">{{climb['style']}}, {{climb['grade']}}, <a href="../view/area{{climb['area']}}">{{climb['area_name']}}</a>,
         <a href="../view/area{{climb['mainarea']}}">{{ climb['mainarea_name'] }}</a>, {{ climb['region'] }}
     </div>
 </div>
@@ -24,7 +24,6 @@
                     MountainProject.com</a>
 
                     <div id="starinput"></div>
-                    <button class="btn btn-xs btn-warning" onclick="submitstars();">Rate Climb</button>
                     <input type="hidden" id="starsscore" name="starsscore" value="{{climb['existingrating']}}">
                     <input type="hidden" id="climb" name="climb" value="{{climb['climbid']}}">
                     <input type="hidden" id="climbname" name="climbname" value="{{climb['name']}}">
@@ -55,7 +54,7 @@
 <script>
 $(document).ready(function(){
 	$('#starinput').raty({
-		score: {{climb['existingrating']}},  cancel: true, target : '#starsscore', targetType : 'score', targetKeep: true
+		score: {{climb['existingrating']}},  cancel: true, target : '#starsscore', targetType : 'score', targetKeep: true, click: submitstars
 		});	   
 	});
 
