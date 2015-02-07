@@ -50,7 +50,7 @@ def getall(g):
 def findmatch(text, g):
     '''take search text and return info on areas, climbs, and users'''
     text = text.strip()
-    if len(text)>1:
+    if len(text)>2:
         matchids = {'climbs': [], 'areas': [], 'users': []}
         matchstr = '%' + text + '%'
         climbmatches = g.db.session.query(ClimbTable).filter(ClimbTable.name.ilike(matchstr)).all()
@@ -76,5 +76,5 @@ def findmatch(text, g):
             matchids['users'].append(ud)
         return matchids
     else:
-        return {'users': [{}], 'areas': [{}], 'climbids': [{}]}
+        return {'users': [{}], 'areas': [{}], 'climbs': [{}]}
     
