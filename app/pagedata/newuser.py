@@ -74,9 +74,9 @@ def addtodb(db, request):
     except:
         warnings.warn("DB flush fail for new user")
         querystr = "INSERT INTO climber_prepped (climberid, mainarea, name, url, gender, personal, age, favclimbs_parsed, favclimbs, interests, climbstyles, selfreportgrades, moreinfo, trad_l, trad_f, sport_l, sport_f, ice_l, ice_f, boulders, aid_l, aid_f, mixed_l, mixed_f, region, numhits, g_min_Sport, g_max_Sport, g_median_Sport, g_min_Trad, g_max_Trad, g_median_Trad, g_min_Boulder, g_max_Boulder, g_median_Boulder) VALUES (%s, %s, '%s', Null, '%s', Null, Null, Null, Null, Null, 'Sport, Trad, Boulder', Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, %s, Null, Null, Null, %s, Null, Null, %s, Null, Null, %s)" % (
-        nuser.climberid, nuser.mainarea, nuser.name, nuser.gender, nuser.region, nuser.g_median_Sport,
+        nuser.climberid, nuser.mainarea, '%s', nuser.gender, nuser.region, nuser.g_median_Sport,
         nuser.g_median_Trad, nuser.g_median_Boulder)
-        db.engine.execute(querystr)
+        db.engine.execute(querystr, nuser.name)
         warnings.warn("raw SQL isert successful")
     ndict['climberid'] = int(float(nuser.climberid))
     session['userid']=int(float(nuser.climberid))
