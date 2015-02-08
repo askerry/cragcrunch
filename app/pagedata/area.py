@@ -33,8 +33,9 @@ def getareadict(a, db):
     adict = a.__dict__
     adict['areaid'] = int(adict['areaid'])
     localchildren=db.session.query(AreaTable).filter_by(area=adict['areaid']).all()
-    print localchildren
     adict['subareas']={int(child.areaid):str(child.name) for child in localchildren}
+    localchildren_climbs=db.session.query(ClimbTable).filter_by(area=adict['areaid']).all()
+    adict['subclimbs']={int(child.climbid):str(child.name) for child in localchildren_climbs}
     #popclimbs, allchildren=getpopclimbs(db, adict['areaid'])
     #adict['popclimbs']={p['climbid']:p['name'] for p in popclimbs}
     #adict['similarareas']=getsimilarareas(db,adict['areaid'])
