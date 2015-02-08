@@ -18,20 +18,20 @@
     <div><h4>Directions:</h4> {{area['directions'] | safe}}</div>
 
     <br>
-    {% if area['subareas' != {}]%}
+    {% if area['subareas'] != {} %}
     <div><h4>Sub Areas:</h4> 
     	{% for sub in area['subareas'].keys() %}
     		<div class="col-md-2"><a href="../view/area{{ sub }}">{{ area['subareas'][sub] }}</a></div>
     	{% endfor %}
     </div>
     {% endif %}
-    {% if area['subclimbs' != {}]%}
+    {% if area['subclimbs'] != {} %}
     <div><h4>Climbs:</h4> 
     	{% for sub in area['subclimbs'].keys() %}
-    		<div class="col-md-2"><a href="../view/area{{ sub }}">{{ area['subareas'][sub] }}</a></div>
+    		<div class="col-md-2"><a href="../view/climb{{ sub }}">{{ area['subclimbs'][sub] }}</a></div>
     	{% endfor %}
     </div>
-    {% if area['subclimbs' != {}]%}
+    {% endif %}
 </div>
 <br>
 
