@@ -158,12 +158,12 @@ def getcandidates(udict, db, area, gradeshift, styles):
         candidates.extend(thesecandidates)
     if len(candidates)==0:
         for style in styles:
-        thesecandidates = [c for c in db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea == area),
+            thesecandidates = [c for c in db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea == area),
                                                                                ClimbTable.numerizedgrade.between(
                                                                                    graderanges[style][0]-5,
                                                                                    graderanges[style][1]+5),
                                                                                (ClimbTable.style == style))).all()]
-        candidates.extend(thesecandidates)
+            candidates.extend(thesecandidates)
     return candidates
 
 
