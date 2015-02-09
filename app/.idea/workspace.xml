@@ -26,7 +26,7 @@
       <file leaf-file-name="pages.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1194" max-vertical-offset="1875">
+            <state vertical-scroll-proportion="0.0" vertical-offset="167" max-vertical-offset="1875">
               <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
               <folding>
                 <element signature="e#31#137#0" expanded="true" />
@@ -59,11 +59,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="home.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="home.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pagedata/home.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-20.5" vertical-offset="532" max-vertical-offset="1290">
-              <caret line="71" column="52" selection-start-line="71" selection-start-column="52" selection-end-line="71" selection-end-column="52" />
+            <state vertical-scroll-proportion="0.6723869" vertical-offset="499" max-vertical-offset="1290">
+              <caret line="62" column="29" selection-start-line="62" selection-start-column="29" selection-end-line="62" selection-end-column="29" />
               <folding>
                 <element signature="e#88#117#0" expanded="true" />
               </folding>
@@ -107,11 +107,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="crunchapp.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="crunchapp.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crunchapp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7006369" vertical-offset="1330" max-vertical-offset="3840">
-              <caret line="118" column="12" selection-start-line="118" selection-start-column="12" selection-end-line="118" selection-end-column="34" />
+            <state vertical-scroll-proportion="-18.153847" vertical-offset="1568" max-vertical-offset="3855">
+              <caret line="136" column="16" selection-start-line="136" selection-start-column="16" selection-end-line="136" selection-end-column="16" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -138,10 +138,10 @@
         <option value="$PROJECT_DIR$/misc.py" />
         <option value="$PROJECT_DIR$/pagedata/climb.py" />
         <option value="$PROJECT_DIR$/pages.py" />
-        <option value="$PROJECT_DIR$/crunchapp.py" />
         <option value="$PROJECT_DIR$/pagedata/area.py" />
         <option value="$PROJECT_DIR$/pagedata/user.py" />
         <option value="$PROJECT_DIR$/pagedata/newuser.py" />
+        <option value="$PROJECT_DIR$/crunchapp.py" />
         <option value="$PROJECT_DIR$/pagedata/home.py" />
       </list>
     </option>
@@ -532,16 +532,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pages.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1194" max-vertical-offset="1875">
-          <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
-          <folding>
-            <element signature="e#31#137#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pagedata/area.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-14.076923" vertical-offset="189" max-vertical-offset="1200">
@@ -572,22 +562,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pagedata/home.py">
+    <entry file="file://$PROJECT_DIR$/pages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-20.5" vertical-offset="532" max-vertical-offset="1290">
-          <caret line="71" column="52" selection-start-line="71" selection-start-column="52" selection-end-line="71" selection-end-column="52" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1194" max-vertical-offset="1875">
+          <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
           <folding>
-            <element signature="e#88#117#0" expanded="true" />
+            <element signature="e#31#137#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/crunchapp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7006369" vertical-offset="1330" max-vertical-offset="3840">
-          <caret line="118" column="12" selection-start-line="118" selection-start-column="12" selection-end-line="118" selection-end-column="34" />
+        <state vertical-scroll-proportion="-18.153847" vertical-offset="1568" max-vertical-offset="3855">
+          <caret line="136" column="16" selection-start-line="136" selection-start-column="16" selection-end-line="136" selection-end-column="16" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pagedata/home.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6723869" vertical-offset="499" max-vertical-offset="1290">
+          <caret line="62" column="29" selection-start-line="62" selection-start-column="29" selection-end-line="62" selection-end-column="29" />
+          <folding>
+            <element signature="e#88#117#0" expanded="true" />
           </folding>
         </state>
       </provider>

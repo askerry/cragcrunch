@@ -134,6 +134,7 @@ def home():
 @app.route('/result', methods=['POST'])
 def search():
     result = pinf.result_home(request, g)
+    print result
     return render_template('home.html', returntype='result', result=result, loggedinid=session['userid'],
                            loggedinname=session['username'])
 

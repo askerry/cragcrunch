@@ -62,7 +62,7 @@ def findmatch(text, g):
         areamatches = g.db.session.query(AreaTable).filter(AreaTable.name.ilike(matchstr)).all()
         for a in areamatches:
             mainarea_name = g.db.session.query(AreaTable).filter_by(areaid=a.mainarea).first().name
-            ad = {'areaid': a.areaid, 'name': a.name, 'mainarea_name': mainarea_name, 'mainarea': c.mainarea, 'region': a.region, 'url': a.url}
+            ad = {'areaid': a.areaid, 'name': a.name, 'mainarea_name': mainarea_name, 'mainarea': a.mainarea, 'region': a.region, 'url': a.url}
             matchids['areas'].append(ad)
         usermatches = g.db.session.query(ClimberTable).filter(ClimberTable.name.ilike(matchstr)).all()
         for u in usermatches:
@@ -71,7 +71,7 @@ def findmatch(text, g):
             except:
                 warnings.warn("main area not found")
                 mainarea_name = 'Unknown Area'
-            ud = {'climberid': int(u.climberid), 'name': u.name, 'mainarea_name': mainarea_name, 'mainarea': c.mainarea, 'region': u.region,
+            ud = {'climberid': int(u.climberid), 'name': u.name, 'mainarea_name': mainarea_name, 'mainarea': u.mainarea, 'region': u.region,
                   'url': u.url}
             matchids['users'].append(ud)
         return matchids
