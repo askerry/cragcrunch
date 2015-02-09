@@ -28,11 +28,11 @@
             {% if result['climbs']==[{}] %}
             <span class="subtle">No climbs match your query.</span>
             {% else %}
-            {% for e in result['climbs'] %}
-            <li><a class="emplink" href="view/climb{{e['climbid']}}">{{e['name']}}</a>, <a
-                    href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a>, {{e['region']}}, {{e['grade']}},
-                {{e['style']}}, <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
-            {% endfor %}
+	            {% for e in result['climbs'] %}
+	            <li><a class="emplink" href="view/climb{{e['climbid']}}">{{e['name']}}</a>, <a
+	                    href="view/area{{e['mainarea']}}">{{e['mainarea_name']}}</a>, {{e['region']}}, {{e['grade']}},
+	                {{e['style']}}, <a class="subtlelink" href="http://{{e['url']}}"> ....view on MP</a></li>
+	            {% endfor %}
             {% endif %}
         </ul>
 
@@ -71,9 +71,9 @@
     <div class="col-md-4" id='blurb'>
         <p><img id='logoimg' class='fitimg' src="../static/img/logo.jpg" alt="logo">Every rock climb is different,
             demanding its own blend of mental and physical skills, and every climber comes to the crag with her own
-            unique strengths, preferences, and goals. A climbing area or park often contains hundres or thousands of
-            individual climbing routes, and a climber can only tackle a handful of the routes on a trip. CragCrunch
-            provides a framework for discovering new climbing routes that are right for YOU.</p>
+            unique strengths, preferences, and goals. A climbing area or park often contains hundreds or thousands of
+            individual climbing routes, and a climber can only tackle a handful of the routes on a single trip. CragCrunch
+            provides a platform for discovering new climbing routes that are right for you.</p>
     </div>
 </div>
 
