@@ -51,23 +51,20 @@
 
 </head>
 <body>
-<form action="../home" method="POST" onsubmit="refreshuser();">
+<form action="../home" method="POST">
     <div class="landingdiv">
         <div id="helper">{{helper}}</div>
-        <input type="text" class="form-control login" id="username" placeholder="user name">
+        <input type="text" class="form-control login" id="username" name="username"  placeholder="user name" onchange="refreshguest();">
         <input type="submit" value="&#8594" class="btn btn-primary">
         <h4><input type="submit" value="Continue as Guest Explorer" class="btn-lg btn-primary" onclick="setguest();">
         </h4>
         <input type="hidden" id="guest" name="guest" value="empty">
-        <input type="hidden" name="username" id="hiddenuser" value="">
     </div>
 </form>
 </body>
 <script>
-    function refreshuser(){
-        var name = $('#username').val();
-        console.log(name)
-        $('#hiddenuser').val(name);
+    function refreshguest(){
+        $('#guest').val('empty');
     };
 </script>
 </html>
