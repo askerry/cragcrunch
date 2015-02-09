@@ -68,13 +68,19 @@ def getuserplots(udict, db):
             if 'newuser' in udict.keys() and udict['newuser'] == True:
                 try:
                     featdict = current_app.modeldicts['feats_%s' % int(userid)]
-                    labels = featdict.keys()
+                    labels =featdict.keys()
+                    print "A"
+                    print labels
+                    labels.remove('flake')
+                    labels.remove('cracks')
                     corrs = [float(featdict[l]) for l in labels]
                     corrs = [(c - 2) / 2 for c in corrs]
                     sems = [0 for c in corrs]
                 except:
                     usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                     usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
+                    print "B"
+                    print usdf.columns
                     if len(usdf['starsscore'].unique()) == 1:
                         fakingit=True
                         usdf.iloc[0, :]['starsscore'] = 1
@@ -87,6 +93,8 @@ def getuserplots(udict, db):
             else:
                 usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                 usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
+                print "C"
+                print usdf.columns
                 fakingit=False
                 if len(usdf['starsscore'].unique()) == 1:
                     fakingit=True

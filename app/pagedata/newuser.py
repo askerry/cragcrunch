@@ -50,16 +50,13 @@ def addtodb(db, request):
         mainarea = float(request.form['mainarea'])
     nuser = ClimberTable(name=str(request.form['name']), gender=str(request.form['gender']), climbstyles=styles,
                          region=float(request.form['state']), mainarea=mainarea)
-    if request.form['sportgrade'] == 'Empty':
-        nuser.g_median_Sport = 39.0
-    else:
-        nuser.g_median_Sport = float(request.form['sportgrade'])
-    if request.form['tradgrade'] == 'Empty':
-        nuser.g_median_Trad = 28.0
-    else:
-        nuser.g_median_Trad = float(request.form['tradgrade'])
-    if request.form['bouldergrade'] == 'Empty':
-        nuser.g_median_Boulder = 14.0
+    if request.form['sportgrade'] == 'Empty':nuser.g_median_Sport = 39.0
+    elif request.form['sportgrade'] < 8: nuser.g_median_Sport = 8
+    else: nuser.g_median_Sport = float(request.form['sportgrade'])
+    if request.form['tradgrade'] == 'Empty':nuser.g_median_Trad = 28.0
+    elif request.form['tradgrade'] < 8: nuser.g_median_Trad = 8
+    else:nuser.g_median_Trad = float(request.form['tradgrade'])
+    if request.form['bouldergrade'] == 'Empty':nuser.g_median_Boulder = 14.0
     else:
         nuser.g_median_Boulder = float(request.form['bouldergrade'])
     nuser.climberid = 'Sport, Trad, Boulder'
@@ -106,8 +103,15 @@ def modelnewuser(db, featdict, userid, username):
         candidateids = [cand for cand in candidateids if cand in Xdf.climbid.values]
     candidateidstrs = [str(int(val)) for val in candidateids]
     features = ['avgstars'] + current_app.askfeatures
-    samplesdf = pd.read_sql('select * from climb_prepped where climbid in (%s)' % ','.join(candidateidstrs), db.engine,
-                            index_col='index')
+    try:
+        samplesdf = pd.read_sql('select * from climb_prepped where climbid in (%s)' % ','.join(candidateidstrs), db.engine,
+                                index_col='index')
+    except:
+        warnings.warn('failed to load constrained candidates. defaulting to full space')
+        candidateids = Xdf.climbid.values[:30]
+        candidateidstrs = [str(int(val)) for val in candidateids]
+        samplesdf = pd.read_sql('select * from climb_prepped where climbid in (%s)' % ','.join(candidateidstrs), db.engine,
+                                index_col='index')
     featdf = pd.read_sql('select * from featranges', db.engine, index_col='index')
     Y = np.array(rateallclimbs(featdict, samplesdf, featdf,
                                features))  # use user input to predict ratings for each of these candidates (based on reduced space)
@@ -149,14 +153,10 @@ def rateclimb(featweights, row):
 
 
 def getstar(value, one=0, two=0, three=0):
-    if value < one:
-        return 1
-    elif value < two:
-        return 2
-    elif value < three:
-        return 3
-    else:
-        return 4
+    if value < one: return 1
+    elif value < two: return 2
+    elif value < three: return 3
+    else: return 4
 
 
 def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
