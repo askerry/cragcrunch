@@ -346,6 +346,8 @@ a.emplink {
 }
 .prefgroup {
     margin: auto;
+    padding-left:1em;
+    padding-right:1em;
 }
 #prefimg {
     height: 10.3em;
