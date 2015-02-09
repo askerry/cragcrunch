@@ -30,7 +30,7 @@ def classifier(clfname):
     if clfname=='gnb':
         clf=GaussianNB() #.sigma_ .theta_
     elif clfname=='rfc':
-        clf=RandomForestClassifierWithCoef(n_estimators=10, oob_score=True)
+        clf=RandomForestClassifierWithCoef(n_estimators=10, min_samples_split=2, max_features='sqrt', oob_score=True)
     elif clfname=='svm':
         clf=SVC(kernel='linear', probability=True, C=1)
     elif clfname=='logistic':

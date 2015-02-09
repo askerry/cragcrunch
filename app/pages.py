@@ -43,12 +43,9 @@ def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, 
     a = g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict = uf.getuserdict(a, g.db)
     ###omg hack
-    if climberid > 8729:
-        udict['newuser'] = True
-    else:
-        udict['newuser'] = False
-    if areaid is None:
-        areaid = udict['mainarea']
+    if climberid > 8729: udict['newuser'] = True
+    else: udict['newuser'] = False
+    if areaid is None: areaid = udict['mainarea']
     try:
         urecs = uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder)  #time suck
     except:

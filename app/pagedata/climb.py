@@ -54,26 +54,21 @@ def getclimbdict(c, db, getnest=False):
                 cdict['length'] = ''
         else:
             cdict['length'] = ""
-        if cdict['pitch'] == 1:
-            cdict['pitch'] = "%s pitch" % int(cdict['pitch'])
+        if cdict['pitch'] == 1:cdict['pitch'] = "%s pitch" % int(cdict['pitch'])
         elif cdict['pitch'] > 1:
             try:
                 cdict['pitch'] = "%s pitches" % int(cdict['pitch'])
             except:
                 cdict['pitch'] = ""
 
-        else:
-            cdict['pitch'] = ""
+        else: cdict['pitch'] = ""
         try:
             cdict['pageviews'] = int(float(cdict['pageviews']))
         except:
             cdict['pageviews'] = 0
-        if cdict['avgstars'] == 1:
-            cdict['avgstars'] = "%.1f star" % cdict['avgstars']
-        elif cdict['avgstars'] > 1:
-            cdict['avgstars'] = "%.1f stars" % cdict['avgstars']
-        else:
-            cdict['avgstars'] = "no stars"
+        if cdict['avgstars'] == 1: cdict['avgstars'] = "%.1f star" % cdict['avgstars']
+        elif cdict['avgstars'] > 1: cdict['avgstars'] = "%.1f stars" % cdict['avgstars']
+        else: cdict['avgstars'] = "no stars"
         lengear = len(cdict['protection'])
         cdict['description'] = cdict['description'].replace('. \n', '<br><br>')[:-(lengear)]
         if getnest:

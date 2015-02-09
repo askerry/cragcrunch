@@ -84,12 +84,9 @@ def getuserplots(udict, db):
                     if len(usdf['starsscore'].unique()) == 1:
                         fakingit=True
                         usdf.iloc[0, :]['starsscore'] = 1
-                    else:
-                        fakingit=False
+                    else: fakingit=False
                     corrs, labels, sems = getuserpredictors(usdf)
-                    if fakingit:
-                        print "faking it"
-                        corrs=[0+np.random.choice(np.arange(-0.05,.05,.001)) for c in corrs]
+                    if fakingit: corrs=[0+np.random.choice(np.arange(-0.05,.05,.001)) for c in corrs]
             else:
                 usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                 usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
@@ -99,12 +96,9 @@ def getuserplots(udict, db):
                 if len(usdf['starsscore'].unique()) == 1:
                     fakingit=True
                     usdf.iloc[0, :]['starsscore'] = 1
-                else:
-                    fakingit=False
+                else: fakingit=False
                 corrs, labels, sems = getuserpredictors(usdf)
-                if fakingit:
-                    print "faking it"
-                    corrs=[0+np.random.choice(np.arange(-0.05,.05,.001)) for c in corrs]
+                if fakingit: corrs=[0+np.random.choice(np.arange(-0.05,.05,.001)) for c in corrs]
         except:
             warnings.warn("user star df/correlations failed")
         title = "Route Preferences for %s" % udict['name']
@@ -205,8 +199,7 @@ def scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classdict):
     '''take individual candidate and score with model'''
     cid = climb['climbid']
     ufeatures = [f for f in trainedclfdict['finalfeats'] if f != 'avgstars']
-    if 'other_avg' not in ufeatures:
-        ufeatures = ['other_avg'] + ufeatures
+    if 'other_avg' not in ufeatures: ufeatures = ['other_avg'] + ufeatures
     if cid in Xdf.index.values:
         row = Xdf.loc[cid, ufeatures]
         try:
