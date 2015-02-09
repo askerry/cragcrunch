@@ -100,6 +100,12 @@ def modelnewuser(db, featdict, userid, username):
                                   userdict['climbstyles'][0])  # get initial set of candidates from users area
     candidateids = [float(cand.climbid) for cand in candidates]
     candidateids = [cand for cand in candidateids if cand in Xdf.climbid.values]
+    print candidateids
+    if len(candidateids)==0:
+        thesecandidates = [c for c in db.session.query(ClimbTable).filter_by(mainarea = userdict['mainarea']).all()]
+        candidateids = [float(cand.climbid) for cand in candidates]
+        candidateids = [cand for cand in candidateids if cand in Xdf.climbid.values]
+        print candidateids
     candidateidstrs = [str(int(val)) for val in candidateids]
     features = ['avgstars'] + current_app.askfeatures
     samplesdf = pd.read_sql('select * from climb_prepped where climbid in (%s)' % ','.join(candidateidstrs), db.engine,
