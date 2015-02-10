@@ -1678,7 +1678,7 @@ div#notebook {
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[2]:
+In&nbsp;[1]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -1709,7 +1709,7 @@ Populating the interactive namespace from numpy and matplotlib
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[3]:
+In&nbsp;[2]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -1724,7 +1724,7 @@ In&nbsp;[3]:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[4]:
+In&nbsp;[3]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -1788,7 +1788,7 @@ In&nbsp;[4]:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[5]:
+In&nbsp;[4]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -1816,7 +1816,7 @@ In&nbsp;[5]:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[6]:
+In&nbsp;[5]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -1844,7 +1844,7 @@ In&nbsp;[6]:
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-loading 9600 climbs
+loading 8296 climbs
 
 </pre>
 </div>
@@ -1857,7 +1857,7 @@ loading 9600 climbs
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[7]:
+In&nbsp;[6]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -1902,8 +1902,8 @@ In&nbsp;[7]:
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-starting with 106 users
-reducing to 87 users who have greater than or equal to 2 ratings provided
+starting with 63 users
+reducing to 57 users who have greater than or equal to 2 ratings provided
 
 </pre>
 </div>
@@ -1938,7 +1938,7 @@ See the the caveats in the documentation: http://pandas.pydata.org/pandas-docs/s
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[9]:
+In&nbsp;[8]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -2337,7 +2337,7 @@ In&nbsp;[90]:
 <div class="inner_cell">
     <div class="input_area">
 <div class="highlight"><pre><span class="n">name</span><span class="o">=</span><span class="s">&#39;random&#39;</span>
-<span class="n">dumbdf</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;starsscore&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;starsscore&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;random&#39;</span><span class="p">:[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usesdf</span><span class="p">))],</span><span class="s">&#39;user&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climber&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;climbid&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
+<span class="n">dumbdf</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;starsscore&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;starsscore&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;random&#39;</span><span class="p">:[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">usesdf</span><span class="o">.</span><span class="n">starsscore</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usesdf</span><span class="p">))],</span><span class="s">&#39;user&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climber&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;climbid&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
 <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">f1</span><span class="o">=</span><span class="n">mo</span><span class="o">.</span><span class="n">round2score</span><span class="p">(</span><span class="n">dumbdf</span><span class="p">,</span> <span class="s">&#39;starsscore&#39;</span><span class="p">,</span> <span class="s">&#39;random&#39;</span><span class="p">,</span> <span class="n">compare</span><span class="p">)</span>
 <span class="n">compare</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 <span class="n">propdf</span><span class="o">=</span><span class="n">viz</span><span class="o">.</span><span class="n">plotresults</span><span class="p">(</span><span class="n">dumbdf</span><span class="p">,</span> <span class="s">&#39;starsscore&#39;</span><span class="p">,</span> <span class="s">&#39;random&#39;</span><span class="p">)</span>
@@ -4422,7 +4422,7 @@ final model vs. combined: t(79)=1.500, p=0.069
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[110]:
+In&nbsp;[16]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -4437,7 +4437,7 @@ In&nbsp;[110]:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[111]:
+In&nbsp;[65]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
@@ -4456,12 +4456,12 @@ In&nbsp;[111]:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">
-In&nbsp;[112]:
+In&nbsp;[48]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
 <div class="highlight"><pre><span class="n">threshes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">.</span><span class="mo">001</span><span class="p">)</span>
-<span class="n">datadict</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;thresh&#39;</span><span class="p">:</span><span class="n">threshes</span><span class="p">,</span> <span class="s">&#39;precision&#39;</span><span class="p">:[],</span> <span class="s">&#39;recall&#39;</span><span class="p">:[],</span> <span class="s">&#39;false positives&#39;</span><span class="p">:[],</span> <span class="s">&#39;true positives&#39;</span><span class="p">:[]}</span>
+<span class="n">datadict</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;thresh&#39;</span><span class="p">:</span><span class="n">threshes</span><span class="p">,</span> <span class="s">&#39;precision&#39;</span><span class="p">:[],</span> <span class="s">&#39;recall&#39;</span><span class="p">:[],</span> <span class="s">&#39;false positives&#39;</span><span class="p">:[],</span> <span class="s">&#39;true positives&#39;</span><span class="p">:[],</span> <span class="s">&#39;climbid&#39;</span><span class="p">:[]}</span>
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threshes</span><span class="p">:</span>
     <span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">tempdf</span><span class="p">[</span><span class="s">&#39;prob&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
     <span class="n">datadict</span><span class="p">[</span><span class="s">&#39;precision&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">trues</span><span class="p">,</span> <span class="n">preds</span><span class="p">))</span>
@@ -4685,25 +4685,46 @@ FBFJk4JTRCRN/x/wBDVzXrlVHgAAAABJRU5ErkJggg==
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">
+In&nbsp;[54]:
+</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight"><pre><span class="n">rocdf</span><span class="o">=</span><span class="n">rocdf</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s">&#39;false positives&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">simps</span><span class="p">,</span> <span class="n">trapz</span> 
+<span class="n">auc</span><span class="o">=</span><span class="n">trapz</span><span class="p">(</span><span class="n">rocdf</span><span class="p">[</span><span class="s">&#39;true positives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">rocdf</span><span class="p">[</span><span class="s">&#39;false positives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;AUC: </span><span class="si">%.3f</span><span class="s">&quot;</span> <span class="o">%</span><span class="k">auc</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+AUC: 0.697
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="performance-as-a-function-of-user-data">Performance as a function of user data</h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>no data (avg stars)</li>
-<li>user entered data (reduced space)</li>
-<li>5 ratings-100 ratings (performance as a function of N)</li>
-</ul>
 </div>
 </div>
 </div>
@@ -5186,6 +5207,31 @@ In&nbsp;[129]:
         <span class="n">traineddict</span><span class="p">[</span><span class="s">&#39;finalfeats&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">allfeats</span>
         <span class="n">traineddict</span><span class="p">[</span><span class="s">&#39;redfeats&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">redfeats</span>
         <span class="n">util</span><span class="o">.</span><span class="n">pickletheseobjects</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">[</span><span class="n">traineddict</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Visualize-features">Visualize features<a class="anchor-link" href="#Visualize-features">&#182;</a></h3>
+</div>
+</div>
+</div>
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">
+In&nbsp;[]:
+</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight"><pre> 
 </pre></div>
 
 </div>
