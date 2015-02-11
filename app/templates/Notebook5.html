@@ -1889,7 +1889,7 @@ In&nbsp;[53]:
 </div>
 <div class="inner_cell">
     <div class="input_area">
-<div class="highlight"><pre><span class="n">minratings</span><span class="o">=</span><span class="mi">4</span>
+<div class="highlight"><pre><span class="n">minratings</span><span class="o">=</span><span class="mi">5</span>
 <span class="n">users</span><span class="o">=</span><span class="n">sdf</span><span class="p">[</span><span class="n">sdf</span><span class="p">[</span><span class="s">&#39;climb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">climbs</span><span class="p">)][</span><span class="s">&#39;climber&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 <span class="n">users</span><span class="o">=</span><span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">cldf</span><span class="o">.</span><span class="n">climberid</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
 <span class="k">print</span> <span class="s">&quot;starting with </span><span class="si">%s</span><span class="s"> users&quot;</span> <span class="o">%</span><span class="k">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
@@ -2343,7 +2343,7 @@ In&nbsp;[13]:
 <div class="inner_cell">
     <div class="input_area">
 <div class="highlight"><pre><span class="n">name</span><span class="o">=</span><span class="s">&#39;random&#39;</span>
-<span class="n">dumbdf</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;starsscore&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;starsscore&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;random&#39;</span><span class="p">:[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usesdf</span><span class="p">))],</span><span class="s">&#39;user&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climber&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;climbid&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
+<span class="n">dumbdf</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;starsscore&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;starsscore&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;random&#39;</span><span class="p">:[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">usesdf</span><span class="o">.</span><span class="n">starsscore</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usesdf</span><span class="p">))],</span><span class="s">&#39;user&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climber&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="s">&#39;climbid&#39;</span><span class="p">:</span><span class="n">usesdf</span><span class="p">[</span><span class="s">&#39;climb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
 <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">f1</span><span class="o">=</span><span class="n">mo</span><span class="o">.</span><span class="n">round2score</span><span class="p">(</span><span class="n">dumbdf</span><span class="p">,</span> <span class="s">&#39;starsscore&#39;</span><span class="p">,</span> <span class="s">&#39;random&#39;</span><span class="p">,</span> <span class="n">compare</span><span class="p">)</span>
 <span class="n">compare</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 <span class="n">propdf</span><span class="o">=</span><span class="n">viz</span><span class="o">.</span><span class="n">plotresults</span><span class="p">(</span><span class="n">dumbdf</span><span class="p">,</span> <span class="s">&#39;starsscore&#39;</span><span class="p">,</span> <span class="s">&#39;random&#39;</span><span class="p">)</span>
@@ -3931,128 +3931,6 @@ TAAAAABJRU5ErkJggg==
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The analyses above suggest that we want to build a model that incorporates three kinds of information: - climb attributes - overall climb popularity - ratings of individual users (e.g. preferences of similar climbers)</p>
 <p>A model that naively combines these features does reasonably well, but I can try to improve performance by toggling the following: - algorithm (RFC vs. SVM vs. Logistic Regression) - features (try dimensionality reduction/feature selection methods) - model parameters (e.g. C param if using SVM)</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="which-algorithm-conceptual">Which algorithm? (conceptual)</h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="random-forest">Random Forest:</h4>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>pros:
-<ul>
-<li>provides interpretable feature importances</li>
-<li>handles large #s features</li>
-<li>handles diverse feature types (i.e. continuous and categorical)</li>
-<li>efficient with large dataset</li>
-</ul></li>
-<li>cons:
-<ul>
-<li>can be prone to overfitting</li>
-<li>decision rules can be complex and unintuitive</li>
-</ul></li>
-<li>parameters to set:
-<ul>
-<li>n_estimators : The number of trees in the forest.</li>
-<li>criterion : measure of quality of a split... Gini impurity(“gini”) vs information gain (&quot;entropy&quot;)</li>
-<li>max_features: # of features to use when looking for best split:
-<ul>
-<li>float --&gt; max_features is a percentage of n_features</li>
-<li>'auto' --&gt; sqrt(n_features).</li>
-<li>'log2' --&gt; log2(n_features).</li>
-<li>None --&gt; max_features=n_features.</li>
-</ul></li>
-</ul></li>
-</ul>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="svm">SVM:</h4>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>pros:
-<ul>
-<li>efficient in high-d spaces</li>
-<li>given well separable classes, focus on the points near the boundary (support vectors) rather than all data points (as in MLE)...thus optimizes best hyperplane</li>
-</ul></li>
-<li>cons:
-<ul>
-<li>weights/coefficients not very interpretable</li>
-<li>not naturally multiclass (must do one vs one or one vs all which each binary class)</li>
-<li>rbf kernels generally more powerful, but not appropriate for text classification problems</li>
-</ul></li>
-<li>parameters to set:
-<ul>
-<li>C param</li>
-<li>kernel</li>
-<li>if non-linear kernel: gamma</li>
-</ul></li>
-</ul>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="multinomial-logistic-regression">Multinomial Logistic Regression</h4>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>pros:
-<ul>
-<li>perceived as &quot;simple&quot;/&quot;transparent&quot;</li>
-<li>interpretable coefficients (but can be misleading unless you have all the relevant regressors in your model)</li>
-</ul></li>
-<li>cons:
-<ul>
-<li>performs best with low number of dimensions</li>
-<li>best suited for cases where classes aren't well separable (i.e. predictors provide only probabilistic estimate of class), as it won't find plane with optimal margin amongst separating boundaries</li>
-</ul></li>
-<li>parameters to set:
-<ul>
-<li>penalty: regularization parameter ('l1' or 'l2')</li>
-<li>C param (like for SVM... smaller values --&gt; stronger regularization)</li>
-</ul></li>
-</ul>
 </div>
 </div>
 </div>
