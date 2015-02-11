@@ -85,6 +85,10 @@ span.mini {
     font-size: .7em;
     color: #ddd;
 }
+p.mini {
+    font-size: .7em;
+    color: #999;
+}
 a.neutrallink {
     color: #ccb;
 }
@@ -195,6 +199,7 @@ a.emplink {
     padding: .5em;
     padding-top: 1em;
     border-radius: 1em;
+    text-align:center;
 }
 #reccontainer {
     position: relative;
