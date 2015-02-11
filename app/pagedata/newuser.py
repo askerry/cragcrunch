@@ -162,7 +162,7 @@ def getstar(value, one=0, two=0, three=0):
 def rateallclimbs(userdict, samplesdf, featdf, reducedfeats):
     '''get climber's ratings on all climbs in sample set'''
     featweights = [
-        float(userdict[current_app.askfeatures_dict[feat]]) - 2 if feat[:feat.index('_')] in userdict.keys() else 0 for
+        float(userdict[current_app.askfeatures_dict[feat]]) - 2 if feat[:feat.index('_')] in userdict else 0 for
         feat in current_app.askfeatures]
     featweights.insert(reducedfeats.index('avgstars'), .1)
     samplesdf['score'] = samplesdf.apply(lambda x: rateclimb(featweights, x[reducedfeats].values), axis=1)

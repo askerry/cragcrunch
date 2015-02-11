@@ -16,18 +16,6 @@ from config import rootdir
 #                Area Page Functions             #
 ##################################################
 
-'''
-def getplotdata(climbids, db):
-    output = db.session.query(ClimbTable).filter(ClimbTable.climbid.in_(climbids)).all()
-    cdict = output[0].__dict__
-    cols = cdict.keys()
-    datadict = {}
-    for c in cols:
-        datadict[c] = [row.__dict__[c] for row in output]
-    plotdf = pd.DataFrame(data=datadict)
-    plotdf.index = plotdf.climbid.values
-    viz.visualizearea(plotdf)
-'''
 
 def getareadict(a, db):
     adict = a.__dict__
@@ -36,10 +24,6 @@ def getareadict(a, db):
     adict['subareas']={int(child.areaid):str(child.name) for child in localchildren}
     localchildren_climbs=db.session.query(ClimbTable).filter_by(area=adict['areaid']).all()
     adict['subclimbs']={int(child.climbid):str(child.name) for child in localchildren_climbs}
-    #popclimbs, allchildren=getpopclimbs(db, adict['areaid'])
-    #adict['popclimbs']={p['climbid']:p['name'] for p in popclimbs}
-    #adict['similarareas']=getsimilarareas(db,adict['areaid'])
-    #adict['allchildren']=allchildren
     adict['pageviews'] = int(adict['pageviews'])
     try:
         adict['climbcount'] = "%s climbs, " % int(adict['climbcount'])

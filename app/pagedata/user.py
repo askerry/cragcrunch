@@ -65,12 +65,10 @@ def getuserplots(udict, db):
             warnings.warn("climb selection failed")
         djsons = []
         try:
-            if 'newuser' in udict.keys() and udict['newuser'] == True:
+            if 'newuser' in udict and udict['newuser'] == True:
                 try:
                     featdict = current_app.modeldicts['feats_%s' % int(userid)]
                     labels =featdict.keys()
-                    print "A"
-                    print labels
                     labels.remove('flake')
                     labels.remove('cracks')
                     corrs = [float(featdict[l]) for l in labels]
@@ -79,8 +77,6 @@ def getuserplots(udict, db):
                 except:
                     usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                     usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
-                    print "B"
-                    print usdf.columns
                     if len(usdf['starsscore'].unique()) == 1:
                         fakingit=True
                         usdf.iloc[0, :]['starsscore'] = 1
@@ -90,8 +86,6 @@ def getuserplots(udict, db):
             else:
                 usdf = getuserstarsbywords(sdf, cdf, userid, current_app.askfeatures, blockterms=rd.blockterms)
                 usdf = usdf[[col for col in usdf.columns if len(usdf[col].unique()) != 1 or col == 'starsscore']]
-                print "C"
-                print usdf.columns
                 fakingit=False
                 if len(usdf['starsscore'].unique()) == 1:
                     fakingit=True
@@ -301,7 +295,7 @@ def pushdata(means, sems, labels, title, xlabel, ylabel, plotid):
     jsondict['series'][0]['tooltip'] = {'pointFormat': '<span>{series.name}</span>: {point.y:.2f}'}
     jsondict['series'][1]['data'] = [0 for el in means]
     #jsondict['series'][1]['data']=[[m-2*sems[mn],m+2*sems[mn]] for mn,m in enumerate(means)]
-    jsondict['xAxis'][0]['categories'] = [rd.labeldict[l] if l in rd.labeldict.keys() else l for l in labels]
+    jsondict['xAxis'][0]['categories'] = [rd.labeldict[l] if l in rd.labeldict else l for l in labels]
     jsondict['title']['text'] = title
     jsondict['yAxis'][0]['title']['text'] = ylabel
     jsondict['xAxis'][0]['title']['text'] = xlabel
