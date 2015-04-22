@@ -51,7 +51,7 @@ class ClimbAreaSpider(CrawlSpider):
                 
 class ClimbAreaSpider(CrawlSpider):
     name = "mpclimbsareas"
-    rules = [Rule(LinkExtractor(allow=['']), callback='parseclimbsandareas', follow=False)]
+    rules = [Rule(LinkExtractor(allow=[''], deny=['']), callback='parseclimbsandareas', follow=False)]
     def __init__(self):
         super(ClimbAreaSpider, self).__init__()
         self.timeout=timeout
