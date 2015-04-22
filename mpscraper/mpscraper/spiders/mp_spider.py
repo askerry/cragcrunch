@@ -183,8 +183,9 @@ class ClimbAreaSpider(CrawlSpider):
         
 class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
-    rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in user_urls]), callback='parseuserdata', follow=following)]
-    #rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=following)]
+    print user_urls
+    #rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in user_urls]), callback='parseuserdata', follow=following)]
+    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=following)]
     def __init__(self):
         super(UserDataSpider, self).__init__()
         self.timeout=timeout
