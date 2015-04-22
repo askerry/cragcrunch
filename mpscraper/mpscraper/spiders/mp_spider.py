@@ -60,7 +60,7 @@ class ClimbAreaSpider(CrawlSpider):
         if cleanup:
             self.start_urls= errorurls
         else:
-            with open("../startingurls.txt", 'rb') as f:
+            with open("startingurls.txt", 'rb') as f:
                 urls=f.read()
                 urls=urls.split(', ')
             self.start_urls = urls             
