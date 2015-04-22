@@ -20,6 +20,8 @@ ITEM_PIPELINES = {
 
 LOG_LEVEL='WARNING'
 
+DEPTH_LIMIT=1
+
 ###AES settings 
 timeout=500 #spider will timeout after this many minutes. set to None for infinite crawling/crawling until completion
 cleanup=False

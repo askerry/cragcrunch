@@ -10,7 +10,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
-from mpscraper.cleanup import errorurls, climb_urls, user_urls, following
+from mpscraper.cleanup import errorurls, climb_urls, user_urls
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
@@ -36,7 +36,7 @@ def checktime(spider):
 class ClimbAreaSpider(CrawlSpider):
     name = "mpclimbsareas"
     #rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in urls]), callback='parseclimbsandareas', follow=following)]
-    rules = [Rule(LinkExtractor(allow=['\/v\/.+\/\d+']), callback='parseclimbsandareas', follow=following)]
+    rules = [Rule(LinkExtractor(allow=['\/v\/.+\/\d+']), callback='parseclimbsandareas', follow=True)]
     def __init__(self):
         super(ClimbAreaSpider, self).__init__()
         self.timeout=timeout
@@ -185,7 +185,7 @@ class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
     print user_urls
     #rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in user_urls]), callback='parseuserdata', follow=following)]
-    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=following)]
+    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=True)]
     def __init__(self):
         super(UserDataSpider, self).__init__()
         self.timeout=timeout
