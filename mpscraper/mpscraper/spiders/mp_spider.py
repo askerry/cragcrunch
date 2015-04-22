@@ -31,7 +31,7 @@ def checktime(spider):
         if delta.total_seconds()/60.0>spider.timeout:
             print "timeout"
             raise CloseSpider('passed timeout thresh')
-
+'''
 class ClimbAreaSpider(CrawlSpider):
     name = "mpclimbsareas"
     rules = [Rule(LinkExtractor(allow=['\/v\/.+\/\d+']), callback='parseclimbsandareas', follow=~cleanup)]
@@ -47,6 +47,23 @@ class ClimbAreaSpider(CrawlSpider):
                 #"http://www.mountainproject.com/v/new-hampshire/105872225",
                 "http://www.mountainproject.com/destinations/"
                 ]
+'''
+                
+class ClimbAreaSpider(CrawlSpider):
+    name = "mpclimbsareas"
+    rules = [Rule(LinkExtractor(allow=['\/v\/.+\/\d+']), callback='parseclimbsandareas', follow=False)]
+    def __init__(self):
+        super(ClimbAreaSpider, self).__init__()
+        self.timeout=timeout
+        self.allowed_domains = ["mountainproject.com"]
+        self.crawlstarttime=datetime.datetime.now()
+        if cleanup:
+            self.start_urls= errorurls
+        else:
+            with open("../startingurls.txt", 'rb') as f:
+                urls=f.read()
+                urls=urls.split(', ')
+            self.start_urls = urls             
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
         checktime(self)
