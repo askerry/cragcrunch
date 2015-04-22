@@ -5,7 +5,7 @@ Created on Tue Jun 17 10:18:20 2014
 @author: amyskerry
 """
 import sys
-sys.path.append('/users/amyskerry/documents/projects/climbrec/mpscraper/')
+sys.path.append('/users/amyskerry/documents/projects/cragcrunch/mpscraper/')
 from scrapy.utils.project import get_project_settings
 from mp_spider import CommentSpider
 from scrapy.crawler import Crawler

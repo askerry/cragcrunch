@@ -7,7 +7,7 @@ This temporary script file is located here:
 """
 import os
 
-rootdir='/home/amyskerry/Projects/climbrec/mpscraper'
+rootdir='/home/amyskerry/Projects/cragcrunch/mpscraper'
 filename=os.path.join(rootdir, 'log','errorlog2.txt')
 with open(filename) as f:
     errorstr=f.read()
