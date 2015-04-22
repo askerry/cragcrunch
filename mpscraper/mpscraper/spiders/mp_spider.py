@@ -51,7 +51,10 @@ class ClimbAreaSpider(CrawlSpider):
                 
 class ClimbAreaSpider(CrawlSpider):
     name = "mpclimbsareas"
-    rules = [Rule(LinkExtractor(allow=[''], deny=['']), callback='parseclimbsandareas', follow=False)]
+    with open("startingurls.txt", 'rb') as f:
+        urls=f.read()
+        urls=urls.split(', ')
+    rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in urls]), callback='parseclimbsandareas', follow=False)]
     def __init__(self):
         super(ClimbAreaSpider, self).__init__()
         self.timeout=timeout
@@ -63,7 +66,7 @@ class ClimbAreaSpider(CrawlSpider):
             with open("startingurls.txt", 'rb') as f:
                 urls=f.read()
                 urls=urls.split(', ')
-            self.start_urls = urls             
+            self.start_urls = self.urls             
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
         checktime(self)
