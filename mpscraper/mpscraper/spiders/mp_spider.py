@@ -183,7 +183,6 @@ class ClimbAreaSpider(CrawlSpider):
         
 class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
-    print user_urls
     #rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in user_urls]), callback='parseuserdata', follow=following)]
     rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=True)]
     def __init__(self):
@@ -196,6 +195,7 @@ class UserDataSpider(CrawlSpider):
         else:
             self.start_urls = user_urls
     def parseuserdata(self, response):
+        print response.url
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
