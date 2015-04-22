@@ -10,7 +10,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
-from mpscraper.cleanup import errorurls
+from mpscraper.cleanup import errorurls, urls, following
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
@@ -51,22 +51,13 @@ class ClimbAreaSpider(CrawlSpider):
                 
 class ClimbAreaSpider(CrawlSpider):
     name = "mpclimbsareas"
-    with open("startingurls.txt", 'rb') as f:
-        urls=f.read()
-        urls=urls.split(', ')
-    rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in urls]), callback='parseclimbsandareas', follow=False)]
+    rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in urls]), callback='parseclimbsandareas', follow=following)]
     def __init__(self):
         super(ClimbAreaSpider, self).__init__()
         self.timeout=timeout
         self.allowed_domains = ["mountainproject.com"]
         self.crawlstarttime=datetime.datetime.now()
-        if cleanup:
-            self.start_urls= errorurls
-        else:
-            with open("startingurls.txt", 'rb') as f:
-                urls=f.read()
-                urls=urls.split(', ')
-            self.start_urls = self.urls             
+        self.start_urls = urls             
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
         checktime(self)
@@ -204,7 +195,7 @@ class ClimbAreaSpider(CrawlSpider):
         
 class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
-    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=~cleanup)]
+    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=following)]
     def __init__(self):
         super(UserDataSpider, self).__init__()
         self.timeout=timeout
