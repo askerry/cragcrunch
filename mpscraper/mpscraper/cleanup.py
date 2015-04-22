@@ -6,6 +6,7 @@ This temporary script file is located here:
 /Users/amyskerry/.spyder2/.temp.py
 """
 import os
+import string
 
 following=False
 
@@ -20,5 +21,11 @@ errorurls=list(set(['http://www.'+e[:e.index(')')] for e in errors if ')' in e])
 
 with open("startingurls.txt", 'rb') as f:
     urls=f.read()
-    urls=urls.split(', ')
+    climb_urls=urls.split(', ')
+    
+user_urls = [
+        "http://www.mountainproject.com/community/"
+    ]
+for l in string.lowercase:
+    user_urls.append('http://www.mountainproject.com/community/'+l)
 

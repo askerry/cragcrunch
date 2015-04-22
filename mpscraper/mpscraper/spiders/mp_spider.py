@@ -10,7 +10,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
-from mpscraper.cleanup import errorurls, urls, following
+from mpscraper.cleanup import errorurls, climb_urls, user_urls, following
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
@@ -42,7 +42,10 @@ class ClimbAreaSpider(CrawlSpider):
         self.timeout=timeout
         self.allowed_domains = ["mountainproject.com"]
         self.crawlstarttime=datetime.datetime.now()
-        self.start_urls = urls             
+        if cleanup:
+            self.start_urls= errorurls
+        else:
+            self.start_urls = climb_urls           
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
         checktime(self)
@@ -180,6 +183,8 @@ class ClimbAreaSpider(CrawlSpider):
         
 class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
+    rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in user_urls]), callback='parseuserdata', follow=following)]
+    #rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=following)]
     def __init__(self):
         super(UserDataSpider, self).__init__()
         self.timeout=timeout
@@ -188,13 +193,7 @@ class UserDataSpider(CrawlSpider):
         if cleanup:
             self.start_urls= errorurls
         else:
-            self.start_urls = [
-                    "http://www.mountainproject.com/community/"
-                ]
-            for l in string.lowercase:
-                self.start_urls.append('http://www.mountainproject.com/community/'+l)
-    rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in self.start_urls]), callback='parseuserdata', follow=following)]
-    #rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=following)]
+            self.start_urls = user_urls
     def parseuserdata(self, response):
         checktime(self)
         sel = Selector(response)
