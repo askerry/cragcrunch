@@ -19,13 +19,19 @@ errorurls=list(set(['http://www.'+e[:e.index(')')] for e in errors if ')' in e])
 
 #urls=errorurls
 
-with open("startingurls.txt", 'rb') as f:
+with open("areaurls.txt", 'rb') as f:
     urls=f.read()
-    climb_urls=urls.split(', ')
+    area_urls=urls.split(', ')
     
 user_urls = [
         "http://www.mountainproject.com/community/"
     ]
 for l in string.lowercase:
     user_urls.append('http://www.mountainproject.com/community/'+l)
+    
+with open("userurls.txt", 'rb') as f:
+    urls=f.read()
+    new_user_urls=urls.split(', ')
+
+user_urls.extend(new_user_urls)
 

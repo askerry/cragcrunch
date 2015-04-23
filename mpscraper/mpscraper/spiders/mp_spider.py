@@ -45,7 +45,7 @@ class ClimbAreaSpider(CrawlSpider):
         if cleanup:
             self.start_urls= errorurls
         else:
-            self.start_urls = climb_urls           
+            self.start_urls = area_urls           
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
         checktime(self)
@@ -183,7 +183,6 @@ class ClimbAreaSpider(CrawlSpider):
         
 class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
-    #rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in user_urls]), callback='parseuserdata', follow=following)]
     rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=True)]
     def __init__(self):
         super(UserDataSpider, self).__init__()
