@@ -11,8 +11,7 @@ from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
 from mpscraper.cleanup import errorurls, area_urls, user_urls
-print user_urls
-print len(area_urls)
+
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
@@ -199,10 +198,10 @@ class UserDataSpider(CrawlSpider):
         else:
             self.start_urls = user_urls
     def parseuserdata(self, response):
-        print response.url
         if response.url in user_urls:
             print ".."
             return None
+        print response.url
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
