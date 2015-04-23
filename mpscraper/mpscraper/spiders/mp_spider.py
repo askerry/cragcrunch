@@ -388,7 +388,7 @@ def checkpagetype(sel, url):
     elif 'action=todos' in url:
         pagetype='todos'
     else:
-        pagetype='uncategorized'
+        pagetype='climberinfo'
     return pagetype 
         
 def parsestars(starstring):
