@@ -35,9 +35,11 @@ with open("areaurls.txt", 'wb') as f:
     urls=["http://"+url for url in urls]
     f.write(', '.join(urls))
 print "refreshed area urls"
+print len(urls)
 
 with open("userurls.txt", 'wb') as f:
     urls=userurls.url.values
     urls=["http://"+url for url in urls]
     f.write(', '.join(urls))
 print "refreshed user urls"
+print len(urls)
