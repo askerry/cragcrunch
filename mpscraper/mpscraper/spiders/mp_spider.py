@@ -206,7 +206,6 @@ class UserDataSpider(CrawlSpider):
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
-        print pagetype
         if pagetype=='ticks':
             ticks=Ticks()
             ticks['url'] = afterwww(response.url)
