@@ -11,6 +11,8 @@ from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
 from mpscraper.cleanup import errorurls, area_urls, user_urls
+print user_urls
+print len(areaurls)
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
