@@ -17,8 +17,7 @@ import us
 sys.setrecursionlimit(3000)
 
 #project specific code
-sys.path.append('mpscraper')
-from mpscraper.cfgdb import cfg
+from cfgdb import cfg
 
 #misc config
 rootdir=os.getcwd()
@@ -35,8 +34,10 @@ with open("areaurls.txt", 'wb') as f:
     urls=areaurls.url.values
     urls=["http://"+url for url in urls]
     f.write(', '.join(urls))
-    
+print "refreshed area urls"
+
 with open("userurls.txt", 'wb') as f:
     urls=userurls.url.values
     urls=["http://"+url for url in urls]
     f.write(', '.join(urls))
+print "refreshed user urls"

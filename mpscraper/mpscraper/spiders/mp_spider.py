@@ -10,7 +10,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
-from mpscraper.cleanup import errorurls, climb_urls, user_urls
+from mpscraper.cleanup import errorurls, area_urls, user_urls
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
@@ -48,6 +48,8 @@ class ClimbAreaSpider(CrawlSpider):
             self.start_urls = area_urls           
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
+        if response.url in area_urls:
+            return None
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
@@ -194,7 +196,8 @@ class UserDataSpider(CrawlSpider):
         else:
             self.start_urls = user_urls
     def parseuserdata(self, response):
-        print response.url
+        if response.url in user_urls:
+            return None
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
