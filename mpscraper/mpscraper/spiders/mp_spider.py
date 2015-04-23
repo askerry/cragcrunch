@@ -49,6 +49,7 @@ class ClimbAreaSpider(CrawlSpider):
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
         if response.url in area_urls:
+            print ".."
             return None
         checktime(self)
         sel = Selector(response)
@@ -198,6 +199,7 @@ class UserDataSpider(CrawlSpider):
     def parseuserdata(self, response):
         print response.url
         if response.url in user_urls:
+            print ".."
             return None
         checktime(self)
         sel = Selector(response)

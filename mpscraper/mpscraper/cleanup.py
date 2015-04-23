@@ -33,5 +33,5 @@ with open("userurls.txt", 'rb') as f:
     urls=f.read()
     new_user_urls=urls.split(', ')
 
-user_urls.extend(new_user_urls)
+#user_urls.extend(new_user_urls)
 
