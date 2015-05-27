@@ -10,8 +10,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.selector import Selector
 from mpscraper.items import Climb, Area, Climber, Ticks, Comments, Stars, Grades, ToDos
 from mpscraper.settings import timeout, cleanup
-from mpscraper.cleanup import errorurls, area_urls, user_urls
-
+from mpscraper.cleanup import errorurls
 import unicodedata
 from scrapy.exceptions import CloseSpider
 import datetime
@@ -33,11 +32,9 @@ def checktime(spider):
             print "timeout"
             raise CloseSpider('passed timeout thresh')
 
-                
 class ClimbAreaSpider(CrawlSpider):
     name = "mpclimbsareas"
-    #rules = [Rule(LinkExtractor(allow=["^"+url+"$" for url in urls]), callback='parseclimbsandareas', follow=following)]
-    rules = [Rule(LinkExtractor(allow=['\/v\/.+\/\d+']), callback='parseclimbsandareas', follow=True)]
+    rules = [Rule(LinkExtractor(allow=['\/v\/.+\/\d+']), callback='parseclimbsandareas', follow=~cleanup)]
     def __init__(self):
         super(ClimbAreaSpider, self).__init__()
         self.timeout=timeout
@@ -46,12 +43,12 @@ class ClimbAreaSpider(CrawlSpider):
         if cleanup:
             self.start_urls= errorurls
         else:
-            self.start_urls = area_urls           
+            self.start_urls = [
+                #"http://www.mountainproject.com/v/new-hampshire/105872225",
+                "http://www.mountainproject.com/destinations/"
+                ]
     
     def parseclimbsandareas(self, response): #note this needs to be named something other than parse
-        if response.url in area_urls:
-            print ".."
-            return None
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
@@ -187,7 +184,7 @@ class ClimbAreaSpider(CrawlSpider):
         
 class UserDataSpider(CrawlSpider):
     name = "mpuserdata"
-    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=True)]
+    rules = [Rule(LinkExtractor(allow=['\/u\/.+\/\d+']), callback='parseuserdata', follow=~cleanup)]
     def __init__(self):
         super(UserDataSpider, self).__init__()
         self.timeout=timeout
@@ -196,12 +193,12 @@ class UserDataSpider(CrawlSpider):
         if cleanup:
             self.start_urls= errorurls
         else:
-            self.start_urls = user_urls
+            self.start_urls = [
+                    "http://www.mountainproject.com/community/"
+                ]
+            for l in string.lowercase:
+                self.start_urls.append('http://www.mountainproject.com/community/'+l)
     def parseuserdata(self, response):
-        if response.url in user_urls:
-            print ".."
-            return None
-        print response.url
         checktime(self)
         sel = Selector(response)
         pagetype=checkpagetype(sel, response.url)
@@ -378,7 +375,7 @@ def checkpagetype(sel, url):
     elif len(sel.xpath('//h1[@class="dkorange"]/em/text()').extract())>0 and len(sel.xpath('//h3[contains(text(),"Climbing Season")]/text()').extract())>0:
         pagetype='area'
     elif len(sel.xpath('//h1/text()').extract())>0 and 'personalpage' in url:
-        pagetype='climberinfo'
+        pagetype='xxxclimberinfo'
     elif 'action=ticks' in url and 'printer=1' not in url and '&export=1' not in url and 'breakdown' not in url:
         pagetype='ticks'
     elif 'what=RATING' in url and 'printer=1' not in url and 'printer=1p' not in url:
@@ -390,7 +387,7 @@ def checkpagetype(sel, url):
     elif 'action=todos' in url:
         pagetype='todos'
     else:
-        pagetype='climberinfo'
+        pagetype='uncategorized'
     return pagetype 
         
 def parsestars(starstring):
