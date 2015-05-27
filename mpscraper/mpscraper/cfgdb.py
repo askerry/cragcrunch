@@ -28,7 +28,7 @@ class Cfg():
         self.host = host
         self.user = user
         self.passwd = passwd
-        self.dbname = 'climbdb'
+        self.dbname = 'climbdb2'
         self.charset = 'utf8'
         self.use_unicode = 0
         self.clobber = False
