@@ -29,7 +29,7 @@ con=MySQLdb.connect(user=cfg.user, passwd=cfg.passwd, db=cfg.dbname, host=cfg.ho
 #stateurls = pd.read_sql("SELECT name, region,url from Area where region in ('World', '* In Progress') and name in %s" %(states), con)
 areaurls = pd.read_sql("SELECT name, region,url from Area", con)
 userurls = pd.read_sql("SELECT name, url from Climber", con)
-
+userurls=userurls.dropna()
 with open("areaurls.txt", 'wb') as f:
     urls=areaurls.url.values
     urls=["http://"+url for url in urls]
