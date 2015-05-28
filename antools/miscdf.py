@@ -60,26 +60,6 @@ def makedescripdf(df, terms):
         df.loc[indices, "%s_description" %(t)]=wordcounts[:,tn]     
     return df   
 
-def hacks(string):
-    '''I have some very specific hacks I want to implement instead of standard stemming'''
-    misc_hacks={'bouldery':'boulder','crimpy':'crimp', 'juggy':'jug','slabby':'slab','overhang':'overhung', 'pumpy':'pump','hang':'hung'}
-    for word in misc_hacks.keys():
-        if word in string:
-            string=string.replace(word,misc_hacks[word])
-    return string
-    
-        
-def combinestars(climbdf):
-    '''combine extracted and computed averages'''
-    newstars=[]
-    for index, row in climbdf.iterrows():
-        if row['computed_avgstars']<.5:
-            climbdf.loc[index,'extracted_avgstars']=row['computed_avgstars']
-            newstars.append(row['computed_avgstars'])
-        else:
-            newstars.append(np.nanmean([row['extracted_avgstars'], row['computed_avgstars']]))
-    climbdf['avgstars']=newstars
-    return climbdf
     
 def maketextcomparedf(cdf):
     from nltk.corpus import movie_reviews
