@@ -101,13 +101,6 @@ def loadpickledobjects(filename):
                 remaining=0
     return objects
  
-def isfloatable(x):   
-    try:
-        float(x)
-        return True
-    except:
-        return False
- 
 def normalizewordcounts(climbdf, features,key):
     '''replace word counts with word counts normalized by length of text'''
     climbdf=climbdf.copy()
