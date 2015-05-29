@@ -7,6 +7,14 @@ Created on Wed May 27 15:45:53 2015
 This module contains functions for interfacing with the database.
 """
 
+def query_filter(dbname, condition_dict, colname):
+    "takes name of database and set of simple equality conditions and returns values of single column"
+    return colvalues
+    
+def get_pageviews(areaid):
+    '''returns number of views of subareas in the area of areaid'''
+    return areaids, views
+
 def get_candidates(user, area, **kwargs):
     return candidates
     
@@ -25,3 +33,6 @@ def get_popularity(climbid):
 def get_url(id_num, kind='climb'):
     '''takes url and kind variable specifying table, and returns relevant url'''
     return url
+    
+def save_update_to_db(obj):
+    pass

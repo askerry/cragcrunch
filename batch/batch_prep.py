@@ -5,6 +5,10 @@ Created on Fri Jan 16 10:31:42 2015
 @author: amyskerry
 """
 import numpy as np
+import pandas as pd
+import scipy.stats
+from utilities import prep
+from utilities import randomdata as rd
 
 ################################
 #         Misc Cleanup         #
@@ -22,48 +26,58 @@ def combinestars(climbdf):
     climbdf['avgstars']=newstars
     return climbdf
     
-def dedupsandmissing(full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
+def dedupsandmissing(climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf):
     '''deal with duplicated/missing areas and climbers'''
-    full_areadf=clean.dedupareas(full_areadf) 
-    full_climberdf=clean.dedupclimbers(full_climberdf)
-    full_tickdf= clean.addmissingclimbers(full_climberdf, full_tickdf)
-    full_commentdf = clean.addmissingclimbers(full_climberdf, full_commentdf)
-    full_gradedf = clean.addmissingclimbers(full_climberdf, full_gradedf)
-    full_tododf= clean.addmissingclimbers(full_climberdf, full_tododf)
-    full_stardf = clean.addmissingclimbers(full_climberdf, full_stardf)
-    return full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
+    areadf=dedupareas(areadf) 
+    climberdf=dedupclimbers(climberdf)
+    tickdf= addmissingclimbers(climberdf, tickdf)
+    commentdf = addmissingclimbers(climberdf, commentdf)
+    gradedf = addmissingclimbers(climberdf, gradedf)
+    stardf = addmissingclimbers(climberdf, stardf)
+    return climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf
     
-def reindexall(full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf):
+def reindexall(hitsdf, climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf):
     '''reindex everything so that id is index'''
-    full_climbdf.index=full_climbdf.climbid
-    full_areadf.index=full_areadf.areaid
-    full_climberdf.index=full_climberdf.climberid
-    full_tickdf.index=full_tickdf.ticksid
-    full_commentdf.index=full_commentdf.commentsid
-    full_gradedf.index=full_gradedf.gradesid
-    full_stardf.index=full_stardf.starid
-    full_tododf.index=full_tododf.todosid
-    full_hitsdf.index=full_hitsdf.hitsid
-    return full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf
+    climbdf.index=climbdf.climbid
+    areadf.index=areadf.areaid
+    climberdf.index=climberdf.climberid
+    tickdf.index=tickdf.ticksid
+    commentdf.index=commentdf.commentsid
+    gradedf.index=gradedf.gradesid
+    stardf.index=stardf.starid
+    hitsdf.index=hitsdf.hitsid
+    return hitsdf, climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf
 
-def renameindices(full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf, mainareadf):
-    full_climbdf.index.rename('index', inplace=True)
-    full_areadf.index.rename('index', inplace=True)
-    full_climberdf.index.rename('index', inplace=True)
-    full_tickdf.index.rename('index', inplace=True)
-    full_commentdf.index.rename('index', inplace=True)
-    full_gradedf.index.rename('index', inplace=True)
-    full_stardf.index.rename('index', inplace=True)
-    full_tododf.index.rename('index', inplace=True)
-    full_hitsdf.index.rename('index', inplace=True)
-    mainareadf.index.rename('index', inplace=True)
-    return full_hitsdf, full_climberdf, full_areadf, full_climbdf,full_stardf,full_commentdf,full_gradedf,full_tickdf,full_tododf,mainareadf
+def renameindices(hitsdf, climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf):
+    climbdf.index.rename('index', inplace=True)
+    areadf.index.rename('index', inplace=True)
+    climberdf.index.rename('index', inplace=True)
+    tickdf.index.rename('index', inplace=True)
+    commentdf.index.rename('index', inplace=True)
+    gradedf.index.rename('index', inplace=True)
+    stardf.index.rename('index', inplace=True)
+    hitsdf.index.rename('index', inplace=True)
+    return hitsdf, climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf
+    
+def quantize_grades(climbdf):
+    climbdf['numerizedgrade']=climbdf['grade'].apply(prep.numerizegrades, gradelists=[rd.grades, rd.bouldergrades])
+    climbdf['numgrade']=climbdf['grade'].apply(prep.splitgrade, output='num')
+    climbdf['lettergrade']=climbdf['grade'].apply(prep.splitgrade, output='letter')
+    return climbdf
+    
+def text_counts(climbdf):
+    feature_dict=prep.load_text_feats()
+    terms=feature_dict.keys()
+    data=zip(*climbdf['description'].apply(prep.text_processing, feature_dict=feature_dict).values)
+    for tnum,term in enumerate(terms):
+        climbdf['t_'+term]=list(data[tnum])
+    return climbdf
 
 ################################
 #       Reduction Steps        #
 ################################
 
-def dropstyles(climbdf,stardf, commentdf, gradedf, tickdf, tododf):
+def dropstyles(climbdf,stardf, commentdf, gradedf, tickdf):
     '''I don't like ice or alpine climbing so I'm not going to worry about them :)'''
     dropids=[]
     mask=climbdf['style'].isin(['Alpine', 'Ice', 'Mixed', 'Chipped', 'Aid'])
@@ -77,17 +91,16 @@ def dropstyles(climbdf,stardf, commentdf, gradedf, tickdf, tododf):
     dropids.extend(climbdf.loc[mask1 & mask2].climbid.values)
     dclimbs=climbdf.loc[climbdf['climbid'].isin(dropids)]
     climbdf=climbdf.drop(dclimbs.index.values)
-    stardf, commentdf, gradedf, tickdf, tododf=dropfromothers(dropids, stardf, commentdf, gradedf, tickdf, tododf)
-    return climbdf,stardf, commentdf, gradedf, tickdf, tododf 
+    stardf, commentdf, gradedf, tickdf=dropfromothers(dropids, stardf, commentdf, gradedf, tickdf)
+    return climbdf,stardf, commentdf, gradedf, tickdf 
     
-def dropfromothers(dropids, stardf, commentdf, gradedf, tickdf, tododf):
+def dropfromothers(dropids, stardf, commentdf, gradedf, tickdf):
     '''take ids of climbs to drop, and drop them from all other dataframes'''
     stardf=drop(stardf,'climb', dropids)
     commentdf= drop(commentdf,'climb', dropids)
     gradedf=drop(gradedf,'climb', dropids)
     tickdf=drop(tickdf,'climb', dropids)
-    tododf=drop(tododf,'climb', dropids)
-    return stardf, commentdf, gradedf, tickdf, tododf
+    return stardf, commentdf, gradedf, tickdf
     
 def drop(df,col, dropids):
     '''drop specified climbs from df'''
@@ -103,12 +116,12 @@ def dropclimbs(climbdf, hitsdf, stardf, commentdf, gradedf, tickdf):
     tickdf=tickdf[tickdf['climb'].isin(climbdf.climbid.values)]
     return hitsdf, stardf, commentdf, gradedf, tickdf
     
-def dropungraded(climbdf,stardf, commentdf, gradedf, tickdf, tododf):
+def dropungraded(climbdf,stardf, commentdf, gradedf, tickdf):
     '''drop climbs that don't have grades'''
     dropids=climbdf.loc[climbdf['grade']=='nan'].climbid.values
     climbdf=climbdf.loc[climbdf['grade']!='nan']
-    stardf, commentdf, gradedf, tickdf, tododf=dropfromothers(dropids, stardf, commentdf, gradedf, tickdf, tododf)
-    return climbdf,stardf, commentdf, gradedf, tickdf, tododf
+    stardf, commentdf, gradedf, tickdf=dropfromothers(dropids, stardf, commentdf, gradedf, tickdf)
+    return climbdf,stardf, commentdf, gradedf, tickdf
     
 def limittoUSA(climbdf, areadf):
     '''limit to climbs in  USA'''
@@ -118,14 +131,14 @@ def limittoUSA(climbdf, areadf):
     climbdf=climbdf[climbdf['area']!=internationalid]
     return climbdf, areadf
     
-def limit2popular(full_hitsdf,full_climbdf, full_stardf, full_commentdf, full_gradedf, full_tickdf, minthresh=5):
-    selclimbs=full_hitsdf.groupby('climb').count()['climber']
+def limit2popular(hitsdf,climbdf, stardf, commentdf, gradedf, tickdf, minthresh=5):
+    selclimbs=hitsdf.groupby('climb').count()['climber']
     selclimbs=[v for v in selclimbs[selclimbs>minthresh].index.values if ~np.isnan(v)]
-    popclimbdf=full_climbdf.loc[selclimbs,:]
-    full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf=dropclimbs(popclimbdf, full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf)
-    print "beginning with %s unique climbs" %(len(full_climbdf))
+    popclimbdf=climbdf.loc[selclimbs,:]
+    hitsdf, stardf, commentdf, gradedf, tickdf=dropclimbs(popclimbdf, hitsdf, stardf, commentdf, gradedf, tickdf)
+    print "beginning with %s unique climbs" %(len(climbdf))
     print "limited to %s climbs by restricting to climbs with >%s climber entries" %(len(popclimbdf),minthresh)
-    return popclimbdf, full_hitsdf, full_stardf, full_commentdf, full_gradedf, full_tickdf
+    return popclimbdf, hitsdf, stardf, commentdf, gradedf, tickdf
 
 
 
@@ -145,15 +158,15 @@ def dedupareas(df):
     return df
     
 def dedupclimbers(climberdf):
-    '''drop duplicate climbs (keeping one with full info)'''
+    '''drop duplicate climbs (keeping one with full info)'''    
     dupnames=climberdf.loc[climberdf['name'].duplicated()].name.values
     for d in dupnames:
         climber=climberdf.loc[climberdf['name']==d]
         try:
             dropid=climber.loc[climber['url']=='nan'].index.values[0]
         except:
-            dropid=climber.iloc[0,:].index.values[0]
-        climberdf=climberdf.drop(dropid)
+            dropid=climber.iloc[0,:].values[0]
+        climberdf=climberdf[climberdf['climberid']!=dropid]
     return climberdf   
     
 def addmissingclimbers(climberdf, df):
@@ -165,6 +178,58 @@ def addmissingclimbers(climberdf, df):
         if len(matches)>0:
             df.loc[indices[urln],'climber']=matches[0]
     return df
+    
+################################
+#       Area Processing        #
+################################ 
+
+def list_states_and_mains(areadf):
+    '''take an area and define the region for it based on it's parent'''
+    states=areadf[areadf['region']=='World'].name.values
+    stateids=areadf[areadf['region']=='World'].areaid.values
+    mainareas=areadf.loc[areadf['area'].isin(stateids)].areaid.values
+    mainareas=extend_mains(mainareas, areadf)
+    return states, stateids, mainareas
+        
+def extend_mains(mainareas, areadf):
+    othermains=[]
+    for m in mainareas:
+        othermains=prep.check_one_level_down(m, othermains, areadf)
+    return list(mainareas)+list(othermains)
+    
+def add_mains_to_areas(mainareas, areadf):
+    areadf['mainarea']=np.nan
+    for areaid in mainareas:
+        subs=prep.getsubareas(areaid, areadf=areadf)
+        areadf.loc[areadf['areaid'].isin(subs),'mainarea']=areaid
+    return areadf
+
+    
+def add_states_and_mains_to_climbs(climbdf, areadf):
+    '''added regions to climbs and dropped climbs missing regions'''
+    climbdf=pd.merge(climbdf, areadf[['areaid','region', 'mainarea']], left_on='area', right_on='areaid', how='inner')
+    climbdf=climbdf.rename(columns={'region_y':'region'})
+    del climbdf['region_x']
+    climbdf=pd.merge(climbdf, areadf[['areaid','name']], left_on='area', right_on='areaid', how='left')
+    climbdf=climbdf.rename(columns={'name_x':'name','name_y':'area_name'})
+    return climbdf
+    
+
+def getclimberareas(hitsdf, climbdf, climberdf):
+    '''get all mainareas that a climber has climbd in'''
+    import pdb
+    pdb.set_trace()
+    for c in climberdf.climberid.values:
+        climbids=[i for i in hitsdf[hitsdf['climber']==c]['climb'].values if i in climbdf['climbid'].values]
+        areas=climbdf.loc[climbids,'mainarea'].values
+        numareas=len(set(areas))
+        try:
+            m=scipy.stats.mode(areas)[0][0]
+        except:
+            m=np.nan
+        climberdf.loc[c,'mainarea']=m
+        climberdf.loc[c,'numareas']=numareas
+    return climberdf
 
 ################################
 #      Ghetto Hack Fixes       #
@@ -195,3 +260,4 @@ def fixstars(stardf, climbdf):
     stars=stardf.groupby('climb').mean()['starsscore'].values
     climbdf.loc[ids,'computed_avgstars']=stars
     return climbdf
+    

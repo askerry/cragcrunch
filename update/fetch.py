@@ -62,7 +62,7 @@ def parse_area(areaid, soup):
     return area
     
 def update_stats(climbid, statsurl):
-    pass
+    return stats
         
 def get_id(url, kind='climb'):
     '''takes a url and returns matching id from the relevant table'''

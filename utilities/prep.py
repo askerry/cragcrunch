@@ -5,6 +5,12 @@ Created on Wed May 27 19:41:31 2015
 @author: amyskerry
 """
 import numpy as np
+import nltk
+from collections import Counter, OrderedDict
+import json
+import sys
+sys.path.append('..')
+from core import retrieval
 
 ################################
 #    Basic String Cleaning     #
@@ -104,7 +110,35 @@ def nanify(val, nanvalues=('','None','unavailable', None)):
     return val
     
 ################################
-#      Misc Grade Cleanups     #
+#          Miscellaneous       #
+################################
+    
+def rating_confidence(climbid, sdf=None):
+    '''return number of people who have rated a climb, and the std of ratings'''
+    relevants=retrieval.query_filter('stars', {'climbid':climbid}, 'starscore')
+    return len(relevants), np.std(relevants)
+    
+def load_text_feats(path='../cfg/apriori.json'):
+    with open(path, 'r') as f:
+        j=f.read()
+    return json.loads(j, object_pairs_hook=collections.OrderedDict) 
+    
+def text_processing(string, feature_dict):
+    wordlist=nltk.tokenize.word_tokenize(string.lower())
+    c=Counter()
+    for term in feature_dict:
+        for word in wordlist:
+            if any([match in word for match in feature_dict[term]]):
+                c[term]+=1
+    props=OrderedDict()
+    for term in feature_dict:
+        props[term]=float(feature_dict[term])/len(wordlist)
+    return props.values
+                
+    
+    
+################################
+#        Grade Processing      #
 ################################
 
 def numerizegrades(grade, gradelists=()):
@@ -186,3 +220,44 @@ def is_graded(grade, style):
         elif style =='Boulder' and grade.startswith('V'):
             return True
     return False
+    
+    
+################################
+#       Area Processing        #
+################################  
+    
+def getregion(mid, areadf): ### needs to be a db access
+    return areadf[areadf['areaid']==mid].region.values[0]
+    
+def check_one_level_down(areaid, othermains, areadf=None):
+    if areadf is not None:
+        top_views=areadf[areadf['areaid']==areaid].iloc[0]['pageviews']
+        lowers=areadf.loc[areadf['area']==areaid]
+        lowerids, lowerviews=lowers['areaid'].values, lowers['pageviews'].values
+    else:
+        top_views=retrieval.query_filter('area', {'areaid':areaid}, 'starscore')[0]
+        lowerids, lowerviews=retrieval.get_pageviews(areaid)
+    for lowerid, lowerview in zip(lowerids, lowerviews):
+        if lowerview>top_views:
+            othermains.append(lowerid)
+    return othermains
+    
+def find_state_and_main(areaid, stateids=None, areadf=None):
+    if areadf is not None:
+        higher_areaid=areadf.loc['areaid'==areaid,'area']#
+    else:
+        higher_areaid=retrieval.query_filter('area', {'areaid':areaid}, 'area')[0]
+    if higher_areaid not in stateids:
+        return find_state_and_main(higher_areaid, stateids=stateids, areadf=areadf)
+    else:
+        return higher_areaid, areaid
+        
+def getsubareas(areaid, areadf=None):### needs to be a db access
+    '''get children areas'''
+    if areadf is not None:
+        subareaids=list(areadf.loc[areadf['area']==areaid, 'areaid'].values)
+    else:        
+        subareaids=list(retrieval.query_filter('area', {'area':areaid}, 'areaid'))
+    for area in subareaids:
+        subareaids.extend(getsubareas(area, areadf=areadf))
+    return subareaids
