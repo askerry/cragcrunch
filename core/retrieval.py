@@ -11,6 +11,17 @@ def query_filter(dbname, condition_dict, colname):
     "takes name of database and set of simple equality conditions and returns values of single column"
     return colvalues
     
+def check_for_existing(climbid, kind):
+    if kind=='area':
+        return        
+    if kind=='region':
+        return
+        
+        
+def is_hit(userid, climbid):
+    '''returns whether userid has climbed climbid'''
+    return boolean
+    
 def get_pageviews(areaid):
     '''returns number of views of subareas in the area of areaid'''
     return areaids, views

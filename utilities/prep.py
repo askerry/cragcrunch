@@ -11,6 +11,7 @@ import json
 import sys
 sys.path.append('..')
 from core import retrieval
+import collections
 
 ################################
 #    Basic String Cleaning     #
@@ -115,10 +116,13 @@ def nanify(val, nanvalues=('','None','unavailable', None)):
     
 def rating_confidence(climbid, sdf=None):
     '''return number of people who have rated a climb, and the std of ratings'''
-    relevants=retrieval.query_filter('stars', {'climbid':climbid}, 'starscore')
+    if sdf is not None:
+        relevants=sdf[sdf['climb']==climbid]['starsscore'].values
+    else:
+        relevants=retrieval.query_filter('stars', {'climbid':climbid}, 'starsscore')
     return len(relevants), np.std(relevants)
     
-def load_text_feats(path='../cfg/apriori.json'):
+def load_text_feats(path='cfg/apriori.json'):
     with open(path, 'r') as f:
         j=f.read()
     return json.loads(j, object_pairs_hook=collections.OrderedDict) 
@@ -128,12 +132,12 @@ def text_processing(string, feature_dict):
     c=Counter()
     for term in feature_dict:
         for word in wordlist:
-            if any([match in word for match in feature_dict[term]]):
+            if any([match==word[:len(match)] for match in feature_dict[term]]):
                 c[term]+=1
     props=OrderedDict()
     for term in feature_dict:
-        props[term]=float(feature_dict[term])/len(wordlist)
-    return props.values
+        props[term]=float(c[term])/len(wordlist)
+    return props.values()
                 
     
     

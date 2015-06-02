@@ -22,13 +22,6 @@
             <form>
                 <div>{{climb['avgstars']}}, <a href="http://{{climb['url']}}">{{climb['pageviews']}} views on
                     MountainProject.com</a>
-
-                    <div id="starinput"></div>
-                    <input type="hidden" id="starsscore" name="starsscore" value="{{climb['existingrating']}}">
-                    <input type="hidden" id="climb" name="climb" value="{{climb['climbid']}}">
-                    <input type="hidden" id="climbname" name="climbname" value="{{climb['name']}}">
-                    <input type="hidden" id="climber" name="climber" value="{{loggedinid}}">
-                    <input type="hidden" id="climbername" name="climbername" value="{{loggedinname}}">
                 </div>
             </form>
             <div>{{climb['pitch']}} {% if climb['length']!=''%}, {{climb['length']}} {% endif %}</div>
@@ -51,12 +44,5 @@
         {% endfor %}
     </div>
 </div>
-<script>
-$(document).ready(function(){
-	$('#starinput').raty({
-		score: {{climb['existingrating']}},  cancel: true, target : '#starsscore', targetType : 'score', targetKeep: true, click: submitstars
-		});	   
-	});
 
-</script>
 {% endblock %}

@@ -17,10 +17,10 @@ import sys
 from collections import OrderedDict
 import pickle
 import pdb
-from config import fulldir, clf
+from config import fulldir
 
 sys.path.append(fulldir)
-import antools.randomstuff as rd
+import utilities.randomdata as rd
 import config
 
 

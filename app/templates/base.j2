@@ -13,46 +13,71 @@
 
     <!-- Bootstrap -->
     <!--twitter bootstrap-->
-    <link href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!--my less--> 
     <!--dev only-->
     <!--JQUERY-->
      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="../static/js/jquery-1.11.2.min.js"></script>
+    <script src="/static/js/jquery-1.11.2.min.js"></script>
 
-	<link href="../static/css/jquery.raty.css" media="all" rel="stylesheet" type="text/css" />
-	<script src="../static/js/jquery.raty.js" type="text/javascript"></script>
+	<link href="/static/css/jquery.raty.css" media="all" rel="stylesheet" type="text/css" />
+	<script src="/static/js/jquery.raty.js" type="text/javascript"></script>
 
     <!--<link rel="stylesheet/css" type="text/css" href="css/style.css" /> -->
     <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
-    <link href="../static/css/bootstrap-switch.css" rel="stylesheet">
-    <link  href="../static/css/style.css" rel="stylesheet"> 
-    <script src="../static/js/bootstrap-switch.js"></script>
-    <link href="../static/css/slider.css" rel="stylesheet">
-    <script src="../static/js/bootstrap-slider.js"></script>
-    <script src="../static/js/bootbox.min.js"></script>
-    <script src="../static/js/bootbox.min.js"></script>
+    <link href="/static/css/bootstrap-switch.css" rel="stylesheet">
+    <link  href="/static/css/style.css" rel="stylesheet"> 
+    <script src="/static/js/bootstrap-switch.js"></script>
+    <link href="/static/css/slider.css" rel="stylesheet">
+    <script src="/static/js/bootstrap-slider.js"></script>
+    <script src="/static/js/bootbox.min.js"></script>
+    <script src="/static/js/bootbox.min.js"></script>
     <!--  <link href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />-->
 	<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>-->
 
-    <script type="text/javascript" src="../static/js/highcharts.js"></script>
-    <script type="text/javascript" src="../static/js/highcharts-more.js"></script> 
+    <script type="text/javascript" src="/static/js/highcharts.js"></script>
+    <script type="text/javascript" src="/static/js/highcharts-more.js"></script> 
     
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script>
+    function presetattrs(val, feature, climberid){
+        percent=val*50+50
+        attrslider=$('.attrslider_'+feature).slider()
+        $('div.slider-handle.round', '#'+feature).css('left', percent+'%')
+        $('.slider-selection', '#'+feature).css('width', percent+'%')
+        $('.attrslider_'+feature).on('slideStop', function () {updateattrs(feature, climberid)});
+    };
+    function printtest(){
+      console.log('testing')
+    };
+    function updateattrs(feat, climberid){
+        newval=$('.attrslider_'+feat).slider('getValue')
+        console.log(newval)
+        console.log('updated')
+        console.log(climberid)
+        $.ajax({
+            type: 'GET',
+            url: '/updatepref', // This is the url that will be requested
+            data: {feat:feat, value:newval, userid:climberid},
+            success: printtest,
+            dataType: 'JSON'
+        });
+    };
+    </script>
 
   </head>
   <body>
     <div id="page">
       <div id='banner'>
-      <img id="bannerimg" src="../static/img/yosemite.png" alt="yosemite">
+      <img id="bannerimg" src="{{config['appdir']}}/static/img/yosemite.png" alt="yosemite">
        <div class="navbar navbar-inverse" role="navigation">
          <div class="container">
            <div class="navbar-header">
@@ -69,7 +94,7 @@
                <li id="home" class="active"><a href="/home">Home</a></li>
                <li id="user"><a href="/user/{{loggedinid}}" onclick="wait();">Profile</a></li>
                <li id="about"><a href="/about">About</a></li>
-               <li id="slides"><a href="/slides">Slides</a></li>
+               <li id="blog"><a href="/blog">Blog</a></li>
                <li id="newuser"><a href="#" onclick=getnewuser();>I'm New!</a></li>
                <li>    
                		<form action="../result" method="POST">
@@ -113,22 +138,31 @@
 					    });};
     			};
     			function acceptreject(data){  
-    				exists=data['exists'] 
+    				reject=data['reject'] 
     				name=data['name']
-    				if (exists==true) {
-    					bootbox.prompt("User name "+name+" is taken or invalid. Please provide a new name.", checkusername);
+    				if (reject==true) {
+    					bootbox.prompt("User name "+name+" is invalid or has already been imported. Please provide a new name.", checkusername);
     				}
     				else
     				{
-    					gotosetuppage(name)
+    					bootbox.prompt("Please create a password for this account.", acceptreject_password);
     				}
 				};  
-    			function gotosetuppage(name){
-    				window.location.replace("/newuser/"+name);
+        function acceptreject_password(pswd){  
+            if (pswd==null) {
+              bootbox.prompt("Password is invalid. Please provide a new password.", checkusername);
+            }
+            else
+            {
+              gotosetuppage(name, pswd)
+            }
+        };
+    			function gotosetuppage(name, pswd){
+    				window.location.replace("/user/import?username="+name+'&password='+pswd);
     			};
 
     			function getnewuser(){
-					bootbox.prompt("Welcome to CragCrunch! Please enter a user name.", checkusername);
+					bootbox.prompt("Welcome to CragCrunch! If you do not have an account on MountainProject.com, please make one now. Enter your Mountain Project user name to import your data", checkusername);
 				};
 
 				function go2user(){
@@ -136,32 +170,12 @@
     				window.location.replace("/user/"+userid.toString());
 				};
 
-				function showstars(data){
-					rating=data['rating']
-					$('#starinput').raty('score', rating);
-				};
-
-				function submitstars(){
-					console.log('hiii')
-					console.log($('#starsscore').val())
-
-					$.ajax({
-					      type: 'POST',
-					      url: '/logstar', // This is the url that will be requested
-					      data: {starsscore:$('#starsscore').val(), climber:$('#climber').val(), climbername:$('#climbername').val(), climb:$('#climb').val(), climbname:$('#climbname').val()},
-					      dataType: 'JSON'
-					    });
-				};
 
 			$(document).ready(function(){
 
 				$("#sportcheck").bootstrapSwitch({labelText:'Sport'});
 				$("#tradcheck").bootstrapSwitch({labelText:'Trad'});
 				$("#bouldercheck").bootstrapSwitch({labelText:'Boulder'});
-				gradeslider=$('#gradeslider').slider()
-				gradeslider.slider('setValue', "0")
-				prefslider=$(".prefslider").slider()
-				prefslider.slider('setValue', "2")
 			});
 
 

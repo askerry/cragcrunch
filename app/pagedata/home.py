@@ -20,6 +20,7 @@ from config import rootdir
 def gettopclimbs(db):
     '''get top climbs by pageviews for naive viewers'''
     topclimbs = db.session.query(ClimbTable).order_by(ClimbTable.pageviews.desc()).limit(10).all()
+    print [c.mainarea for c in topclimbs]
     tlist = [{'name': c.name, 'url': c.url, 'mainarea': int(c.mainarea), 'climbid': c.climbid, 'pageviews': int(c.pageviews),
               'mainarea_name': db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name,
               'region': c.region} for c in topclimbs]

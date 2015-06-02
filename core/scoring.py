@@ -13,13 +13,13 @@ import similarity as sim
 import features
 
 #this might go elsewhere
-from ..cfg import similarity_cfg
-from settings import userfeatures, climbfeatures, climbattributes
-usersim_cfg=similarity_cfg(userfeatures)
-climbsim_cfg=similarity_cfg(climbfeatures)
+#from ..cfg import similarity_cfg
+#from settings import userfeatures, climbfeatures, climbattributes
+#usersim_cfg=similarity_cfg(userfeatures)
+#climbsim_cfg=similarity_cfg(climbfeatures)
 
 
-def finalscore(user, climbid, weights=(1,1,1,1)):
+def finalscore(db, user, climbid, weights=(1,1,1,1)):
     '''return final score for the climb, based on weighted average of the 4 component scores'''
     pop=retrieval.get_popularity(climbid)
     usim=get_usersim_weighted_score(user, climbid)
@@ -34,13 +34,13 @@ def get_usersim_weighted_score(user, climbid):
     scores,weights=[],[]
     for climberid, userscore in climbers.items():
         scores.append(userscore)
-        similarity, confidence = sim.get_climber_similarity(user.id, climberid, usersim_cfg)
+        similarity, confidence = sim.get_climber_similarity(user['climberid'], climberid, usersim_cfg)
         weights.append((1 + confidence * similarity)**2)
     return np.average(scores, weights)
     
 def get_climbsim_weighted_score(user, climbid):
     '''take average of scores of climbs user has climbed, weighted by similarity of climb to target climb'''
-    userclimbs=retrieval.get_users_climbs()
+    userclimbs=retrieval.get_users_climbs(user['climberid'])
     scores,weights=[],[]
     for ownclimb, ownscore in userclimbs.items():
         scores.append(ownscore)

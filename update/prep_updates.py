@@ -7,7 +7,7 @@ def get_attrs(obj):
 
 def nanify(obj, attrs, nanvalues=['','None','unavailable', None]):
     for attr, value in obj_dict.items():
-        if valuein nanvalues:
+        if value in nanvalues:
             obj_dict[attr]= np.nan
     return obj_dict
     
@@ -25,11 +25,11 @@ def longlat(obj_dict):
     
 def extract_name(obj_dict):
     if 'url' in obj_dict:
-        obj_dict['urlname'], prep.extractname(obj_dict['url']))
+        obj_dict['urlname']=prep.extractname(obj_dict['url'])
     return obj_dict
     
 
-def full_obj_clean(obj_dict)
+def full_obj_clean(obj_dict):
     obj_dict=string_clean(obj_dict, lambda x:int(x), ('climbid', 'areaid', 'climberid', 'ticksid', 'commentsid', 'gradesid', 'starid', 'climb', 'climber', 'area'))
     obj_dict=string_clean(obj_dict, lambda x:float(x), ('starsscore', 'age', 'avgstars'))
     obj_dict=string_clean(obj_dict, prep.removecomma, ('pageviews'))
@@ -53,8 +53,6 @@ def climb_in_db(climbid):
 def get_area_name(areaid):
     return name
     
-def check_climbers_area(climberid):
-    return areaid
     
 def quantize_grades(obj_dict):
     obj_dict['numerizedgrade']=prep.numerizegrades(obj_dict['grade'], gradelists=[rd.grades, rd.bouldergrades])
@@ -72,7 +70,7 @@ def process_stars(starscore):
 
 def process(obj, add=True):
     obj_dict=full_obj_clean(obj_dict)
-    if 'climbid' in obj_dict and !climb_in_db(obj_dict['climbid']):
+    if 'climbid' in obj_dict and not climb_in_db(obj_dict['climbid']):
         #fetch and save climb
     if 'style' in obj_dict and is_silly_style(obj_dict['style']):
         return False
@@ -80,8 +78,8 @@ def process(obj, add=True):
         return False
     if 'age' in obj_dict 
         if obj_dict['age']>120:
-            obj_dict['area']=check_climbers_area(obj_dict['climberid'])
-            obj_dict['region'], obj_dict['mainarea']=find_state_and_main(obj_dict['area'])
+            obj_dict['area']=retrieval.check_for_existing(obj_dict['climberid'], 'area')[0]
+            obj_dict['region']=retrieval.check_for_existing(obj_dict['climberid'], 'region')[0]
         obj_dict['mainarea']
     if 'climberid' in obj_dict and 'climbid' in obj_dict:
         update_hits(obj_dict['climberid'], obj_dict['climbid'])

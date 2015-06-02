@@ -1,17 +1,18 @@
-__author__ = 'amyskerry'
-
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy import Column, Integer, Float, String, Boolean, Date, ForeignKey, Text
 from config import dirname
 import os
 import pickle
+import json
+import collections
 
-with open(os.path.join(dirname, 'data', 'climbingterms.pkl'), 'rb') as inputfile:
-    terms = pickle.load(inputfile)
+attribute_file='cfg/attributes.json'
+with open(attribute_file, 'r') as f:
+        j=f.read()
+attributes=json.loads(j, object_pairs_hook=collections.OrderedDict) 
 
 Base = declarative_base()
-
 
 class AreaTable(Base):
     __tablename__ = 'area_prepped'
@@ -29,6 +30,7 @@ class AreaTable(Base):
     region = Column(String(20))
     country = Column(String(20))
     pageviews = Column(Float)
+    mainarea_name = Column(String(70))
 
 
 class ClimbTable(Base):
@@ -51,15 +53,11 @@ class ClimbTable(Base):
     avgstars = Column(String(30))
     pageviews = Column(String(30))
     submittedby = Column(String(70))
-    commentsmerged = Column(Text)
     numerizedgrade = Column(Float)
     mainarea_name = Column(String(70))
     area_name = Column(String(70))
-    mergedtext = Column(Text)
-
-
-for c in terms:
-    setattr(ClimbTable, c + '_description', Column(Integer))
+for attr in attributes:
+    setattr(ClimbTable, 't_'+attr, Column(Float))
 
 
 class ClimberTable(Base):
@@ -89,16 +87,6 @@ class ClimberTable(Base):
     mixed_l = Column(String(30))
     mixed_f = Column(String(30))
     region = Column(String(70))
-    numhits = Column(Float)
-    g_min_Sport = Column(Float)
-    g_max_Sport = Column(Float)
-    g_median_Sport = Column(Float)
-    g_min_Trad = Column(Float)
-    g_max_Trad = Column(Float)
-    g_median_Trad = Column(Float)
-    g_min_Boulder = Column(Float)
-    g_max_Boulder = Column(Float)
-    g_median_Boulder = Column(Float)
 
 
 class TicksTable(Base):
@@ -145,3 +133,13 @@ class GradesTable(Base):
     url = Column(String(200))
     grade = Column(String(30))
     name = Column(String(200))
+
+class ProfileTable(Base):
+    __tablename__ = 'user_profiles'
+    userid = Column(Integer, ForeignKey('climber_prepped.climberid'), primary_key=True, autoincrement=True)
+    name = Column(String(70))
+    password = Column(String(30))
+    region = Column(String(50))
+    mainarea = Column(Integer)
+    preferences=Column(String(500))
+

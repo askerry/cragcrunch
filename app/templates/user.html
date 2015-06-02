@@ -61,7 +61,6 @@
                 <input id='gradeslider' type="text" class="span2" data-slider-min="-24" data-slider-max="24"
                        data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
                        data-slider-handle="square" data-slider-tooltip="hide">
-
                 <div class="sliderlabel">Harder</div>
             </div>
             <p class="mini">*Adjusting difficulty will give you climbs that are easier or harder relative to the grade YOU typically climb.</p>
@@ -78,6 +77,7 @@
             </div>
         </div>
         <br>
+        <span class="miniboost"><a href="/user/{{user['climberid']}}/preferences">Update your climbing style </a></span>
         <span class="miniboost">View {{user['name']}}'s full climbing record on <a href="http://{{user['url']}}">MountainProject</a>.</span>
     </div>
 </div>
@@ -121,16 +121,16 @@
 			   $.ajax({
 			      type: 'GET',
 			      url: '/refreshrecs', // This is the url that will be requested
-			      data: {areaid: $('#areadropdown').val(), userid:{{user['climberid']}}, gradeshift:$('#gradeslider').slider('getValue'), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
+			      data: {areaid: $('#areadropdown').val(), userid:{{user['climberid']}}, grade:$('#gradeslider').slider('getValue'), sportcheck: $("#sportcheck").prop('checked'), tradcheck: $("#tradcheck").prop('checked'), bouldercheck: $("#bouldercheck").prop('checked')},
 			      success: updaterec,
 			      dataType: 'JSON'
 			    });
 				};
 
 			$(document).ready(function(){
+                gradeslider=$('#gradeslider').slider()
+                gradeslider.slider('setValue', "0")
 				$('#gradeslider').on('slideStop', refreshrecs);
-
-
 			    $('#home').removeClass('active');
 			    $('#about').removeClass('active');
 			    $('#newuser').removeClass('active');

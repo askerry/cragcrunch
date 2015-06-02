@@ -1,0 +1,56 @@
+{% extends "base.j2" %}
+
+{% block content %}
+
+<form action="../{{userid}}" method="GET" onSubmit="showwaiting();">
+    <h3>Preferences</h3>
+    <span class="miniboost">Now we need to know a little bit about what you like to climb. Tell us how you feel about each of the climb features below:</span>&nbsp&nbsp&nbsp
+    <input type="submit" value="Save Preferences" class="btn btn-primary">
+
+    <div class="bubblingG" id="bub1">
+	<span id="bubblingG_1">
+	</span>
+	<span id="bubblingG_2">
+	</span>
+	<span id="bubblingG_3">
+	</span>
+    </div>
+    <div class="row" id="prefgrid">
+        {% for feature in a_dict.keys() %}
+        <div class="col-md-2 prefbox">
+            <div class="featurelabel">{{a_dict[feature]['label']}}</div>
+            <img id='prefimg' class='fitimg' src="/static/img/attribute_imgs/{{a_dict[feature]['file']}}" alt="logo">
+            <div class="sliderdiv" id="{{feature}}">
+                <div class="sliderlabel2">-</div>
+                <input id='{{feature}}' class='attrslider_{{feature}}' type="text" class="span2" data-slider-min="-24" data-slider-max="24"
+                       data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                       data-slider-handle="round" data-slider-tooltip="hide">
+                <div class="sliderlabel2">+</div>
+            </div>
+        </div>
+        <script>  
+        presetattrs({{a_dict[feature]['value']}}, "{{feature}}", "{{userid}}")
+        $('.attrslider_{{feature}}').on('slideStop', updateattrs); 
+        </script>
+        {% endfor %}
+    </div>
+</form>
+
+
+<script>
+
+	function showwaiting(){
+		console.log('WAITING');
+		$('#prefgrid').hide();
+		$('#bub1').css("visibility", "visible").css("height","600px").css("margin-top","5em")
+	}
+
+    $(document).ready(function(){
+        $('#home').removeClass('active');
+        $('#newuser').removeClass('active');
+        $('#about').removeClass('active');
+        $('#user').addClass('active');
+    });
+
+</script>
+{% endblock %}

@@ -1,7 +1,3 @@
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, Date, ForeignKey, Text
-from sqlalchemy.ext.declarative import declarative_base
-
 import sys, os
 
 rootdir = os.getcwd()
@@ -11,13 +7,11 @@ sys.path.append(os.path.join(rootdir, 'Projects', 'credentials'))
 dirname = os.path.join(rootdir, 'Projects', 'cragcrunch')
 from sqlcfg import host, user, passwd
 
-
 projectroot = '/Projects/cragcrunch/'
 fulldir = os.path.join(rootdir, 'Projects/cragcrunch')
 redfeatfile = os.path.join(fulldir, 'data', 'learnedfeatures.pkl')
 
 # database parameters
-
 class Cfg():
     def __init__(self, projectroot, host, user, passwd, dbname, charset='utf8', use_unicode=0, clobber=False):
         self.projectroot = projectroot
@@ -30,21 +24,8 @@ class Cfg():
         self.clobber = clobber
 
 
-DBCFG = Cfg(projectroot, host, user, passwd, dbname='climbdb')
+DBCFG = Cfg(projectroot, host, user, passwd, dbname='climbdb_prepped')
 
-
-#configure model parameters
-
-from sklearn.ensemble import RandomForestClassifier
-
-
-class RandomForestClassifierWithCoef(RandomForestClassifier):
-    '''extension of the RandomForectClassifier class that allows me to call coef_ instead of feature_importances_ (for ease/consistency with APIs of other models)'''
-
-    def fit(self, *args, **kwargs):
-        super(RandomForestClassifierWithCoef, self).fit(*args, **kwargs)
-        self.coef_ = self.feature_importances_
-
-
-clf = RandomForestClassifierWithCoef(n_estimators=80,
-                                     oob_score=True)  #n_estimators selected from CV performance on exploratory (NH) data
+#vars in caps will be read by app.config
+ROOTDIR=fulldir
+APPNAME='CragCrunch'

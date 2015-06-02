@@ -14,6 +14,9 @@ from copy import deepcopy
 import warnings
 import timeit
 from config import rootdir
+import sys
+sys.path.append(os.path.join(rootdir, 'cragcrunch/core/'))
+import core.similarity as similarity
 
 
 # #################################################
@@ -79,10 +82,20 @@ def getclimbdict(c, db, getnest=False):
     return cdict
 
 
-def getsimilarclimbs(db, climbid, ClimbTable):
+def getsimilarclimbs(db, climbid, cdict, ClimbTable):
     '''get climbs similar to target'''
-    df = pd.read_sql('select * from simclimbs', db.engine, index_col='climbid')
-    simclimbids = df.loc[climbid, :].values[1:6].astype(int)
+    grade=cdict['numerizedgrade']
+    style=cdict['style']
+    if style == 'Boulder': slush=2 
+    else: slush=5
+    candidates = [c.climbid for c in db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea == cdict['mainarea']),
+                                                                               ClimbTable.numerizedgrade.between(
+                                                                                   grade-slush,grade+slush),
+                                                                               (ClimbTable.style == style))).all()]
+    similarities=[similarity.get_climb_similarity(climbid, candidate)[0] for candidate in candidates[:100]]
+    rank=list(np.argsort(similarities))
+    rank.reverse()
+    simclimbids = [candidates[i] for i in rank[:5]] 
     simclimbobjs = [db.session.query(ClimbTable).filter_by(climbid=c).first() for c in simclimbids]
     simclimbdicts = [getclimbdict(o, db) for o in simclimbobjs]
     return simclimbdicts

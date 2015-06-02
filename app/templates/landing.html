@@ -55,9 +55,12 @@
     <div class="landingdiv">
         <div id="helper">{{helper}}</div>
         <input type="text" class="form-control login" id="username" name="username"  placeholder="user name" onchange="refreshguest();">
+        <input type="password" class="form-control login" id="password" name="password"  placeholder="password">
         <input type="submit" value="&#8594" class="btn btn-primary">
-        <h4><input type="submit" value="Continue as Guest Explorer" class="btn-lg btn-primary" onclick="setguest();">
+        <h4><input type="submit" value="Continue as Guest Explorer" class="btn-lg btn-primary landing" onclick="setguest();">
         </h4>
+        <input type="hidden" id="username" name="username" value="empty">
+        <input type="hidden" id="password" name="password" value="empty">
         <input type="hidden" id="guest" name="guest" value="empty">
     </div>
 </form>

@@ -6,17 +6,18 @@ Created on Wed May 27 20:19:21 2015
 """
 import numpy as np
 import pandas as pd
-import MySQLdb
+from sqlalchemy import create_engine
 import logging
 import sys
-sys.path.append('../utilities')
-from utilities import prep
+sys.path.append('..')
+from  utilities import prep
 import batch_prep as bp
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
+
 def load_data(cfg):
-    con=MySQLdb.connect(user=cfg.user, passwd=cfg.passwd, db=cfg.dbname, host=cfg.host, charset=cfg.charset, use_unicode=cfg.charset)
+    con = create_engine('mysql://%s@%s/%s?charset=%s&use_unicode=%s&passwd=%s' % (cfg.user, cfg.host, cfg.dbname, cfg.charset, cfg.use_unicode, cfg.passwd), pool_recycle=3600)
     climbdf = pd.read_sql("SELECT * from Climb", con)
     climbdf=climbdf[['name']+[el for el in climbdf.columns.tolist() if el!='name']] #moving name first
     areadf = pd.read_sql("SELECT * from Area", con)
@@ -27,6 +28,7 @@ def load_data(cfg):
     stardf = pd.read_sql("SELECT * from Stars", con)
     logging.info('data loaded')
     return climbdf, areadf, climberdf, tickdf, commentdf, gradedf, stardf
+
 
 def cleandf(df):
     '''apply various functions to clean string inputs from html'''
@@ -72,14 +74,15 @@ def area_parsing(areadf, climbdf):
     mainareas=bp.extend_mains(mainareas, areadf)
     areadf=bp.add_mains_to_areas(mainareas, areadf)
     climbdf=bp.add_states_and_mains_to_climbs(climbdf, areadf)
+    areadf, climbdf=bp.add_names(areadf, climbdf)
     logging.info("parsed area information")
     return areadf, climbdf
     
-def write_data(climbdf, areadf, climberdf, tickdf, commentdf, gradedf, stardf, hitsdf, chunksize=1000):
+def write_data(cfg, climbdf, areadf, climberdf, tickdf, commentdf, gradedf, stardf, hitsdf, chunksize=1000):
     #save prepped data to sql
-    con=MySQLdb.connect('mysql://%s@%s/%s?charset=%s&use_unicode=%s&passwd=%s' %(cfg.user, cfg.host, cfg.dbname+'_prepped', cfg.charset, cfg.use_unicode, cfg.passwd))
+    con = create_engine('mysql://%s@%s/%s?charset=%s&use_unicode=%s&passwd=%s' % (cfg.user, cfg.host, cfg.dbname+'_prepped', cfg.charset, cfg.use_unicode, cfg.passwd), pool_recycle=3600)
     areadf.to_sql('area_prepped', con, if_exists='replace', chunksize=chunksize)
-    climberdf.to_sql('climber_prepped', con, if_exists='replace', chunksize=chunksize)
+    climberdf.to_sql('climber_prepped', con,if_exists='replace', chunksize=chunksize)
     tickdf.to_sql('ticks_prepped', con, if_exists='replace', chunksize=chunksize)
     commentdf.to_sql('comments_prepped', con, if_exists='replace', chunksize=chunksize)
     gradedf.to_sql('grades_prepped', con, if_exists='replace', chunksize=chunksize)
@@ -131,16 +134,19 @@ if __name__=='__main__':
     climbdf=bp.quantize_grades(climbdf)
     logging.info("performed additional cleaning ({} climbs)".format(len(climbdf)))
     
+    
     #area parsing
     areadf, climbdf=area_parsing(areadf, climbdf)
-    climberdf=bp.getclimberareas(hitsdf, climbdf, climberdf)
-    climberdf['region']=climberdf['mainarea'].apply(prep.getregion, areadf=areadf)
+    hitsdf, climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf=bp.reindexall(hitsdf,climberdf, areadf, climbdf,stardf,commentdf,gradedf,tickdf)
+    hitsdf=hitsdf[hitsdf['climb'].isin(climbdf['climbid'].values)]
+    
+    climberdf=bp.summarize_climbers(tickdf, climbdf, climberdf)
     
     #cleanup stars
     climbdf=bp.fixstars(stardf, climbdf)
     climbdf=bp.combinestars(climbdf)
     climbdf['roundedstars']=climbdf['avgstars'].apply(np.round) 
-    morecols=climbdf['climbid'].apply(bp.getratingcounts, sdf=stardf)
+    morecols=climbdf['climbid'].apply(prep.rating_confidence, sdf=stardf)
     climbdf['starcounts']=[x[0] for x in morecols.values]
     climbdf['starstd']=[x[1] for x in morecols.values]
     logging.info("performed star rating clean up")
@@ -154,4 +160,4 @@ if __name__=='__main__':
     climbdf=bp.text_counts(climbdf)
     
     #write to database
-    write_data(climbdf, areadf, climberdf, tickdf, commentdf, gradedf, stardf, hitsdf)
+    write_data(cfg, climbdf, areadf, climberdf, tickdf, commentdf, gradedf, stardf, hitsdf)

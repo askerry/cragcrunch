@@ -13,13 +13,12 @@ import pickle
 import pagedata.home as hf
 import pandas as pd
 import timeit
-from config import fulldir, clf
+from config import fulldir
 import sys
 
 sys.path.append(fulldir)
-import antools.randomstuff as rd
+import utilities.randomdata as rd
 
-from config import fulldir
 
 # ###############     HOME PAGE    ####################
 
@@ -38,7 +37,7 @@ def result_home(request, g):
 ################     USER PAGE    ####################
 
 
-def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, boulder=True):
+def getuserpage(g, inputdict, areaid=None, grade=0, sport=True, trad=True, boulder=True):
     climberid = inputdict['userid']
     a = g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict = uf.getuserdict(a, g.db)
@@ -47,7 +46,7 @@ def getuserpage(g, inputdict, areaid=None, gradeshift=0, sport=True, trad=True, 
     else: udict['newuser'] = False
     if areaid is None: areaid = udict['mainarea']
     try:
-        urecs = uf.getuserrecs(udict, g.db, areaid, gradeshift, sport, trad, boulder)  #time suck
+        urecs = uf.getuserrecs(udict, g.db, areaid, grade, sport, trad, boulder)  #time suck
     except:
         warnings.warn("failed to generate user recs")
         urecs = []
@@ -77,7 +76,7 @@ def getclimbpage(g, inputdict, userid):
     stars = cf.checkstars(g.db, climbid, userid)
     c = g.db.session.query(ClimbTable).filter_by(climbid=climbid).first()
     cdict = cf.getclimbdict(c, g.db, getnest=True)
-    crecs = cf.getsimilarclimbs(g.db, climbid, ClimbTable)
+    crecs = cf.getsimilarclimbs(g.db, climbid, cdict, ClimbTable)
     del cdict['_sa_instance_state']
     cdict['existingrating'] = str(stars)
     return cdict, crecs
@@ -85,6 +84,7 @@ def getclimbpage(g, inputdict, userid):
 
 ##############     NEW USER PAGE    ##################
 
+'''
 def getuserinput(request, features):
     features = [f for f in current_app.askfeatures_terms if f not in rd.blockterms]
     userid = float(request.form['userid'])
@@ -115,3 +115,4 @@ def adduser(g, request):
     except:
         session['stash'] = {udict['climberid']: udict}
     return udict
+'''

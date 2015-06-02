@@ -9,6 +9,7 @@ import pandas as pd
 import scipy.stats
 from utilities import prep
 from utilities import randomdata as rd
+from multiprocessing import Pool
 
 ################################
 #         Misc Cleanup         #
@@ -65,14 +66,40 @@ def quantize_grades(climbdf):
     climbdf['lettergrade']=climbdf['grade'].apply(prep.splitgrade, output='letter')
     return climbdf
     
+
 def text_counts(climbdf):
     feature_dict=prep.load_text_feats()
     terms=feature_dict.keys()
-    data=zip(*climbdf['description'].apply(prep.text_processing, feature_dict=feature_dict).values)
+    p = Pool(4)
+    tuples=[p.apply(prep.text_processing, args=(string, feature_dict)) for string in climbdf['description'].values]
+    data=zip(*tuples)
     for tnum,term in enumerate(terms):
-        climbdf['t_'+term]=list(data[tnum])
+        climbdf['t_'+term]=data[tnum]
     return climbdf
-
+    
+def summarize_climbers(tickdf, climbdf, climberdf):
+    t=pd.merge(tickdf, climbdf[['climbid', 'mainarea', 'region', 'numerizedgrade']], left_on='climb', right_on='climbid', how='right')
+    climber_areas=t.groupby('climber')[['mainarea']].apply(lambda x:scipy.stats.mode(x)[0][0][0])
+    climber_areas=pd.DataFrame(data={'climberid':climber_areas.index.values, 'mainarea':climber_areas.values})
+    climber_regions=t.groupby('climber')[['region']].apply(lambda x:scipy.stats.mode(x)[0][0][0])
+    climber_regions=pd.DataFrame(data={'climberid':climber_regions.index.values, 'region':climber_regions.values})
+    avg_grade=t.groupby('climber')[['numerizedgrade']].apply(lambda x:np.nanmean(x))
+    avg_grade=pd.DataFrame(data={'climberid':avg_grade.index.values, 'avg_grade':avg_grade.values})
+    climberdf=pd.merge(climberdf, climber_areas, on='climberid', how='left', suffixes=['_l', ''])
+    del climberdf['mainarea_l']
+    climberdf=pd.merge(climberdf, climber_regions, on='climberid', how='left')
+    climberdf=pd.merge(climberdf, avg_grade, on='climberid', how='left')
+    climberdf['region']=climberdf['region'].fillna('World').values
+    climberdf['mainarea']=climberdf['mainarea'].fillna(2).values
+    climberdf['avg_grade']=climberdf['avg_grade'].fillna(31).values
+    return climberdf
+    
+def add_names(areadf, climbdf):
+    areadf=pd.merge(areadf, areadf[['areaid', 'name']], left_on='mainarea', right_on='areaid', how='left', suffixes=['', '_r'])
+    areadf=areadf.rename(columns={'name_r':'mainarea_name'})
+    climbdf=pd.merge(climbdf, areadf[['areaid', 'name']], left_on='mainarea', right_on='areaid', how='left', suffixes=['', '_r'])
+    climbdf=climbdf.rename(columns={'name_r':'mainarea_name'})
+    return areadf, climbdf
 ################################
 #       Reduction Steps        #
 ################################
@@ -217,10 +244,8 @@ def add_states_and_mains_to_climbs(climbdf, areadf):
 
 def getclimberareas(hitsdf, climbdf, climberdf):
     '''get all mainareas that a climber has climbd in'''
-    import pdb
-    pdb.set_trace()
     for c in climberdf.climberid.values:
-        climbids=[i for i in hitsdf[hitsdf['climber']==c]['climb'].values if i in climbdf['climbid'].values]
+        climbids=hitsdf[hitsdf['climber']==c]['climb'].values
         areas=climbdf.loc[climbids,'mainarea'].values
         numareas=len(set(areas))
         try:
