@@ -134,6 +134,13 @@ class GradesTable(Base):
     grade = Column(String(30))
     name = Column(String(200))
 
+class HitsTable(Base):
+    __tablename__ = 'hits_prepped'
+    hitsid = Column(Integer, primary_key=True,)
+    climb = Column(Integer, ForeignKey('climb_prepped.climbid'))
+    climber = Column(Integer, ForeignKey('climber_prepped.climberid'))
+    urlname = Column(String(200))
+
 class ProfileTable(Base):
     __tablename__ = 'user_profiles'
     userid = Column(Integer, ForeignKey('climber_prepped.climberid'), primary_key=True, autoincrement=True)

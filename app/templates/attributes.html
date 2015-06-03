@@ -5,7 +5,7 @@
 <form action="../{{userid}}" method="GET" onSubmit="showwaiting();">
     <h3>Preferences</h3>
     <span class="miniboost">Now we need to know a little bit about what you like to climb. Tell us how you feel about each of the climb features below:</span>&nbsp&nbsp&nbsp
-    <input type="submit" value="Save Preferences" class="btn btn-primary">
+    <input type="submit" value="Return to Profile" class="btn btn-primary">
 
     <div class="bubblingG" id="bub1">
 	<span id="bubblingG_1">
@@ -22,7 +22,7 @@
             <img id='prefimg' class='fitimg' src="/static/img/attribute_imgs/{{a_dict[feature]['file']}}" alt="logo">
             <div class="sliderdiv" id="{{feature}}">
                 <div class="sliderlabel2">-</div>
-                <input id='{{feature}}' class='attrslider_{{feature}}' type="text" class="span2" data-slider-min="-24" data-slider-max="24"
+                <input id='{{feature}}' class='attrslider attrslider_{{feature}}' type="text" class="span2" data-slider-min="-24" data-slider-max="24"
                        data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
                        data-slider-handle="round" data-slider-tooltip="hide">
                 <div class="sliderlabel2">+</div>

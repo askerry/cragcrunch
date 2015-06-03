@@ -229,10 +229,16 @@ a.emplink {
 	width: 1.5em;
 	height: 1.5em;
 	margin-bottom: .2em;
-	margin-right:.3em;
+	margin-right:.2em;
+}
+#settingsimg{
+    width: 1.2em;
+    height: 1.2em;
+    margin-bottom: .2em;
+    margin-right:.1em;
 }
 .sliderdiv {
-    width: 90%;
+    width: 80%;
     margin: auto;
     margin-top: .1em;
     height: 3em;
@@ -242,13 +248,13 @@ a.emplink {
 #gradeslider {
     width: 90%}
 .attrslider {
-    width: 50%}
+    width: 30%}
 #infobox {
     width: 70%}
 .sliderlabel {
     display: inline;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 2%;
+    margin-right: 2%;
     font-size: 1.1em;
 }
 .sliderlabel2 {

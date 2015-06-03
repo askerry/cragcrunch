@@ -15,8 +15,8 @@ import warnings
 import timeit
 from config import rootdir
 import sys
-sys.path.append(os.path.join(rootdir, 'cragcrunch/core/'))
-import core.similarity as similarity
+sys.path.append(os.path.join(rootdir, 'cragcrunch/rec/'))
+import rec.scoring as scoring
 
 
 # #################################################
@@ -69,9 +69,9 @@ def getclimbdict(c, db, getnest=False):
             cdict['pageviews'] = int(float(cdict['pageviews']))
         except:
             cdict['pageviews'] = 0
-        if cdict['avgstars'] == 1: cdict['avgstars'] = "%.1f star" % cdict['avgstars']
-        elif cdict['avgstars'] > 1: cdict['avgstars'] = "%.1f stars" % cdict['avgstars']
-        else: cdict['avgstars'] = "no stars"
+        if cdict['avgstars'] == 1: cdict['avgstars_string'] = "%.1f star" % cdict['avgstars']
+        elif cdict['avgstars'] > 1: cdict['avgstars_string'] = "%.1f stars" % cdict['avgstars']
+        else: cdict['avgstars_string'] = "no stars"
         lengear = len(cdict['protection'])
         cdict['description'] = cdict['description'].replace('. \n', '<br><br>')[:-(lengear)]
         if getnest:
@@ -92,7 +92,7 @@ def getsimilarclimbs(db, climbid, cdict, ClimbTable):
                                                                                ClimbTable.numerizedgrade.between(
                                                                                    grade-slush,grade+slush),
                                                                                (ClimbTable.style == style))).all()]
-    similarities=[similarity.get_climb_similarity(climbid, candidate)[0] for candidate in candidates[:100]]
+    similarities=[scoring.get_climb_similarity(db, climbid, candidate)[0] for candidate in candidates[:100]]
     rank=list(np.argsort(similarities))
     rank.reverse()
     simclimbids = [candidates[i] for i in rank[:5]] 

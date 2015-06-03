@@ -5,7 +5,7 @@ Created on Fri Jan 16 09:12:37 2015
 @author: amyskerry
 """
 from flask import current_app, render_template
-from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ProfileTable
+from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ProfileTable, HitsTable
 import numpy as np
 import pandas as pd
 import pickle
@@ -25,7 +25,7 @@ from collections import OrderedDict
 from config import fulldir
 
 sys.path.append(fulldir)
-import core.scoring as scoring
+import rec.scoring as scoring
 import utilities.randomdata as rd
 
 
@@ -58,6 +58,23 @@ def load_preferences(db, userid, attributes):
     prefs=json.loads(db.session.query(ProfileTable).filter_by(userid=userid).first().preferences)
     return {key: prefs[key] for key in attributes}
 
+def getuserplots(udict, db):
+    userid = udict['climberid']
+    prefs=json.loads(db.session.query(ProfileTable).filter_by(userid=userid).first().preferences, object_pairs_hook=OrderedDict)
+    labels=prefs.keys()
+    try:
+        corrs=[prefs[attr] for attr in labels]
+        #zeros look weird
+        corrs=[c if c!=0 else np.random.choice([.08, .03, .1, -.01, -.04, -.7]) for c in corrs]
+        sems = [0 for c in corrs]
+        title = "Route Preferences for %s" % udict['name']
+        title = "Preference Scores"
+        djsons=[pushdata(corrs, sems, labels, title, '', '', "plotcontainer")]
+    except:
+        djsons = []
+        warnings.warn("plot failed")
+    return djsons
+'''
 def getuserplots(udict, db):
     userid = udict['climberid']
     sdf = pd.read_sql("SELECT * from stars_prepped where climber = '%s'" % userid, db.engine, index_col='index')
@@ -108,7 +125,7 @@ def getuserplots(udict, db):
         djsons = []
         warnings.warn("plot failed")
     return djsons
-
+'''
 
 def getuserrecs(udict, db, area, grade, sport, trad, boulder):
     userid = udict['climberid']
@@ -162,28 +179,31 @@ def derive_prefs(db, userid, attr):
             result=db.session.query(ClimbTable).filter_by(climbid=climb).first()
             for key in attr:
                 feats[key].append(getattr(result, 't_'+key))
-        pref_dict={key:scipy.stats.pearsonr(stars, feats[key]) for key in attr}
+        pref_dict={}
+        for key in attr:
+            corr=scipy.stats.pearsonr(stars, feats[key])[0]
+            if np.isnan(corr):
+                corr=0
+            pref_dict[key]=corr
     else:
         pref_dict={key:0 for key in attr}
     return pref_dict
 
 def add_to_profile(db, uobj, password):
-    with open('cfg/attributes.json') as f:
-        attr=json.loads(f.read())
-    prefs=json.dumps(derive_prefs(db, uobj.climberid, attr))
+    prefs=json.dumps(derive_prefs(db, uobj.climberid, current_app.attributes))
     nuser = ProfileTable(userid=uobj.climberid, name=uobj.name, password=password, region= uobj.region, mainarea = uobj.mainarea, preferences=prefs)
     db.session.add(nuser)
     db.session.flush()
     db.session.commit()
 
-def getcandidates(udict, db, area, gradeshift, styles):
+def getcandidates(udict, db, area, grade, styles):
     try:
         styles = styles.split(', ')
     except:
         warnings.warn("styles already a list")
     graderanges = {}
     for style in ('Sport', 'Trad', 'Boulder'):
-        graderanges[style] = getgraderange(udict, db, grade, style)
+        graderanges[style] = getgraderange(udict, db, style=style, gradepercent=(float(grade)-12)/12)
     candidates = []
     for style in styles:
         thesecandidates = [c for c in db.session.query(ClimbTable).filter(and_((ClimbTable.mainarea == area),
@@ -203,49 +223,39 @@ def getcandidates(udict, db, area, gradeshift, styles):
             candidates.extend(thesecandidates)
     return candidates
 
-'''
-def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
+def getuserrecommendedclimbs(udict, db, area, grade, sport, trad, boulder):
     styles = get_stylelist(sport, trad, boulder)
-    candidates = getcandidates(udict, db, area, gradeshift, styles)
-    if len(candidates) == 0:
-        candidates = getcandidates(udict, db, area, gradeshift,
-                                   ['Sport', 'Trad', 'Boulder'])  #if no matches, generalize to all styles
-    candidates = [cf.getclimbdict(c, db) for c in candidates]
-    trainedclfdict = loadtrainedmodel(udict)
-    classorder = list(trainedclfdict['clf'].classes_)
-    classdict = {pred: classorder.index(pred) for pred in [1, 2, 3, 4] if pred in classorder}
-    Xdf = pd.read_sql("SELECT * from final_X_matrix", db.engine, index_col='index')
-    datadict = {'pred': [], 'prob': [], 'climbid': [], 'style': [], 'mainarea': [], 'grade': [], 'hit': []}
-    for climb in candidates:
-        datadict = scoreclimb(climb, db, Xdf, udict, trainedclfdict, datadict, classdict)
-    preddf = pd.DataFrame(data=datadict)
-    preddf = preddf.sort(columns=['pred', 'prob'], ascending=False)
-    if len(preddf[(preddf['pred'] == 4) & (preddf['prob'] >= .9)]) > 10:
-        preddf = preddf[(preddf['pred'] == 4) & (preddf['prob'] >= .9)]
-        indices = preddf.climbid.values
-        np.random.shuffle(indices)
-        return indices[:10]
-    else:
-        return preddf.iloc[:10, :].climbid.values
-'''
-
-def getuserrecommendedclimbs(udict, db, area, gradeshift, sport, trad, boulder):
-    styles = get_stylelist(sport, trad, boulder)
+    print udict, area, grade, styles
     candidates = getcandidates(udict, db, area, grade, styles)
     if len(candidates) == 0:
         candidates = getcandidates(udict, db, area, grade,
                                    ['Sport', 'Trad', 'Boulder'])  #if no matches, generalize to all styles
     candidates = [cf.getclimbdict(c, db) for c in candidates]
+    candidates={c['climbid']:c for c in candidates}
     datadict = {'score': [], 'climbid': [], 'style': [], 'mainarea': [], 'grade': [], 'hit': []}
-    for climb in candidates:
+    userclimbs, prefs, allstars=rec_preloads(db, udict, candidates)
+    print len(candidates)
+    for climbid in candidates.keys():
+        climb=candidates[climbid]
         for var in ['climbid', 'style', 'mainarea', 'grade']:
             datadict[var].append(climb[var])
-        datadict['score'].append(scoring.finalscore(udict, climbid))
-        datadict['hit'].append(retrieval.is_hit(udict['climberid'], climb['climbid']))
+        datadict['score'].append(scoring.finalscore(db, udict, climbid, candidates, current_app.attributes, userclimbs, prefs, allstars))
+        #match=len(db.session.query(HitsTable).filter(and_(HitsTable.climber==udict['climberid'], HitsTable.climb==climb['climbid'])).all())>0
+        match=0
+        datadict['hit'].append(match)
     preddf = pd.DataFrame(data=datadict)
     preddf = preddf.sort(columns=['score'], ascending=False)
     return preddf.iloc[:10, :].climbid.values
 
+def rec_preloads(db, udict, candidates):
+    climbobjs=db.session.query(StarsTable).filter_by(climber=udict['climberid']).all()
+    userclimbs={c.climb:c.starsscore for c in climbobjs}
+    userobj=db.session.query(ProfileTable).filter_by(userid=udict['climberid']).first()
+    prefs=json.loads(userobj.preferences)
+    allstars={c:[] for c in candidates.keys()}
+    for entry in db.session.query(StarsTable).filter(StarsTable.climb.in_(candidates.keys())).all():
+        allstars[entry.climb].append({'climberid':entry.climber, 'starsscore':entry.starsscore})
+    return userclimbs, prefs, allstars
 
 def getmainareaoptions(db):
     '''get list of possible main areas'''
@@ -260,21 +270,18 @@ def getmainareaoptions(db):
     return OrderedDict((float(aid), str(names[aidn])) for aidn, aid in enumerate(areas) if '*' not in str(names[aidn]))
 
 
-def getgraderange(udict, db, style=None, grade=None):
+def getgraderange(udict, db, style=None, gradepercent=None):
     '''get range of rasonable grades'''
-    if grade is None:
-        if style=='Sport':
-            grade = 41 #default to 10.d
-        if style=='Trad':
-            grade=31 #default to 5.9
-        if style=='Boulder':
-            grade=11 #default to v3
+    defaults={'Sport':41, 'Trad':31, 'Boulder':11}
+    dgrade=defaults[style]
+    if gradepercent is None:
+        grade=dgrade
+    else:
+        grade=dgrade+gradepercent*dgrade
     if style == 'Boulder':
         range = [grade - 3, grade + 3]
-        range = [g + float(grade) / 1.5 for g in range]
     else:
         range = [grade - 5, grade + 5]
-        range = [g + float(grade) for g in range]
     if range[1] < 0:
         range[1] = 1
     return range

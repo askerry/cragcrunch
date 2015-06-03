@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, jsonify, current_app, redirect
-from ormcfg import ClimberTable, ProfileTable
+from ormcfg import ClimberTable, ProfileTable, HitsTable
 import pages as pinf
 import pagedata.user as uf
 import pagedata.newuser as nuf
@@ -22,7 +22,7 @@ from cfg.database_cfg import connect_db
 import utilities.randomdata as rd
 
 global default
-default = 44946
+default = 15613
 
 
 # create application
@@ -32,10 +32,8 @@ app.config.from_object('config')
 with open(os.path.join(app.config['ROOTDIR'], 'app/secret_key.txt')) as f:
     app.secret_key=f.read()
 
-# slow data loading stuff
 
-app.featdicts = {}
-app.modeldicts = {}
+# slow data loading stuff
 
 app.config['FEATFILE']=os.path.join(app.config['ROOTDIR'], 'cfg/apriori.json')
 app.config['ATTRIBUTEFILE']=os.path.join(app.config['ROOTDIR'], 'cfg/attributes.json')
@@ -102,7 +100,6 @@ def home():
 @app.route('/result', methods=['POST'])
 def search():
     result = pinf.result_home(request, g)
-    print result
     return render_template('home.html', returntype='result', result=result, loggedinid=session['userid'],
                            loggedinname=session['username'])
 
@@ -127,9 +124,7 @@ def view(searchid=0):
 @app.route('/user')
 @app.route('/user/<userid>', methods=['GET'])
 def user(userid=default):
-    session['userid']=userid
     userdict, userrecs, userplotdata, areas, defaultarea = pinf.getuserpage(g, {'userid': userid})
-    session['username']=userdict['name']
     return render_template('user.html', user=userdict, recs=userrecs, plotdata=userplotdata, areas=areas,
                            defaultarea=float(defaultarea), loggedinid=userid,
                            loggedinname=session['username'])
@@ -179,6 +174,9 @@ def updaterecs():
 def checkavailability():
     desiredname = request.args.get('desiredname')
     matches = g.db.session.query(ClimberTable).filter_by(name=desiredname).all()
+    climberids=[match.climberid for match in matches]
+    climberhits= [hit.climber for hit in g.db.session.query(HitsTable).filter(HitsTable.climber.in_(climberids)).all()]
+    matches=[match for match in matches if match.climberid in climberhits]
     existing = g.db.session.query(ProfileTable).filter_by(name=desiredname).all()
     if len(matches) > 0 and len(existing)==0:
         return jsonify({'reject': False, 'name': desiredname})

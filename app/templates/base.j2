@@ -92,16 +92,17 @@
            <div class="collapse navbar-collapse">
              <ul class="nav navbar-nav">
                <li id="home" class="active"><a href="/home">Home</a></li>
-               <li id="user"><a href="/user/{{loggedinid}}" onclick="wait();">Profile</a></li>
+               <li id="user"><a href="/user/{{loggedinid}}" onclick="wait();">My Profile</a></li>
                <li id="about"><a href="/about">About</a></li>
                <li id="blog"><a href="/blog">Blog</a></li>
-               <li id="newuser"><a href="#" onclick=getnewuser();>I'm New!</a></li>
+               <li id="newuser"><a href="#" onclick=getnewuser();>Join!</a></li>
                <li>    
                		<form action="../result" method="POST">
         				<input id="searchbox" type="text" name="text" placeholder="Search for climb, area, or user">
     				</form>
     			</li>
     			<li><a href="/user/{{loggedinid}}"><span class="mini">signed in as</span> {{loggedinname}}</a></li>
+          <li><a href="/user/{{loggedinid}}/preferences"><img id="settingsimg" src="../../static/img/settings.png" alt="settings"></img></a></li>
     			<li><a href="/"><span id="logout" class="mini btn btn-default">sign out</span></a></li>
              </ul>
            </div><!--/.nav-collapse -->
