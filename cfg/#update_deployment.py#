@@ -1,0 +1,11 @@
+
+
+
+#save from current database to .sql
+#push to github
+
+sftp to remote
+push .sql
+load .sql into database
+
+pullfrom github

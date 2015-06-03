@@ -9,8 +9,7 @@ import nltk
 from collections import Counter, OrderedDict
 import json
 import sys
-sys.path.append('..')
-from core import retrieval
+import retrieval
 import collections
 
 ################################

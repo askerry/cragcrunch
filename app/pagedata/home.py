@@ -5,7 +5,7 @@ Created on Fri Jan 16 09:20:26 2015
 @author: amyskerry
 """
 from flask import current_app
-from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable
+from ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ProfileTable
 from sqlalchemy import between
 import numpy as np
 import warnings
@@ -20,7 +20,6 @@ from config import rootdir
 def gettopclimbs(db):
     '''get top climbs by pageviews for naive viewers'''
     topclimbs = db.session.query(ClimbTable).order_by(ClimbTable.pageviews.desc()).limit(10).all()
-    print [c.mainarea for c in topclimbs]
     tlist = [{'name': c.name, 'url': c.url, 'mainarea': int(c.mainarea), 'climbid': c.climbid, 'pageviews': int(c.pageviews),
               'mainarea_name': db.session.query(AreaTable).filter_by(areaid=c.mainarea).first().name,
               'region': c.region} for c in topclimbs]
@@ -29,9 +28,8 @@ def gettopclimbs(db):
 
 def getusers(db):
     '''get list of all possible users in the databse'''
-    userkeys=[c for c in current_app.modeldicts.keys() if 'user' in c]
-    climberids = [c[5:] for c in userkeys]
-    climberids = [float(c[:c.index('_')]) for c in climberids]
+    climbers=db.session.query(ProfileTable).all()
+    climberids=[c.userid for c in climbers]
     climbers = db.session.query(ClimberTable).filter(ClimberTable.climberid.in_(climberids)).all()
     names = [climber.name for climber in climbers]
     ids = [climber.climberid for climber in climbers]

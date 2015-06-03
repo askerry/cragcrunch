@@ -1,4 +1,7 @@
 
+sys.path.append('..')
+from utilities import prep, retrieval
+
 def get_attrs(obj):
     import inspect
     attrs,_=zip(*inspect.getmembers(object, lambda x: not inspect.ismethod(x)))

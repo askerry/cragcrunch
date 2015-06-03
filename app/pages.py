@@ -37,7 +37,7 @@ def result_home(request, g):
 ################     USER PAGE    ####################
 
 
-def getuserpage(g, inputdict, areaid=None, grade=0, sport=True, trad=True, boulder=True):
+def getuserpage(g, inputdict, areaid=None, grade=12, sport=True, trad=True, boulder=True):
     climberid = inputdict['userid']
     a = g.db.session.query(ClimberTable).filter_by(climberid=climberid).first()
     udict = uf.getuserdict(a, g.db)
@@ -45,11 +45,12 @@ def getuserpage(g, inputdict, areaid=None, grade=0, sport=True, trad=True, bould
     if climberid > 8729: udict['newuser'] = True
     else: udict['newuser'] = False
     if areaid is None: areaid = udict['mainarea']
-    try:
-        urecs = uf.getuserrecs(udict, g.db, areaid, grade, sport, trad, boulder)  #time suck
-    except:
-        warnings.warn("failed to generate user recs")
-        urecs = []
+    #try:
+    #    print "trying to get users recs"
+    urecs = uf.getuserrecs(udict, g.db, areaid, grade, sport, trad, boulder)  #time suck
+    #except:
+    #    warnings.warn("failed to generate user recs")
+    #    urecs = []
     uplotdata = uf.getuserplots(udict, g.db)
     areas = uf.getmainareaoptions(g.db)
     return udict, urecs, uplotdata, areas, udict['mainarea']

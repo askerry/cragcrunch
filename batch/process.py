@@ -60,8 +60,9 @@ def cleandf(df):
     return df
 
 
-def create_hitdf(tickdf, commentdf, gradedf):
-    hitsdf=pd.concat([tickdf[['climb','climber', 'urlname']],commentdf[['climb','climber','urlname']],gradedf[['climb','climber','urlname']]])
+def create_hitdf(tickdf, commentdf, gradedf, stardf):
+    
+    hitsdf=pd.concat([stardf[['climb','climber', 'urlname']], tickdf[['climb','climber', 'urlname']],commentdf[['climb','climber','urlname']],gradedf[['climb','climber','urlname']]])
     hitsdf=hitsdf.drop_duplicates()
     hitsdf=hitsdf.loc[~np.isnan(hitsdf.climber.values)]
     hitsdf.index=range(len(hitsdf))
@@ -121,7 +122,7 @@ if __name__=='__main__':
     logging.info("performed data reduction ({} climbs)".format(len(climbdf)))
       
     #create climber x climb matrix
-    hitsdf=create_hitdf(tickdf, commentdf, gradedf)
+    hitsdf=create_hitdf(tickdf, commentdf, gradedf, stardf)
     
     #misc fixes  
     climberdf=bp.fixclimbers(climberdf, hitsdf)
