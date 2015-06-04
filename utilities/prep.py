@@ -249,7 +249,7 @@ def find_state_and_main(areaid, stateids=None, areadf=None):
     if areadf is not None:
         higher_areaid=areadf.loc['areaid'==areaid,'area']#
     else:
-        higher_areaid=retrieval.query_filter('area', {'areaid':areaid}, 'area')[0]
+        higher_areaid=retrieval.get_area(areaid)
     if higher_areaid not in stateids:
         return find_state_and_main(higher_areaid, stateids=stateids, areadf=areadf)
     else:
