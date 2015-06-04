@@ -10,7 +10,7 @@ import sys
 import numpy as np
 import pandas as pd
 sys.path.append('../')
-from utilities import randomdata as rd
+import randomdata as rd
 from cfg.database_cfg import cfg, DBConnection
 from app.ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ProfileTable, HitsTable
 from sqlalchemy import create_engine, and_
@@ -83,6 +83,7 @@ def get_id(url, kind='climb'):
         return 'new'
         
 def save_update_to_db(obj_dict, kind='climb'):
+    print "saving"
     if kind=='climb':
         if obj_dict['climbid']=='new':
             print "creating new climb entry"

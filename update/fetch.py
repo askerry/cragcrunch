@@ -23,6 +23,7 @@ def refresh_id(id_num, kind='climb'):
     refresh_url(url, kind=kind, id_num=id_num)
 
 def refresh_url(url, kind='climb', follow=True, id_num=None):
+    print url
     r=urllib2.urlopen(url)
     html = r.read()
     if id_num is None:
@@ -69,17 +70,17 @@ def update_climber(id_num, url, html, follow):
     
 def update_area(id_num, url, html, follow):
     soup = BeautifulSoup(html)
-    commenter_urls=[a.get('href') for a in soup.find_all('a', href=re.compile("/u/"))]
-    for commenter in commenter_urls:
-        refresh_url(rooturl+commenter, kind='climber')
     if follow:
+        commenter_urls=[a.get('href') for a in soup.find_all('a', href=re.compile("/u/"))]
+        for commenter in commenter_urls:
+            refresh_url(rooturl+commenter, kind='climber')
         leftnav=soup.find('table', id=re.compile('leftNav'))
         if len(soup.find_all('span', id="routeSortLabel"))>0:
-            climb_urls=[c.get('href') for c in leftnav.find_all('a', href=re.compile("/v/"))]
+            climb_urls=[c.get('href') for c in leftnav.find_all('a', href=re.compile("/v/[a-z]"))]
             for climb in climb_urls:
                 refresh_url(climb, kind='climb', follow=False)
         else:
-            area_urls=[a.get('href') for a in leftnav.find_all('a', href=re.compile("/v/"))] 
+            area_urls=[a.get('href') for a in leftnav.find_all('a', href=re.compile("/v/[a-z]"))] 
             for area in area_urls:
                 refresh_url(area, kind='area', follow=False)
     return parse_area(id_num, soup) 
@@ -153,15 +154,18 @@ def parse_climber(climberid, soup):
     d['mainarea']='unavailable'
     d['url']=str(soup.find('link', rel="canonical").attrs['href'])
     personinfo=soup.find(lambda x: x.has_attr('class')  and 'personalData' in x['class'])
-    personinfo.find(lambda x: x.get_text()[:9]=='Personal:').find('em').get_text()
-    d['personal']=personinfo.find(lambda x: x.get_text()[:9]=='Personal:').find('em').get_text()
-    if "Female" in d['personal'] or 'female' in d['personal']:
-        d['gender']='F'
-    elif "Male" in d['personal'] or 'male' in d['personal']:
-        d['gender']='M'
+    personal=personinfo.find(lambda x: x.get_text()[:9]=='Personal:')
+    if personal is not None:
+        d['personal']=personal.find('em').get_text()
+        if "Female" in d['personal'] or 'female' in d['personal']:
+            d['gender']='F'
+        elif "Male" in d['personal'] or 'male' in d['personal']:
+            d['gender']='M'
+        else:
+            d['gender']='unavailable'
+        d['age']=''.join([char for char in d['personal'] if char.isdigit()])
     else:
-        d['gender']='unavailable'
-    d['age']=''.join([char for char in d['personal'] if char.isdigit()])
+        d['age'],d['gender'], d['personal']='unavailable','unavailable','unavailable'
     return d
     
     
@@ -181,8 +185,11 @@ def fetch_contribs(url):
         r=urllib2.urlopen(url)
         html = r.read()
         soup = BeautifulSoup(html)
-        for i in range(1,get_num(soup)):
-            url_list.append(urls[key]+'&page='+str(i+1))
+        try:
+            for i in range(1,get_num(soup)):
+                url_list.append(urls[key]+'&page='+str(i+1))
+        except:
+            print "only one page"
         pages=[]
         for u in url_list:
             r=urllib2.urlopen(u)
@@ -215,7 +222,7 @@ def extract_comments(soup, climberid, climbername, url):
     results=[]
     for entry in [s.parent for s in soup.find_all('b') if 'Location' in s.get_text()]:
         line=entry.find_all('a')[-2]
-        if '(' in line.get_text() and ')' in line.get_text():
+        if '(V' in line.get_text() or '(5.' in line.get_text() and ')' in line.get_text(): #hackhackhack
             obj_dict={}
             obj_dict['commentsid']=np.nan
             obj_dict['url']=url[11:]

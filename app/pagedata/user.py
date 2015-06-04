@@ -272,12 +272,20 @@ def getmainareaoptions(db):
 
 def getgraderange(udict, db, style=None, gradepercent=None):
     '''get range of rasonable grades'''
-    defaults={'Sport':41, 'Trad':31, 'Boulder':11}
+    defaults={'Sport':41, 'Trad':32, 'Boulder':13}
     dgrade=defaults[style]
     if gradepercent is None:
         grade=dgrade
     else:
-        grade=dgrade+gradepercent*dgrade
+        if style=='Boulder':
+            if gradepercent>.5:
+                grade=dgrade+gradepercent*dgrade*2.2
+            elif gradepercent>.5:
+                grade=dgrade+gradepercent*dgrade*1.5
+            else:
+                grade=dgrade+gradepercent*dgrade*1.1
+        else:
+            grade=dgrade+gradepercent*dgrade
     if style == 'Boulder':
         range = [grade - 3, grade + 3]
     else:
