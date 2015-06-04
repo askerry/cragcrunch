@@ -11,7 +11,7 @@ import re
 import numpy as np
 import prep_updates as pu
 
-rooturl="www.mountainproject.com"
+rooturl="http://www.mountainproject.com"
 
 
 ###############################
@@ -30,13 +30,13 @@ def refresh_url(url, kind='climb', follow=True, id_num=None):
             id_num=retrieval.get_id(url, kind)
         except:
             id_num='new'
-    print id_num
     if kind=='climb':
         obj=update_climb(id_num, url, html, follow)
     elif kind=='climber':
         obj=update_climber(id_num, url, html, follow)
     elif kind=='area':
         obj=update_area(id_num, url, html, follow)
+    obj=pu.process(obj, kind=kind)        
     return obj
         
 def update_climb(id_num, url, html, follow):
@@ -71,8 +71,7 @@ def update_area(id_num, url, html, follow):
     soup = BeautifulSoup(html)
     commenter_urls=[a.get('href') for a in soup.find_all('a', href=re.compile("/u/"))]
     for commenter in commenter_urls:
-        print rooturl+commenter
-        #refresh_url(rooturl+commenter, kind='climber')
+        refresh_url(rooturl+commenter, kind='climber')
     if follow:
         leftnav=soup.find('table', id=re.compile('leftNav'))
         if len(soup.find_all('span', id="routeSortLabel"))>0:

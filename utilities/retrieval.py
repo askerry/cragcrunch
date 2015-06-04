@@ -13,13 +13,13 @@ sys.path.append('../')
 from utilities import randomdata as rd
 from cfg.database_cfg import cfg, DBConnection
 from app.ormcfg import ClimbTable, AreaTable, ClimberTable, TicksTable, CommentsTable, StarsTable, GradesTable, ProfileTable, HitsTable
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 con = create_engine('mysql://%s@%s/%s?charset=%s&use_unicode=%s&passwd=%s' % (cfg.user, cfg.host, cfg.dbname+'_prepped', cfg.charset, cfg.use_unicode, cfg.passwd), pool_recycle=3600)
 db=DBConnection(con.engine)
 
 def query_filter(table, condition_dict, colname):
     "takes name of database and set of simple equality conditions and returns values of single column"
-    return colvalues
+    pass
     
 def check_for_existing(climbid, kind):
     if kind=='area':
@@ -82,13 +82,50 @@ def get_id(url, kind='climb'):
     except:
         return 'new'
         
-def save_update_to_db(obj, kind='climb'):
+def save_update_to_db(obj_dict, kind='climb'):
     if kind=='climb':
-        if obj.climbid=='new':
+        if obj_dict['climbid']=='new':
             print "creating new climb entry"
+            obj = ClimbTable()
+            for key in obj_dict:
+                if key!='climbid':
+                    setattr(obj,key,obj_dict[key])
         else:
-            print "updating climb"
-    print obj
+            obj=db.session.query(ClimbTable).filter_by(climbid=obj_dict['climbid']).first()
+    if kind=='climber':
+        if obj_dict['climberid']=='new':
+            print "creating new climber entry"
+            obj = ClimberTable()
+            for key in obj_dict:
+                if key!='climberid':
+                    setattr(obj,key,obj_dict[key])
+        else:
+            obj=db.session.query(ClimberTable).filter_by(climberid=obj_dict['climberid']).first()
+    if kind=='area':
+        if obj_dict['areaid']=='new':
+            print "creating new area entry"
+            obj = AreaTable()
+            for key in obj_dict:
+                if key!='areaid':
+                    setattr(obj,key,obj_dict[key])
+        else:
+            obj=db.session.query(AreaTable).filter_by(areaid=obj_dict['areaid']).first()
+    for key in obj_dict:
+        setattr(obj, key, obj_dict[key])
+    print obj.__dict__
+    #db.session.add(obj)
+    #db.session.flush()
+    #db.session.commit()
     
-def update_hits(climberid,climbid):
-    pass
+def update_hits(climberid,climbid, url):
+    obj=db.session.query(HitsTable).filter(and_(climber=climberid, climb=climbid)).first()
+    if obj is None:
+        prekey='mountainproject.com/u/'
+        urlname=url[url.index(prekey)+len(prekey):]
+        urlname=urlname[:urlname.index('/')]
+        print urlname
+        obj=HitsTable(climber=climberid, climb=climbid, urlname=urlname)
+        print obj
+        #db.session.add(obj)
+        #db.session.flush()
+        #db.session.commit()

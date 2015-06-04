@@ -6,8 +6,9 @@ import os
 import pickle
 import json
 import collections
+from config import fulldir
 
-attribute_file='cfg/attributes.json'
+attribute_file=fulldir+'/cfg/attributes.json'
 with open(attribute_file, 'r') as f:
         j=f.read()
 attributes=json.loads(j, object_pairs_hook=collections.OrderedDict) 

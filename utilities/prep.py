@@ -11,6 +11,14 @@ import json
 import sys
 import retrieval
 import collections
+import sys, os
+rootdir=os.getcwd()
+while 'Projects' in rootdir:
+    rootdir=os.path.dirname(rootdir)
+sys.path.append(os.path.join(rootdir, 'Projects', 'credentials'))
+from sqlcfg import projectroot 
+fulldir=rootdir+projectroot
+print fulldir
 
 ################################
 #    Basic String Cleaning     #
@@ -121,7 +129,7 @@ def rating_confidence(climbid, sdf=None):
         relevants=retrieval.query_filter('stars', {'climbid':climbid}, 'starsscore')
     return len(relevants), np.std(relevants)
     
-def load_text_feats(path='cfg/apriori.json'):
+def load_text_feats(path=os.path.join(fulldir,'cfg/apriori.json')):
     with open(path, 'r') as f:
         j=f.read()
     return json.loads(j, object_pairs_hook=collections.OrderedDict) 

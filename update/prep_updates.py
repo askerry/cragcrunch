@@ -9,11 +9,8 @@ import utilities.randomdata as rd
 #     main prep pipeline      #
 ###############################
 
-def process(obj_dict, add=True):
+def process(obj_dict, kind='climb', add=True):
     obj_dict=full_obj_clean(obj_dict)
-    #if 'climbid' in obj_dict and not climb_in_db(obj_dict['climbid']):
-    #    #fetch and save climb
-    #    print "empty func"
     if 'style' in obj_dict and prep.is_silly_style(obj_dict['style']):
         return False
     if 'style' in obj_dict and (not prep.is_graded(obj_dict['grade'], obj_dict['style']) or np.isnan(obj_dict['area'])):
@@ -35,8 +32,8 @@ def process(obj_dict, add=True):
         obj_dict=process_stars(obj_dict)
     if add:
         if 'climberid' in obj_dict and 'climbid' in obj_dict:
-            retrieval.update_hits(obj_dict['climberid'], obj_dict['climbid'])
-        retrieval.save_update_to_db(obj_dict)
+            retrieval.update_hits(obj_dict['climberid'], obj_dict['climbid'], obj_dict['url'])
+        retrieval.save_update_to_db(obj_dict, kind=kind)
     return obj_dict
     
 def full_obj_clean(obj_dict):
